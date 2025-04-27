@@ -15,7 +15,7 @@ import {
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateUserDto, FilterUserDto, UpdateUserDto } from '@auth/dto';
 import { UserEntity } from '@auth/entities';
-import { ResponseHttpModel } from '@shared/interfaces';
+import { ResponseHttpInterface } from '@shared/interfaces';
 import { Auth, PublicRoute } from '@auth/decorators';
 import { RoleEnum } from '@auth/enums';
 import { UsersService } from '../services/users.service';
@@ -30,7 +30,7 @@ export class UsersController {
   @PublicRoute()
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() payload: CreateUserDto): Promise<ResponseHttpModel> {
+  async create(@Body() payload: CreateUserDto): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.usersService.create(payload);
 
     return {
@@ -43,7 +43,7 @@ export class UsersController {
   @ApiOperation({ summary: 'Catalogue' })
   @Get('catalogue')
   @HttpCode(HttpStatus.OK)
-  async catalogue(): Promise<ResponseHttpModel> {
+  async catalogue(): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.usersService.catalogue();
 
     return {
@@ -58,7 +58,7 @@ export class UsersController {
   @Auth(RoleEnum.ADMIN)
   @Get()
   @HttpCode(HttpStatus.OK)
-  async findAll(@Query() params: FilterUserDto): Promise<ResponseHttpModel> {
+  async findAll(@Query() params: FilterUserDto): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.usersService.findAll(params);
 
     return {
@@ -75,7 +75,7 @@ export class UsersController {
   @HttpCode(HttpStatus.OK)
   async findOne(
     @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<ResponseHttpModel> {
+  ): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.usersService.findOne(id);
 
     return {
@@ -92,7 +92,7 @@ export class UsersController {
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() payload: UpdateUserDto,
-  ): Promise<ResponseHttpModel> {
+  ): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.usersService.update(id, payload);
 
     return {
@@ -108,7 +108,7 @@ export class UsersController {
   @HttpCode(HttpStatus.CREATED)
   async reactivate(
     @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<ResponseHttpModel> {
+  ): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.usersService.reactivate(id);
 
     return {
@@ -124,7 +124,7 @@ export class UsersController {
   @HttpCode(HttpStatus.CREATED)
   async remove(
     @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<ResponseHttpModel> {
+  ): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.usersService.remove(id);
 
     return {
@@ -138,7 +138,7 @@ export class UsersController {
   @Auth()
   @Patch('remove-all')
   @HttpCode(HttpStatus.CREATED)
-  async removeAll(@Body() payload: UserEntity[]): Promise<ResponseHttpModel> {
+  async removeAll(@Body() payload: UserEntity[]): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.usersService.removeAll(payload);
 
     return {
@@ -154,7 +154,7 @@ export class UsersController {
   @HttpCode(HttpStatus.CREATED)
   async suspend(
     @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<ResponseHttpModel> {
+  ): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.usersService.suspend(id);
 
     return {

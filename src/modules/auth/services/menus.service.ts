@@ -2,7 +2,7 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { Repository, FindOptionsWhere, ILike, IsNull } from 'typeorm';
 import { MenuEntity, RoleEntity, UserEntity } from '@auth/entities';
-import { ServiceResponseHttpModel } from '@shared/interfaces';
+import { ServiceResponseHttpInterface } from '@shared/interfaces';
 import { AuthRepositoryEnum } from '@shared/enums';
 import {
   CreateMenuDto,
@@ -22,14 +22,14 @@ export class MenusService {
     private roleRepository: Repository<RoleEntity>,
   ) {}
 
-  async create(payload: CreateMenuDto): Promise<ServiceResponseHttpModel> {
+  async create(payload: CreateMenuDto): Promise<ServiceResponseHttpInterface> {
     const newMenu = this.repository.create(payload);
     const menuCreated = await this.repository.save(newMenu);
 
     return { data: plainToInstance(ReadMenuDto, menuCreated) };
   }
 
-  async catalogue(): Promise<ServiceResponseHttpModel> {
+  async catalogue(): Promise<ServiceResponseHttpInterface> {
     const response = await this.repository.findAndCount({ take: 1000 });
 
     return {
@@ -38,7 +38,7 @@ export class MenusService {
     };
   }
 
-  async getMenusForSidebar(): Promise<ServiceResponseHttpModel> {
+  async getMenusForSidebar(): Promise<ServiceResponseHttpInterface> {
     const response = await this.repository.find({
       where: { parent: IsNull() },
       relations: { children: true, parent: true },
@@ -51,7 +51,7 @@ export class MenusService {
     };
   }
 
-  async getMenusByRole(roleId: string): Promise<ServiceResponseHttpModel> {
+  async getMenusByRole(roleId: string): Promise<ServiceResponseHttpInterface> {
     const role = await this.roleRepository.findOne({
       where: { id: roleId, menus: { parent: IsNull() } },
       relations: { menus: { parent: true, children: { children: true } } },
@@ -62,7 +62,7 @@ export class MenusService {
     };
   }
 
-  async findAll(params?: FilterMenuDto): Promise<ServiceResponseHttpModel> {
+  async findAll(params?: FilterMenuDto): Promise<ServiceResponseHttpInterface> {
     //Pagination & Filter by Search
     if (params && params?.limit > 0 && params?.page >= 0) {
       return await this.paginateAndFilter(params);
@@ -84,7 +84,7 @@ export class MenusService {
     };
   }
 
-  async findOne(id: string): Promise<ServiceResponseHttpModel> {
+  async findOne(id: string): Promise<ServiceResponseHttpInterface> {
     const menu = await this.repository.findOneBy({ id });
 
     if (!menu) {
@@ -97,7 +97,7 @@ export class MenusService {
   async update(
     id: string,
     payload: UpdateMenuDto,
-  ): Promise<ServiceResponseHttpModel> {
+  ): Promise<ServiceResponseHttpInterface> {
     const menu = await this.repository.preload({ id, ...payload });
 
     if (!menu) {
@@ -109,7 +109,7 @@ export class MenusService {
     return { data: plainToInstance(ReadMenuDto, menuUpdated) };
   }
 
-  async remove(id: string): Promise<ServiceResponseHttpModel> {
+  async remove(id: string): Promise<ServiceResponseHttpInterface> {
     const menu = await this.repository.findOneBy({ id });
 
     if (!menu) {
@@ -121,14 +121,14 @@ export class MenusService {
     return { data: plainToInstance(ReadMenuDto, menuDeleted) };
   }
 
-  async removeAll(payload: MenuEntity[]): Promise<ServiceResponseHttpModel> {
+  async removeAll(payload: MenuEntity[]): Promise<ServiceResponseHttpInterface> {
     const menusDeleted = await this.repository.softRemove(payload);
     return { data: menusDeleted };
   }
 
   private async paginateAndFilter(
     params: FilterMenuDto,
-  ): Promise<ServiceResponseHttpModel> {
+  ): Promise<ServiceResponseHttpInterface> {
     let where: FindOptionsWhere<MenuEntity> | FindOptionsWhere<MenuEntity>[];
     where = {};
     let { page, search } = params;

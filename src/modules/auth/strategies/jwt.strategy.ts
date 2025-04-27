@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { config } from '@config';
 import { ConfigType } from '@nestjs/config';
-import { PayloadTokenModel } from '@auth/models';
+import { PayloadTokenInterface } from 'src/modules/auth/interfaces';
 import { UserEntity } from '@auth/entities';
 import { UsersService } from '../services/users.service';
 
@@ -19,7 +19,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
   }
 
-  async validate(payload: PayloadTokenModel): Promise<UserEntity> {
+  async validate(payload: PayloadTokenInterface): Promise<UserEntity> {
     const user = await this.userService.findOne(payload.id);
 
     if (!user) throw new UnauthorizedException('El Usuario no existe.');

@@ -1,7 +1,8 @@
 import { DataSource } from 'typeorm';
 import { ConfigType } from '@nestjs/config';
-import { ConfigEnum } from '../shared/enums';
+import { ConfigEnum } from '@shared/enums';
 import { config } from '@config';
+import { AuditSubscriber } from '@modules/audit/audit.subscriber';
 
 export const databaseProviders = [
   {
@@ -22,6 +23,8 @@ export const databaseProviders = [
         migrationsTableName: 'migrations',
         // dropSchema: true,
         synchronize: true,
+        subscribers: [AuditSubscriber],
+
       });
       return dataSource.initialize();
     },

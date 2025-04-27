@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
 
-@Entity('files', { schema: 'core' })
+@Entity('files', { schema: 'common' })
 export class FileEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

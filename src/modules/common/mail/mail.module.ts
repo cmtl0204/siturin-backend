@@ -27,7 +27,7 @@ import { MailService } from './mail.service';
           from: configService.mail.from,
         },
         template: {
-          dir: join(process.cwd(), 'resources/mail/templates'),
+          dir: join(process.cwd(), 'src/modules/common/mail/templates'),
           adapter: new HandlebarsAdapter(),
           options: {
             static: true,

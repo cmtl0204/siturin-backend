@@ -11,21 +11,21 @@ import { plainToInstance } from 'class-transformer';
 import { Repository } from 'typeorm';
 import { add, isBefore } from 'date-fns';
 import { UserEntity, TransactionalCodeEntity } from '@auth/entities';
-import { PayloadTokenModel } from '@auth/models';
+import { PayloadTokenInterface } from 'src/modules/auth/interfaces';
 import {
   AuthRepositoryEnum,
   MailSubjectEnum,
   MailTemplateEnum,
 } from '@shared/enums';
 import {
-  LoginDto,
+  SignInDto,
   PasswordChangeDto,
   ReadProfileDto,
   ReadUserInformationDto,
   UpdateProfileDto,
   UpdateUserInformationDto,
 } from '@auth/dto';
-import { ServiceResponseHttpModel } from '@shared/interfaces';
+import { ServiceResponseHttpInterface } from '@shared/interfaces';
 import { MailService } from '@modules/common/mail/mail.service';
 import { config } from '@config';
 import { ConfigType } from '@nestjs/config';
@@ -92,7 +92,7 @@ export class AuthService {
     return true;
   }
 
-  async login(payload: LoginDto): Promise<ServiceResponseHttpModel> {
+  async signIn(payload: SignInDto): Promise<ServiceResponseHttpInterface> {
     const user: UserEntity | null = await this.repository.findOne({
       select: {
         id: true,
@@ -139,13 +139,13 @@ export class AuthService {
 
     return {
       data: {
-        token: await this.generateJwt(user),
+        accessToken: await this.generateJwt(user),
         user: userRest,
       },
     };
   }
 
-  async findProfile(id: string): Promise<ServiceResponseHttpModel> {
+  async findProfile(id: string): Promise<ServiceResponseHttpInterface> {
     const user = await this.repository.findOne({
       select: {
         id: true,
@@ -222,7 +222,7 @@ export class AuthService {
     return plainToInstance(ReadProfileDto, profileUpdated);
   }
 
-  refreshToken(user: UserEntity): ServiceResponseHttpModel {
+  refreshToken(user: UserEntity): ServiceResponseHttpInterface {
     const accessToken = this.generateJwt(user);
 
     return { data: { accessToken, user } };
@@ -230,7 +230,7 @@ export class AuthService {
 
   async requestTransactionalCode(
     username: string,
-  ): Promise<ServiceResponseHttpModel> {
+  ): Promise<ServiceResponseHttpInterface> {
     const user = await this.repository.findOne({
       where: { username },
     });
@@ -281,7 +281,7 @@ export class AuthService {
   async verifyTransactionalCode(
     token: string,
     username: string,
-  ): Promise<ServiceResponseHttpModel> {
+  ): Promise<ServiceResponseHttpInterface> {
     const transactionalCode = await this.transactionalCodeRepository.findOne({
       where: { token },
     });
@@ -323,7 +323,7 @@ export class AuthService {
     return { data: true };
   }
 
-  async resetPassword(payload: any): Promise<ServiceResponseHttpModel> {
+  async resetPassword(payload: any): Promise<ServiceResponseHttpInterface> {
     const user = await this.repository.findOne({
       where: { username: payload.username },
     });
@@ -370,7 +370,7 @@ export class AuthService {
     //
     expiresDate.setDate(expiresDate.getSeconds() + 10);
 
-    const payload: PayloadTokenModel = { id: user.id, username: user.username };
+    const payload: PayloadTokenInterface = { id: user.id, username: user.username };
 
     return await this.jwtService.signAsync(payload);
   }

@@ -6,9 +6,9 @@ import { CacheModule } from '@nestjs/cache-manager';
 
 @Global()
 @Module({
-  imports: [CacheModule.register(),],
+  imports: [CacheModule.register()],
   controllers: [CatalogueController],
   providers: [catalogueProvider, CataloguesService],
-  exports: [catalogueProvider, CataloguesService, CataloguesService],
+  exports: [catalogueProvider, CataloguesService],
 })
 export class CatalogueModule {}

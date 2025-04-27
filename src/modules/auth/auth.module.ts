@@ -1,4 +1,4 @@
-import { Global, Module } from '@nestjs/common';
+import { Global, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
@@ -8,12 +8,6 @@ import {
   RolesController,
   UsersController,
 } from '@auth/controllers';
-import {
-  AuditsService,
-  AuthService,
-  MenusService,
-  RolesService,
-} from '@auth/services';
 import { authProviders } from '@auth/providers';
 import { DatabaseModule } from '@database/database.module';
 import { MenusController } from './controllers/menus.controller';
@@ -22,6 +16,10 @@ import { JwtStrategy } from '@auth/strategies';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtGuard } from '@auth/guards';
 import { MailModule } from '@modules/common/mail/mail.module';
+import { AuthService } from '@auth/services/auth.service';
+import { RolesService } from '@auth/services/roles.service';
+import { MenusService } from '@auth/services/menus.service';
+import { VerifyUserMiddleware } from '@auth/middlewares';
 
 @Global()
 @Module({
@@ -53,7 +51,6 @@ import { MailModule } from '@modules/common/mail/mail.module';
       useClass: JwtGuard,
     },
     ...authProviders,
-    AuditsService,
     AuthService,
     RolesService,
     UsersService,
@@ -65,9 +62,14 @@ import { MailModule } from '@modules/common/mail/mail.module';
     UsersService,
     RolesService,
     MenusService,
-    AuditsService,
     JwtModule,
     PassportModule,
   ],
 })
-export class AuthModule {}
+export class AuthModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(VerifyUserMiddleware) // el middleware que quieres aplicar
+      .forRoutes('*'); // o puedes poner solo un controlador, por ejemplo: YourController
+  }
+}

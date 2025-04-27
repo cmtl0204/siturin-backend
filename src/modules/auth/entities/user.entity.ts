@@ -1,20 +1,15 @@
 import {
-  PrimaryGeneratedColumn,
-  Column,
-  Entity,
-  OneToOne,
-  ManyToOne,
-  JoinColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  DeleteDateColumn,
   BeforeInsert,
   BeforeUpdate,
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  JoinColumn,
   ManyToMany,
-  OneToMany,
-  AfterInsert,
-  AfterUpdate,
-  AfterRemove,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import * as Bcrypt from 'bcrypt';
 import { RoleEntity } from '@auth/entities';
@@ -293,12 +288,5 @@ export class UserEntity {
       return;
     }
     this.personalEmail = this.personalEmail.toLowerCase().trim();
-  }
-
-  @AfterInsert()
-  @AfterUpdate()
-  @AfterRemove()
-  audit() {
-    console.log(this);
   }
 }

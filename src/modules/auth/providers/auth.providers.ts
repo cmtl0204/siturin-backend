@@ -5,17 +5,10 @@ import {
   PermissionEntity,
   RoleEntity,
   UserEntity,
-  AuditEntity,
 } from '@auth/entities';
 import { ConfigEnum, AuthRepositoryEnum } from '@shared/enums';
 
 export const authProviders = [
-  {
-    provide: AuthRepositoryEnum.AUDIT_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(AuditEntity),
-    inject: [ConfigEnum.PG_DATA_SOURCE],
-  },
   {
     provide: AuthRepositoryEnum.MENU_REPOSITORY,
     useFactory: (dataSource: DataSource) =>

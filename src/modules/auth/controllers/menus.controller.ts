@@ -16,8 +16,8 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Auth } from '@auth/decorators';
 import { CreateMenuDto, FilterMenuDto, UpdateMenuDto } from '@auth/dto';
 import { MenuEntity } from '@auth/entities';
-import { ResponseHttpModel } from '@shared/interfaces';
-import { MenusService } from '@auth/services';
+import { ResponseHttpInterface } from '@shared/interfaces';
+import { MenusService } from '@auth/services/menus.service';
 
 @ApiTags('Menus')
 @Controller('menus')
@@ -28,7 +28,7 @@ export class MenusController {
   @Auth()
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() payload: CreateMenuDto): Promise<ResponseHttpModel> {
+  async create(@Body() payload: CreateMenuDto): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.menusService.create(payload);
 
     return {
@@ -41,7 +41,7 @@ export class MenusController {
   @ApiOperation({ summary: 'Catalogue' })
   @Get('catalogue')
   @HttpCode(HttpStatus.OK)
-  async catalogue(): Promise<ResponseHttpModel> {
+  async catalogue(): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.menusService.catalogue();
 
     return {
@@ -55,7 +55,7 @@ export class MenusController {
   @ApiOperation({ summary: 'Menus for sidebar' })
   @Get('sidebar')
   @HttpCode(HttpStatus.OK)
-  async getMenusForSidebar(): Promise<ResponseHttpModel> {
+  async getMenusForSidebar(): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.menusService.getMenusForSidebar();
 
     return {
@@ -71,7 +71,7 @@ export class MenusController {
   @HttpCode(HttpStatus.OK)
   async getMenusByRole(
     @Param('roleId') roleId: string,
-  ): Promise<ResponseHttpModel> {
+  ): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.menusService.getMenusByRole(roleId);
 
     return {
@@ -84,7 +84,7 @@ export class MenusController {
   @ApiOperation({ summary: 'Find All' })
   @Get()
   @HttpCode(HttpStatus.OK)
-  async findAll(@Query() params: FilterMenuDto): Promise<ResponseHttpModel> {
+  async findAll(@Query() params: FilterMenuDto): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.menusService.findAll(params);
 
     return {
@@ -101,7 +101,7 @@ export class MenusController {
   @HttpCode(HttpStatus.OK)
   async findOne(
     @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<ResponseHttpModel> {
+  ): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.menusService.findOne(id);
 
     return {
@@ -118,7 +118,7 @@ export class MenusController {
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() payload: UpdateMenuDto,
-  ): Promise<ResponseHttpModel> {
+  ): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.menusService.update(id, payload);
 
     return {
@@ -134,7 +134,7 @@ export class MenusController {
   @HttpCode(HttpStatus.CREATED)
   async remove(
     @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<ResponseHttpModel> {
+  ): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.menusService.remove(id);
 
     return {
@@ -148,7 +148,7 @@ export class MenusController {
   @Auth()
   @Patch('remove-all')
   @HttpCode(HttpStatus.CREATED)
-  async removeAll(@Body() payload: MenuEntity[]): Promise<ResponseHttpModel> {
+  async removeAll(@Body() payload: MenuEntity[]): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.menusService.removeAll(payload);
 
     return {

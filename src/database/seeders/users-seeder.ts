@@ -3,11 +3,10 @@ import { faker } from '@faker-js/faker';
 import { CatalogueTypeEnum } from '@shared/enums';
 import { RoleEntity } from '@auth/entities';
 import { RoleEnum } from '@auth/enums';
-import { RolesService } from '@auth/services';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
 import { CataloguesService } from '@modules/common/catalogue/catalogue.service';
-// import * as XLSX from 'xlsx';
 import { UsersService } from '@auth/services/users.service';
+import { RolesService } from '@auth/services/roles.service';
 
 @Injectable()
 export class UsersSeeder {

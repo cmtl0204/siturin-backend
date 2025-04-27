@@ -13,7 +13,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ResponseHttpModel } from '@shared/interfaces';
+import { ResponseHttpInterface } from '@shared/interfaces';
 import { CataloguesService } from '@modules/common/catalogue/catalogue.service';
 import {
   CreateCatalogueDto,
@@ -49,7 +49,7 @@ export class CatalogueController {
       data: response,
       message: `catalogue`,
       title: `Catalogue`,
-    } as ResponseHttpModel;
+    } as ResponseHttpInterface;
   }
 
   @ApiOperation({ summary: 'List of catalogues' })
@@ -73,7 +73,7 @@ export class CatalogueController {
       data,
       message: `show ${id}`,
       title: `Success`,
-    } as ResponseHttpModel;
+    } as ResponseHttpInterface;
   }
 
   @Put(':id')
@@ -88,7 +88,7 @@ export class CatalogueController {
       data: data,
       message: `Catalogue updated ${id}`,
       title: `Updated`,
-    } as ResponseHttpModel;
+    } as ResponseHttpInterface;
   }
 
   @Delete(':id')
@@ -119,7 +119,7 @@ export class CatalogueController {
   @ApiOperation({ summary: 'Find Cache' })
   @Get('cache/get')
   @HttpCode(HttpStatus.OK)
-  async findCache(): Promise<ResponseHttpModel> {
+  async findCache(): Promise<ResponseHttpInterface> {
     const response = await this.catalogueService.findCache();
     return {
       data: response,
@@ -131,7 +131,7 @@ export class CatalogueController {
   @ApiOperation({ summary: 'Load Cache' })
   @Get('cache/load')
   @HttpCode(HttpStatus.OK)
-  async loadCache(): Promise<ResponseHttpModel> {
+  async loadCache(): Promise<ResponseHttpInterface> {
     const response = await this.catalogueService.loadCache();
     return {
       data: response,

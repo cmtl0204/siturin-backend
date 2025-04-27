@@ -7,7 +7,7 @@ export * from './auth/update-profile.dto';
 export * from './auth/update-user-information.dto';
 export * from './auth/read-profile.dto';
 export * from './auth/read-user-information.dto';
-export * from './auth/login.dto';
+export * from './auth/sign-in.dto';
 export * from './auth/password-change.dto';
 
 // Users

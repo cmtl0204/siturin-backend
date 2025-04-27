@@ -1,21 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import {
-  CreateCatalogueDto,
-  SeedCatalogueDto,
-} from '@modules/common/catalogue/dto';
+import { CreateCatalogueDto } from '@modules/common/catalogue/dto';
 import { CataloguesService } from '@modules/common/catalogue/catalogue.service';
 import {
+  CatalogueEthnicOriginEnum,
+  CatalogueMaritalStatusEnum,
   CatalogueStateEnum,
   CatalogueTypeEnum,
-  CatalogueCareersModalityEnum,
-  CatalogueMaritalStatusEnum,
-  CatalogueSchoolPeriodStateEnum,
-  CatalogueEthnicOriginEnum,
-  CatalogueTypeSchoolEnum,
-  CatalogueStudentLiveEnum,
 } from '@shared/enums';
-import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
-import { SeedCatalogueParentDto } from '@modules/common/catalogue/dto';
 
 @Injectable()
 export class CataloguesSeeder {

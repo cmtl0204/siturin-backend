@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { MenusService, RolesService } from '@auth/services';
-import { CreateMenuDto } from '@auth/dto';
 import { MenuTypeEnum, RoleEnum } from '@auth/enums';
-import { MenuEntity } from '@auth/entities';
-import { PrimeIcons } from '../../shared/enums';
-import { SeederMenuDto } from '@auth/dto/menus/seeder-menu.dto';
+import { MenusService } from '@auth/services/menus.service';
+import { RolesService } from '@auth/services/roles.service';
 
 @Injectable()
 export class MenusSeeder {
@@ -55,32 +52,6 @@ export class MenusSeeder {
 
     let role = await this.rolesService.findByCode(RoleEnum.ADMIN);
     role.menus = menusAll.filter((menu) => menu.code === RoleEnum.ADMIN);
-    await this.rolesService.createMenus(role);
-
-    role = await this.rolesService.findByCode(RoleEnum.STUDENT);
-    role.menus = menusAll.filter((menu) => menu.code === RoleEnum.STUDENT);
-    await this.rolesService.createMenus(role);
-
-    role = await this.rolesService.findByCode(RoleEnum.TEACHER);
-    role.menus = menusAll.filter((menu) => menu.code === RoleEnum.TEACHER);
-    await this.rolesService.createMenus(role);
-
-    role = await this.rolesService.findByCode(RoleEnum.COORDINATOR_CAREER);
-    role.menus = menusAll.filter(
-      (menu) => menu.code === RoleEnum.COORDINATOR_CAREER,
-    );
-    await this.rolesService.createMenus(role);
-
-    role = await this.rolesService.findByCode(RoleEnum.REVIEWER);
-    role.menus = menusAll.filter((menu) => menu.code === RoleEnum.REVIEWER);
-    await this.rolesService.createMenus(role);
-
-    role = await this.rolesService.findByCode(RoleEnum.SECRETARY);
-    role.menus = menusAll.filter((menu) => menu.code === RoleEnum.SECRETARY);
-    await this.rolesService.createMenus(role);
-
-    role = await this.rolesService.findByCode(RoleEnum.WELFARE);
-    role.menus = menusAll.filter((menu) => menu.code === RoleEnum.WELFARE);
     await this.rolesService.createMenus(role);
   }
 }

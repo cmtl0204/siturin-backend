@@ -16,19 +16,19 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Auth } from '@auth/decorators';
 import { CreateRoleDto, FilterRoleDto, UpdateRoleDto } from '@auth/dto';
 import { RoleEntity } from '@auth/entities';
-import { ResponseHttpModel } from '@shared/interfaces';
-import { RolesService } from '@auth/services';
+import { ResponseHttpInterface } from '@shared/interfaces';
+import { RolesService } from '@auth/services/roles.service';
 
 @ApiTags('Roles')
+@Auth()
 @Controller('roles')
 export class RolesController {
   constructor(private rolesService: RolesService) {}
 
   @ApiOperation({ summary: 'Create One' })
-  @Auth()
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() payload: CreateRoleDto): Promise<ResponseHttpModel> {
+  async create(@Body() payload: CreateRoleDto): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.rolesService.create(payload);
 
     return {
@@ -41,7 +41,7 @@ export class RolesController {
   @ApiOperation({ summary: 'Catalogue' })
   @Get('catalogue')
   @HttpCode(HttpStatus.OK)
-  async catalogue(): Promise<ResponseHttpModel> {
+  async catalogue(): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.rolesService.catalogue();
 
     return {
@@ -55,7 +55,7 @@ export class RolesController {
   @ApiOperation({ summary: 'Find All' })
   @Get()
   @HttpCode(HttpStatus.OK)
-  async findAll(@Query() params: FilterRoleDto): Promise<ResponseHttpModel> {
+  async findAll(@Query() params: FilterRoleDto): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.rolesService.findAll(params);
 
     return {
@@ -67,12 +67,11 @@ export class RolesController {
   }
 
   @ApiOperation({ summary: 'Find One' })
-  @Auth()
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   async findOne(
     @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<ResponseHttpModel> {
+  ): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.rolesService.findOne(id);
 
     return {
@@ -83,13 +82,12 @@ export class RolesController {
   }
 
   @ApiOperation({ summary: 'Update One' })
-  @Auth()
   @Put(':id')
   @HttpCode(HttpStatus.CREATED)
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() payload: UpdateRoleDto,
-  ): Promise<ResponseHttpModel> {
+  ): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.rolesService.update(id, payload);
 
     return {
@@ -100,12 +98,11 @@ export class RolesController {
   }
 
   @ApiOperation({ summary: 'Remove One' })
-  @Auth()
   @Delete(':id')
   @HttpCode(HttpStatus.CREATED)
   async remove(
     @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<ResponseHttpModel> {
+  ): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.rolesService.remove(id);
 
     return {
@@ -116,10 +113,9 @@ export class RolesController {
   }
 
   @ApiOperation({ summary: 'Remove All' })
-  @Auth()
   @Patch('remove-all')
   @HttpCode(HttpStatus.CREATED)
-  async removeAll(@Body() payload: RoleEntity[]): Promise<ResponseHttpModel> {
+  async removeAll(@Body() payload: RoleEntity[]): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.rolesService.removeAll(payload);
 
     return {

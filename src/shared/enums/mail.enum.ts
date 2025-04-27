@@ -1,5 +1,3 @@
-import { join } from 'path';
-
 export enum MailEnum {
   PG_DATA_SOURCE = 'PG_DATA_SOURCE',
 }

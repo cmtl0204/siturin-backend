@@ -10,7 +10,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity('catalogues', { schema: 'core' })
+@Entity('catalogues', { schema: 'common' })
 export class CatalogueEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

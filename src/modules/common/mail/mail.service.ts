@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
-import { catchError } from 'rxjs';
 import { ConfigType } from '@nestjs/config';
 import { config } from '@config';
 import { MailDataInterface } from './interfaces/mail-data.interface';
@@ -105,20 +104,26 @@ export class MailService {
 
     const sendMailOptions = {
       to: mailData.to,
-      from: `${this.configService.mail.fromName} - ${this.configService.mail.from}`,
+      from: `${this.configService.mail.fromName} ${this.configService.mail.from}`,
       subject: mailData.subject,
       template: mailData.template,
       context: { system: 'environments.appName', data: mailData.data },
       attachments: mailAttachments,
     };
 
-    return await this.mailerService.sendMail(sendMailOptions).then(
-      (response) => {
-        return { accepted: response.accepted, rejected: response.rejected };
-      },
-      catchError((error) => {
-        return error;
-      }),
-    );
+    try {
+      const response = await this.mailerService.sendMail(sendMailOptions);
+
+      return {
+        accepted: response.accepted,
+        rejected: response.rejected,
+      };
+    } catch (error) {
+      console.error('Error al enviar el correo:', error);
+      return {
+        error: true,
+        message: error.message || 'No se pudo enviar el correo',
+      };
+    }
   }
 }

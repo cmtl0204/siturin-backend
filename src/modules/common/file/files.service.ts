@@ -6,7 +6,7 @@ import * as path from 'path';
 import { join } from 'path';
 import * as fs from 'fs';
 import { PaginationDto } from '@shared/dto';
-import { ServiceResponseHttpModel } from '@shared/interfaces';
+import { ServiceResponseHttpInterface } from '@shared/interfaces';
 import { FilterFileDto } from './dto';
 
 @Injectable()
@@ -77,7 +77,7 @@ export class FilesService {
   async findByModel(
     modelId: string,
     params?: FilterFileDto,
-  ): Promise<ServiceResponseHttpModel> {
+  ): Promise<ServiceResponseHttpInterface> {
     //Pagination & Filter by search
     if (params && params?.limit > 0 && params?.page >= 0) {
       return await this.paginateAndFilter(modelId, params);
@@ -95,7 +95,7 @@ export class FilesService {
   private async paginateAndFilter(
     modelId: string,
     params: FilterFileDto,
-  ): Promise<ServiceResponseHttpModel> {
+  ): Promise<ServiceResponseHttpInterface> {
     let where: FindOptionsWhere<FileEntity> | FindOptionsWhere<FileEntity>[];
 
     let { page, search } = params;

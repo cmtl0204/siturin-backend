@@ -14,19 +14,22 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Auth, PublicRoute, User } from '@auth/decorators';
-import { AuthService } from '@auth/services';
 import { UserEntity } from '@auth/entities';
 import {
-  LoginDto,
+  SignInDto,
   PasswordChangeDto,
   UpdateProfileDto,
   UpdateUserInformationDto,
 } from '@auth/dto';
-import { ResponseHttpModel } from '@shared/interfaces';
+import {
+  ResponseHttpInterface,
+  ServiceResponseHttpInterface,
+} from '@shared/interfaces';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { join } from 'path';
 import { getFileName, imageFilter } from '@shared/helpers';
+import { AuthService } from '@auth/services/auth.service';
 
 @Auth()
 @ApiTags('Auth')
@@ -34,12 +37,12 @@ import { getFileName, imageFilter } from '@shared/helpers';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @ApiOperation({ summary: 'Login' })
+  @ApiOperation({ summary: 'SignIn' })
   @PublicRoute()
-  @Post('login')
+  @Post('sign-in')
   @HttpCode(HttpStatus.CREATED)
-  async login(@Body() payload: LoginDto): Promise<ResponseHttpModel> {
-    const serviceResponse = await this.authService.login(payload);
+  async signIn(@Body() payload: SignInDto): Promise<ResponseHttpInterface> {
+    const serviceResponse = await this.authService.signIn(payload);
 
     return {
       data: serviceResponse.data,
@@ -54,7 +57,7 @@ export class AuthController {
   async changePassword(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() payload: PasswordChangeDto,
-  ): Promise<ResponseHttpModel> {
+  ): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.authService.changePassword(id, payload);
 
     return {
@@ -67,7 +70,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Find Profile' })
   @Get('profile')
   @HttpCode(HttpStatus.OK)
-  async findProfile(@User() user: UserEntity): Promise<ResponseHttpModel> {
+  async findProfile(@User() user: UserEntity): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.authService.findProfile(user.id);
 
     return {
@@ -82,7 +85,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async findUserInformation(
     @User() user: UserEntity,
-  ): Promise<ResponseHttpModel> {
+  ): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.authService.findUserInformation(user.id);
 
     return {
@@ -98,7 +101,7 @@ export class AuthController {
   async updateProfile(
     @User() user: UserEntity,
     @Body() payload: UpdateProfileDto,
-  ): Promise<ResponseHttpModel> {
+  ): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.authService.updateProfile(
       user.id,
       payload,
@@ -117,7 +120,7 @@ export class AuthController {
   async updateUserInformation(
     @User('id', ParseUUIDPipe) id: string,
     @Body() payload: UpdateUserInformationDto,
-  ): Promise<ResponseHttpModel> {
+  ): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.authService.updateUserInformation(
       id,
       payload,
@@ -149,7 +152,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async requestTransactionalCode(
     @Param('username') username: string,
-  ): Promise<ResponseHttpModel> {
+  ): Promise<ResponseHttpInterface> {
     const serviceResponse =
       await this.authService.requestTransactionalCode(username);
 
@@ -166,7 +169,7 @@ export class AuthController {
   async verifyTransactionalCode(
     @Param('token') token: string,
     @Body('username') username: string,
-  ): Promise<ResponseHttpModel> {
+  ): Promise<ResponseHttpInterface> {
     await this.authService.verifyTransactionalCode(token, username);
 
     return {
@@ -179,7 +182,7 @@ export class AuthController {
   @PublicRoute()
   @Patch('reset-passwords')
   @HttpCode(HttpStatus.OK)
-  async resetPassword(@Body() payload: any): Promise<ResponseHttpModel> {
+  async resetPassword(@Body() payload: any): Promise<ResponseHttpInterface> {
     await this.authService.resetPassword(payload);
 
     return {
@@ -204,7 +207,7 @@ export class AuthController {
   async uploadAvatar(
     @UploadedFile() avatar: Express.Multer.File,
     @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<ResponseHttpModel> {
+  ): Promise<ResponseHttpInterface> {
     const response = await this.authService.uploadAvatar(avatar, id);
     return {
       data: response,

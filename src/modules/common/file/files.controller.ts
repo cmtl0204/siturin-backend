@@ -16,7 +16,7 @@ import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { FilesService } from './files.service';
 import { getFileName, fileFilter, imageFilter } from '@shared/helpers';
-import { ResponseHttpModel } from '@shared/interfaces';
+import { ResponseHttpInterface } from '@shared/interfaces';
 import { join } from 'path';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { FilterFileDto } from './dto';
@@ -47,7 +47,7 @@ export class FilesController {
     @UploadedFile() file: Express.Multer.File,
     @Param('modelId', ParseUUIDPipe) modelId: string,
     @Query('typeId') typeId: string,
-  ): Promise<ResponseHttpModel> {
+  ): Promise<ResponseHttpInterface> {
     const response = await this.filesService.uploadFile(file, modelId, typeId);
     return {
       data: response,
@@ -76,7 +76,7 @@ export class FilesController {
     @UploadedFiles() files: Array<Express.Multer.File>,
     @Param('modelId', ParseUUIDPipe) modelId: string,
     @Body() payload: any,
-  ): Promise<ResponseHttpModel> {
+  ): Promise<ResponseHttpInterface> {
     await this.filesService.uploadFiles(files, modelId);
 
     return {
@@ -91,7 +91,7 @@ export class FilesController {
   async download(
     @Param('id', ParseUUIDPipe) id: string,
     @Res() res,
-  ): Promise<ResponseHttpModel> {
+  ): Promise<ResponseHttpInterface> {
     const path = await this.filesService.getPath(id);
 
     return {
@@ -102,11 +102,11 @@ export class FilesController {
   }
 
   @ApiOperation({ summary: 'Find By Model' })
-  @Get('models/:modelId')
+  @Get('interfaces/:modelId')
   async findByModel(
     @Param('modelId', ParseUUIDPipe) modelId: string,
     @Query() params: FilterFileDto,
-  ): Promise<ResponseHttpModel> {
+  ): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.filesService.findByModel(
       modelId,
       params,
@@ -124,7 +124,7 @@ export class FilesController {
   @Delete('/:id')
   async remove(
     @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<ResponseHttpModel> {
+  ): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.filesService.remove(id);
 
     return {
@@ -136,7 +136,7 @@ export class FilesController {
 
   @ApiOperation({ summary: 'Read Files' })
   @Get('read-files')
-  async readFiles(): Promise<ResponseHttpModel> {
+  async readFiles(): Promise<ResponseHttpInterface> {
     const path = 'C:\\Users\\cesar.tamayo\\Desktop\\blacibu\\files';
     const files = fs.readdirSync(path);
     files.forEach((file) => {

@@ -9,6 +9,8 @@ export enum AuthRepositoryEnum {
 
 export enum CommonRepositoryEnum {
   FILE_REPOSITORY = 'FILE_REPOSITORY',
+  CATALOGUE_REPOSITORY = 'CATALOGUE_REPOSITORY',
+  DPA_REPOSITORY = 'DPA_REPOSITORY',
 }
 
 export enum CoreRepositoryEnum {

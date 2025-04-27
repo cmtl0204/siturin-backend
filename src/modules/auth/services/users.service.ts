@@ -10,7 +10,7 @@ import {
 import { MAX_ATTEMPTS } from '@auth/constants';
 import { UserEntity } from '@auth/entities';
 import { PaginationDto } from '@shared/dto';
-import { ServiceResponseHttpModel } from '@shared/interfaces';
+import { ServiceResponseHttpInterface } from '@shared/interfaces';
 import { AuthRepositoryEnum } from '@shared/enums';
 import { RoleEnum } from '@auth/enums';
 
@@ -29,7 +29,7 @@ export class UsersService {
     return await this.repository.save(newUser);
   }
 
-  async catalogue(): Promise<ServiceResponseHttpModel> {
+  async catalogue(): Promise<ServiceResponseHttpInterface> {
     const response = await this.repository.findAndCount({ take: 1000 });
 
     return {
@@ -38,7 +38,7 @@ export class UsersService {
     };
   }
 
-  async findAll(params?: FilterUserDto): Promise<ServiceResponseHttpModel> {
+  async findAll(params?: FilterUserDto): Promise<ServiceResponseHttpInterface> {
     const relations = { roles: true, careers: true };
     //Pagination & Filter by Search
     if (params && params?.limit > 0 && params?.page >= 0) {
@@ -143,7 +143,7 @@ export class UsersService {
   private async paginateAndFilter(
     params: FilterUserDto,
     relations: any,
-  ): Promise<ServiceResponseHttpModel> {
+  ): Promise<ServiceResponseHttpInterface> {
     let where: FindOptionsWhere<UserEntity> | FindOptionsWhere<UserEntity>[];
     where = {};
     let { page, search } = params;
@@ -178,7 +178,7 @@ export class UsersService {
 
   private async filterByBirthdate(
     birthdate: Date,
-  ): Promise<ServiceResponseHttpModel> {
+  ): Promise<ServiceResponseHttpInterface> {
     const where: FindOptionsWhere<UserEntity> = {};
 
     if (birthdate) {

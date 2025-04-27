@@ -8,8 +8,6 @@ export const config = registerAs('config', () => {
       host: process.env.DB_HOST,
       password: process.env.DB_PASSWORD,
       port: parseInt(process.env.DB_PORT!, 10),
-      schemaAuth: process.env.DB_SCHEMA_AUTH,
-      schemaCore: process.env.DB_SCHEMA_CORE,
       username: process.env.DB_USER,
     },
     mail: {
@@ -24,5 +22,6 @@ export const config = registerAs('config', () => {
     jwtSecret: process.env.JWT_SECRET,
     port: parseInt(process.env.PORT!, 10),
     appUrl: process.env.APP_URL,
+    env: process.env.ENV,
   };
 });

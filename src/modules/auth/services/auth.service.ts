@@ -10,7 +10,7 @@ import * as Bcrypt from 'bcrypt';
 import { plainToInstance } from 'class-transformer';
 import { Repository } from 'typeorm';
 import { add, isBefore } from 'date-fns';
-import { UserEntity, TransactionalCodeEntity } from '@auth/entities';
+import { TransactionalCodeEntity, UserEntity } from '@auth/entities';
 import { PayloadTokenInterface } from 'src/modules/auth/interfaces';
 import {
   AuthRepositoryEnum,
@@ -18,10 +18,10 @@ import {
   MailTemplateEnum,
 } from '@shared/enums';
 import {
-  SignInDto,
   PasswordChangeDto,
   ReadProfileDto,
   ReadUserInformationDto,
+  SignInDto,
   UpdateProfileDto,
   UpdateUserInformationDto,
 } from '@auth/dto';
@@ -140,7 +140,7 @@ export class AuthService {
     return {
       data: {
         accessToken: await this.generateJwt(user),
-        user: userRest,
+        auth: userRest,
       },
     };
   }
@@ -366,10 +366,6 @@ export class AuthService {
   }
 
   private async generateJwt(user: UserEntity): Promise<string> {
-    const expiresDate = new Date();
-    //
-    expiresDate.setDate(expiresDate.getSeconds() + 10);
-
     const payload: PayloadTokenInterface = {
       id: user.id,
       username: user.username,

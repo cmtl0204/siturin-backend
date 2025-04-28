@@ -16,15 +16,12 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Auth, PublicRoute, User } from '@auth/decorators';
 import { UserEntity } from '@auth/entities';
 import {
-  SignInDto,
   PasswordChangeDto,
+  SignInDto,
   UpdateProfileDto,
   UpdateUserInformationDto,
 } from '@auth/dto';
-import {
-  ResponseHttpInterface,
-  ServiceResponseHttpInterface,
-} from '@shared/interfaces';
+import { ResponseHttpInterface } from '@shared/interfaces';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { join } from 'path';

@@ -1,4 +1,6 @@
-export interface ServiceResponseHttpInterface {
-  data: any;
-  pagination?: any;
+export interface ServiceResponseHttpInterface<
+  T = object | boolean | number | string | null | [] | undefined,
+> {
+  data: T;
+  pagination?: T;
 }

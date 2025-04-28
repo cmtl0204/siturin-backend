@@ -7,7 +7,7 @@ const ES_I18N_MESSAGES = JSON.parse(
   readFileSync('src/assets/lang/es.json').toString(),
 );
 
-const model = new CreateCatalogueDto();
+const model = new CreateCadastreDto();
 
 new Validator()
   .validate(model, { messages: ES_I18N_MESSAGES })
@@ -21,7 +21,7 @@ new Validator()
 //     '$property должно быть равно $constraint1',
 // };
 //
-// const model = new CreateCatalogueDto();
+// const model = new CreateCadastreDto();
 //
 // new Validator()
 //   .validate(model, { messages: RU_I18N_MESSAGES })

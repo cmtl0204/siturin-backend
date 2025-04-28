@@ -11,12 +11,25 @@ export class AuditMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
     if (req.headers.authorization) {
       const token = req.headers.authorization.split(' ');
-      const jwtDecode = this.jwtService.decode(token[1]) as PayloadTokenInterface;
 
-      auditNamespace.run(() => {
-        setCurrentUser({ id: jwtDecode.id });
+      if (token.length !== 2 || token[0] !== 'Bearer') {
+        throw new Error('Formato de token inválido');
+      }
+
+      try {
+        const jwtDecode: PayloadTokenInterface = this.jwtService.decode(
+          token[1],
+        );
+
+        auditNamespace.run(() => {
+          setCurrentUser({ id: jwtDecode.id });
+          next();
+        });
+      } catch (error) {
+        console.error(error);
         next();
-      });
+      }
+
       return;
     }
 

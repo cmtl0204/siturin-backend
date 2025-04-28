@@ -1,11 +1,18 @@
 import {
+  BeforeInsert,
+  BeforeUpdate,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { CadastreStateEntity, ProcessEntity } from '@modules/core/entities';
 
 @Entity('cadastres', { schema: 'core' })
 export class CadastreEntity {
@@ -45,14 +52,78 @@ export class CadastreEntity {
   enabled: boolean;
 
   /** Inverse Relationship **/
+  @OneToMany(() => CadastreStateEntity, (entity) => entity.cadastre)
+  cadastreStates: CadastreEntity[];
+
+  @OneToOne(() => CadastreStateEntity, (entity) => entity.cadastre)
+  cadastreState: CadastreEntity;
 
   /** Foreign Keys **/
+  @ManyToOne(() => ProcessEntity, { nullable: true })
+  @JoinColumn({ name: 'process_id' })
+  process: ProcessEntity;
+  @Column({
+    type: 'uuid',
+    name: 'process_id',
+    nullable: true,
+    comment: '',
+  })
+  processId: string;
 
   /** Columns **/
   @Column({
-    name: 'id_temp',
-    type: 'bigint',
+    name: 'id_process',
+    type: 'varchar',
+    nullable: true,
     comment: 'Codigo de la tabla migrada',
   })
+  idProcess: string;
+
+  @Column({
+    name: 'id_temp',
+    type: 'bigint',
+    comment: 'PK de la tabla migrada',
+  })
   idTemp: number;
+
+  @Column({
+    name: 'observation',
+    type: 'text',
+    nullable: true,
+    comment: 'Alguna observacion',
+  })
+  observation: string;
+
+  @Column({
+    name: 'register_number',
+    type: 'varchar',
+    comment: 'Numero de registro',
+  })
+  registerNumber: string;
+
+  @Column({
+    name: 'registered_at',
+    type: 'date',
+    comment: 'Fecha de registro',
+  })
+  registeredAt: Date;
+
+  @Column({
+    name: 'system_origin',
+    type: 'varchar',
+    comment: 'Sitema de origin, SIIT, SITURIN V1',
+  })
+  systemOrigin: string;
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  setRegisteredAt() {
+    if (!this.registeredAt) {
+      return;
+    }
+
+    this.registeredAt = new Date(
+      `${this.registeredAt.getUTCFullYear()}-${this.registeredAt.getUTCMonth() + 1}-${this.registeredAt.getUTCDate()}`,
+    );
+  }
 }

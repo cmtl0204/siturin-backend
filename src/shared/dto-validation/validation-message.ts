@@ -97,3 +97,11 @@ export function maxValidationOptions(validationOptions?: ValidationOptions) {
       'La propiedad $property debe contener como valor máximo $constraint1',
   };
 }
+
+export function isPositiveValidationOptions(
+  validationOptions?: ValidationOptions,
+) {
+  return {
+    message: 'La propiedad $property debe ser un número positivo',
+  };
+}

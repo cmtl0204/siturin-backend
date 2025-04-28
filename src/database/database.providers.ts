@@ -24,7 +24,6 @@ export const databaseProviders = [
         // dropSchema: true,
         synchronize: true,
         subscribers: [AuditSubscriber],
-
       });
       return dataSource.initialize();
     },

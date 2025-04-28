@@ -12,7 +12,6 @@ import { CoreModule } from '@modules/core/core.module';
 import { AuditModule } from '@modules/audit/audit.module';
 import { ReportsModule } from '@modules/reports/reports.module';
 import { ImportsModule } from '@modules/imports/imports.module';
-import { RouterModule } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -37,28 +36,6 @@ import { RouterModule } from '@nestjs/core';
         MAIL_FROM_ADDRESS: Joi.string().required(),
       }),
     }),
-    RouterModule.register([
-      {
-        path: 'auth',
-        module: AuthModule,
-      },
-      {
-        path: 'common',
-        module: CommonModule,
-      },
-      {
-        path: 'core',
-        module: CoreModule,
-      },
-      {
-        path: 'reports',
-        module: ReportsModule,
-      },
-      {
-        path: 'imports',
-        module: ImportsModule,
-      },
-    ]),
     MulterModule.register({ dest: './uploads' }),
     HttpModule,
     AuditModule,

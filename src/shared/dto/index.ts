@@ -1,1 +1,1 @@
-export * from './pagination/pagination.dto';
+export * from '@shared/pagination/pagination.dto';

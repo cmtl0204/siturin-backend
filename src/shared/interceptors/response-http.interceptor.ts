@@ -31,7 +31,7 @@ export class ResponseHttpInterceptor<T>
           pagination: response.pagination,
           message: response.message,
           title: response.title,
-          version: '1.0.1',
+          version: '3.0.1',
         };
       }),
     );

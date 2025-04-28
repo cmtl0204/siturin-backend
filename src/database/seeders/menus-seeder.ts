@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { MenuTypeEnum, RoleEnum } from '@auth/enums';
 import { MenusService } from '@auth/services/menus.service';
 import { RolesService } from '@auth/services/roles.service';
+import { MenuEntity } from '@auth/entities';
 
 @Injectable()
 export class MenusSeeder {
@@ -50,8 +51,13 @@ export class MenusSeeder {
   private async createMenuRole() {
     const menusAll = (await this.menusService.findAll()).data;
 
-    let role = await this.rolesService.findByCode(RoleEnum.ADMIN);
-    role.menus = menusAll.filter((menu) => menu.code === RoleEnum.ADMIN);
-    await this.rolesService.createMenus(role);
+    if (Array.isArray(menusAll)) {
+      const role = await this.rolesService.findByCode(RoleEnum.ADMIN);
+
+      role.menus = menusAll.filter(
+        (menu) => menu?.code === RoleEnum.ADMIN,
+      ) as MenuEntity[];
+      await this.rolesService.createMenus(role);
+    }
   }
 }

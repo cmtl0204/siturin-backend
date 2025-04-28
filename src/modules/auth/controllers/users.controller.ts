@@ -58,7 +58,9 @@ export class UsersController {
   @Auth(RoleEnum.ADMIN)
   @Get()
   @HttpCode(HttpStatus.OK)
-  async findAll(@Query() params: FilterUserDto): Promise<ResponseHttpInterface> {
+  async findAll(
+    @Query() params: FilterUserDto,
+  ): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.usersService.findAll(params);
 
     return {
@@ -138,7 +140,9 @@ export class UsersController {
   @Auth()
   @Patch('remove-all')
   @HttpCode(HttpStatus.CREATED)
-  async removeAll(@Body() payload: UserEntity[]): Promise<ResponseHttpInterface> {
+  async removeAll(
+    @Body() payload: UserEntity[],
+  ): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.usersService.removeAll(payload);
 
     return {

@@ -108,7 +108,9 @@ export class RolesService {
     return { data: plainToInstance(ReadRoleDto, roleDeleted) };
   }
 
-  async removeAll(payload: RoleEntity[]): Promise<ServiceResponseHttpInterface> {
+  async removeAll(
+    payload: RoleEntity[],
+  ): Promise<ServiceResponseHttpInterface> {
     const rolesDeleted = await this.repository.softRemove(payload);
     return { data: rolesDeleted };
   }

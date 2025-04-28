@@ -84,7 +84,9 @@ export class MenusController {
   @ApiOperation({ summary: 'Find All' })
   @Get()
   @HttpCode(HttpStatus.OK)
-  async findAll(@Query() params: FilterMenuDto): Promise<ResponseHttpInterface> {
+  async findAll(
+    @Query() params: FilterMenuDto,
+  ): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.menusService.findAll(params);
 
     return {
@@ -148,7 +150,9 @@ export class MenusController {
   @Auth()
   @Patch('remove-all')
   @HttpCode(HttpStatus.CREATED)
-  async removeAll(@Body() payload: MenuEntity[]): Promise<ResponseHttpInterface> {
+  async removeAll(
+    @Body() payload: MenuEntity[],
+  ): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.menusService.removeAll(payload);
 
     return {

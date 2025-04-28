@@ -22,7 +22,8 @@ export class VerifyUserMiddleware implements NestMiddleware {
   async use(req: Request, res: Response, next: NextFunction) {
     if (req.headers.authorization) {
       const token = req.headers.authorization.split(' ');
-      const jwtDecode = this.jwtService.decode(token[1]) as PayloadTokenInterface;
+
+      const jwtDecode: PayloadTokenInterface = this.jwtService.decode(token[1]);
 
       const user = await this.userEntityRepository.findOne({
         where: { id: jwtDecode.id },

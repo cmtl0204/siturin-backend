@@ -121,7 +121,9 @@ export class MenusService {
     return { data: plainToInstance(ReadMenuDto, menuDeleted) };
   }
 
-  async removeAll(payload: MenuEntity[]): Promise<ServiceResponseHttpInterface> {
+  async removeAll(
+    payload: MenuEntity[],
+  ): Promise<ServiceResponseHttpInterface> {
     const menusDeleted = await this.repository.softRemove(payload);
     return { data: menusDeleted };
   }

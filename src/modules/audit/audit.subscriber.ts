@@ -74,7 +74,7 @@ export class AuditSubscriber implements EntitySubscriberInterface {
     await this.log(event, 'UPDATE', {
       newData: newChanges,
       oldData: oldChanges,
-      entityId: event.entity,
+      entityId: event.entity?.id,
     });
   }
 

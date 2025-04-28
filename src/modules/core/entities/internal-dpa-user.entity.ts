@@ -3,15 +3,12 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  JoinColumn,
-  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { CadastreEntity } from '@modules/core/entities/cadastre.entity';
 
-@Entity('cadastre_states', { schema: 'core' })
-export class CadastreStateEntity {
+@Entity('internal_dpa_users', { schema: 'core' })
+export class InternalDpaUserEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -50,16 +47,6 @@ export class CadastreStateEntity {
   /** Inverse Relationship **/
 
   /** Foreign Keys **/
-  @ManyToOne(() => CadastreEntity, { nullable: true })
-  @JoinColumn({ name: 'cadastre_id' })
-  cadastre: CadastreEntity;
-  @Column({
-    type: 'uuid',
-    name: 'cadastre_id',
-    nullable: true,
-    comment: '',
-  })
-  cadastreId: string;
 
   /** Columns **/
   @Column({

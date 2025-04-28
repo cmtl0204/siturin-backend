@@ -68,8 +68,6 @@ import { VerifyUserMiddleware } from '@auth/middlewares';
 })
 export class AuthModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(VerifyUserMiddleware) // el middleware que quieres aplicar
-      .forRoutes('*'); // o puedes poner solo un controlador, por ejemplo: YourController
+    consumer.apply(VerifyUserMiddleware).forRoutes('api/v1/:path');
   }
 }

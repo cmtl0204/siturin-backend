@@ -1,12 +1,14 @@
-export interface ResponseHttpInterface {
-  data: object | boolean | number | string | null;
+export interface ResponseHttpInterface<
+  T = object | boolean | number | string | null | undefined,
+> {
+  data: T;
   message: string | string[];
   title: string;
-  pagination?: any;
+  pagination?: T;
 }
 
-export interface ErrorResponseHttpModel {
-  data?: any;
+export interface ErrorResponseHttpModel<T = any> {
+  data?: T;
   error: string;
   message: string | string[];
   statusCode: number;

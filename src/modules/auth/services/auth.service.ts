@@ -370,7 +370,10 @@ export class AuthService {
     //
     expiresDate.setDate(expiresDate.getSeconds() + 10);
 
-    const payload: PayloadTokenInterface = { id: user.id, username: user.username };
+    const payload: PayloadTokenInterface = {
+      id: user.id,
+      username: user.username,
+    };
 
     return await this.jwtService.signAsync(payload);
   }

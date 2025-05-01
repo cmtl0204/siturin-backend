@@ -31,19 +31,24 @@ export class CatalogueController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() payload: CreateCatalogueDto) {
+  async create(
+    @Body() payload: CreateCatalogueDto,
+  ): Promise<ResponseHttpInterface> {
     const data = await this.catalogueService.create(payload);
 
     return {
       data,
       message: 'created',
+      title: '',
     };
   }
 
   @ApiOperation({ summary: 'List all catalogues' })
   @Get('catalogue')
   @HttpCode(HttpStatus.OK)
-  async catalogue(@Query('type') type: CatalogueTypeEnum) {
+  async catalogue(
+    @Query('type') type: CatalogueTypeEnum,
+  ): Promise<ResponseHttpInterface> {
     const response = await this.catalogueService.catalogue(type);
     return {
       data: response,
@@ -56,24 +61,29 @@ export class CatalogueController {
   // @Roles(RoleEnum.ADMIN)
   @Get()
   @HttpCode(HttpStatus.OK)
-  async findAll(@Query() params: FilterCatalogueDto) {
+  async findAll(
+    @Query() params: FilterCatalogueDto,
+  ): Promise<ResponseHttpInterface> {
     const response = await this.catalogueService.findAll(params);
     return {
       data: response.data,
       pagination: response.pagination,
       message: `index`,
+      title: '',
     };
   }
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+  async findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<ResponseHttpInterface> {
     const data = await this.catalogueService.findOne(id);
     return {
       data,
       message: `show ${id}`,
       title: `Success`,
-    } as ResponseHttpInterface;
+    };
   }
 
   @Put(':id')
@@ -81,19 +91,21 @@ export class CatalogueController {
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() payload: UpdateCatalogueDto,
-  ) {
+  ): Promise<ResponseHttpInterface> {
     const data = await this.catalogueService.update(id, payload);
 
     return {
       data: data,
       message: `Catalogue updated ${id}`,
       title: `Updated`,
-    } as ResponseHttpInterface;
+    };
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.CREATED)
-  async remove(@Param('id', ParseUUIDPipe) id: string) {
+  async remove(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<ResponseHttpInterface> {
     const data = await this.catalogueService.remove(id);
 
     return {
@@ -105,7 +117,9 @@ export class CatalogueController {
 
   @Patch('remove-all')
   @HttpCode(HttpStatus.CREATED)
-  async removeAll(@Body() payload: CatalogueEntity[]) {
+  async removeAll(
+    @Body() payload: CatalogueEntity[],
+  ): Promise<ResponseHttpInterface> {
     const data = await this.catalogueService.removeAll(payload);
 
     return {

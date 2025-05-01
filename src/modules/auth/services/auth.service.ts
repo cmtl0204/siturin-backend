@@ -50,7 +50,7 @@ export class AuthService {
   async changePassword(
     id: string,
     payload: PasswordChangeDto,
-  ): Promise<boolean> {
+  ): Promise<ServiceResponseHttpInterface> {
     const user = await this.repository.findOne({
       select: {
         id: true,
@@ -89,7 +89,7 @@ export class AuthService {
       password: Bcrypt.hashSync(payload.passwordNew, 10),
     });
 
-    return true;
+    return { data: true };
   }
 
   async signIn(payload: SignInDto): Promise<ServiceResponseHttpInterface> {
@@ -177,20 +177,20 @@ export class AuthService {
     };
   }
 
-  async findUserInformation(id: string): Promise<ReadUserInformationDto> {
+  async findUserInformation(id: string): Promise<ServiceResponseHttpInterface> {
     const user = await this.repository.findOneBy({ id });
 
     if (!user) {
       throw new NotFoundException('Información de usuario no existe');
     }
 
-    return plainToInstance(ReadUserInformationDto, user);
+    return { data: user };
   }
 
   async updateUserInformation(
     id: string,
     payload: UpdateUserInformationDto,
-  ): Promise<ReadUserInformationDto> {
+  ): Promise<ServiceResponseHttpInterface> {
     const user = await this.userService.findOne(id);
 
     if (!user) {
@@ -202,13 +202,13 @@ export class AuthService {
     this.repository.merge(user, payload);
     const userUpdated = await this.repository.save(user);
 
-    return plainToInstance(ReadUserInformationDto, userUpdated);
+    return { data: userUpdated };
   }
 
   async updateProfile(
     id: string,
     payload: UpdateProfileDto,
-  ): Promise<ReadProfileDto> {
+  ): Promise<ServiceResponseHttpInterface> {
     const user = await this.repository.findOneBy({ id });
 
     if (!user) {
@@ -219,11 +219,11 @@ export class AuthService {
 
     const profileUpdated = await this.repository.update(id, payload);
 
-    return plainToInstance(ReadProfileDto, profileUpdated);
+    return { data: profileUpdated };
   }
 
-  refreshToken(user: UserEntity): ServiceResponseHttpInterface {
-    const accessToken = this.generateJwt(user);
+  async refreshToken(user: UserEntity): Promise<ServiceResponseHttpInterface> {
+    const accessToken = await this.generateJwt(user);
 
     return { data: { accessToken, user } };
   }
@@ -351,7 +351,7 @@ export class AuthService {
   async uploadAvatar(
     file: Express.Multer.File,
     id: string,
-  ): Promise<UserEntity> {
+  ): Promise<ServiceResponseHttpInterface> {
     const entity = await this.repository.findOne({
       select: {
         id: true,
@@ -362,7 +362,9 @@ export class AuthService {
 
     if (entity?.avatar) entity.avatar = `avatars/${file.filename}`;
 
-    return await this.repository.save({ ...entity });
+    const user = await this.repository.save({ ...entity });
+
+    return { data: user };
   }
 
   private async generateJwt(user: UserEntity): Promise<string> {

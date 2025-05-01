@@ -1,12 +1,12 @@
 import { Global, Module } from '@nestjs/common';
-import { FilesController } from './files.controller';
-import { FilesService } from './files.service';
+import { FileController } from './file.controller';
+import { FileService } from './file.service';
 import { fileProviders } from './file.providers';
 
 @Global()
 @Module({
-  controllers: [FilesController],
-  providers: [...fileProviders, FilesService],
-  exports: [...fileProviders, FilesService],
+  controllers: [FileController],
+  providers: [...fileProviders, FileService],
+  exports: [...fileProviders, FileService],
 })
 export class FileModule {}

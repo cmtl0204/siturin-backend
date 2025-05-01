@@ -10,7 +10,7 @@ import { ServiceResponseHttpInterface } from '@shared/interfaces';
 import { FilterFileDto } from './dto';
 
 @Injectable()
-export class FilesService {
+export class FileService {
   constructor(
     @Inject(CommonRepositoryEnum.FILE_REPOSITORY)
     private repository: Repository<FileEntity>,

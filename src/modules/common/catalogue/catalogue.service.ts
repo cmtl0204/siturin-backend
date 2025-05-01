@@ -10,7 +10,6 @@ import {
   CacheEnum,
   CatalogueTypeEnum,
   CommonRepositoryEnum,
-  CoreRepositoryEnum,
 } from '@shared/enums';
 import { ReadUserDto } from '@auth/dto';
 import { UserEntity } from '@auth/entities';
@@ -30,18 +29,22 @@ export class CataloguesService {
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
   ) {}
 
-  async create(payload: CreateCatalogueDto): Promise<CatalogueEntity> {
+  async create(
+    payload: CreateCatalogueDto,
+  ): Promise<ServiceResponseHttpInterface> {
     const newCatalogue = this.repository.create(payload);
 
-    return await this.repository.save(newCatalogue);
+    return { data: await this.repository.save(newCatalogue) };
   }
 
-  async catalogue(type: CatalogueTypeEnum): Promise<CatalogueEntity[]> {
+  async catalogue(
+    type: CatalogueTypeEnum,
+  ): Promise<ServiceResponseHttpInterface> {
     const data = await this.repository.find({
       where: { type },
     });
 
-    return data;
+    return { data };
   }
 
   async findAll(
@@ -60,7 +63,7 @@ export class CataloguesService {
     return { data: data[0], pagination: { totalItems: data[1], limit: 10 } };
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<ServiceResponseHttpInterface> {
     const catalogue = await this.repository.findOne({
       where: { id },
     });
@@ -69,10 +72,10 @@ export class CataloguesService {
       throw new NotFoundException('Catalogue not found');
     }
 
-    return catalogue;
+    return { data: catalogue };
   }
 
-  async findByCode(code: string) {
+  async findByCode(code: string): Promise<ServiceResponseHttpInterface> {
     const catalogue = await this.repository.findOne({
       where: { code },
     });
@@ -81,10 +84,10 @@ export class CataloguesService {
       throw new NotFoundException('Catalogue not found');
     }
 
-    return catalogue;
+    return { data: catalogue };
   }
 
-  async findByType(type: string) {
+  async findByType(type: string): Promise<ServiceResponseHttpInterface> {
     const catalogue = await this.repository.find({
       where: { type },
     });
@@ -93,10 +96,13 @@ export class CataloguesService {
       throw new NotFoundException('Catalogue not found');
     }
 
-    return catalogue;
+    return { data: catalogue };
   }
 
-  async update(id: string, payload: UpdateCatalogueDto) {
+  async update(
+    id: string,
+    payload: UpdateCatalogueDto,
+  ): Promise<ServiceResponseHttpInterface> {
     const catalogue = await this.repository.findOneBy({ id });
 
     if (!catalogue) {
@@ -105,24 +111,30 @@ export class CataloguesService {
 
     this.repository.merge(catalogue, payload);
 
-    return this.repository.save(catalogue);
+    const catalogueCreated = await this.repository.save(catalogue);
+
+    return { data: catalogueCreated };
   }
 
-  async remove(id: string): Promise<CatalogueEntity> {
+  async remove(id: string): Promise<ServiceResponseHttpInterface> {
     const catalogue = await this.repository.findOneBy({ id });
 
     if (!catalogue) {
       throw new NotFoundException('Catalogue not found');
     }
 
-    return await this.repository.softRemove(catalogue);
+    return { data: await this.repository.softRemove(catalogue) };
   }
 
-  async removeAll(payload: CatalogueEntity[]): Promise<CatalogueEntity[]> {
-    return await this.repository.softRemove(payload);
+  async removeAll(
+    payload: CatalogueEntity[],
+  ): Promise<ServiceResponseHttpInterface> {
+    return { data: await this.repository.softRemove(payload) };
   }
 
-  private async paginateAndFilter(params: FilterCatalogueDto) {
+  private async paginateAndFilter(
+    params: FilterCatalogueDto,
+  ): Promise<ServiceResponseHttpInterface> {
     let where: FindOptionsWhere<UserEntity> | FindOptionsWhere<UserEntity>[];
     where = {};
     let { page, search } = params;
@@ -147,7 +159,7 @@ export class CataloguesService {
     };
   }
 
-  async findCache(): Promise<CatalogueEntity[]> {
+  async findCache(): Promise<ServiceResponseHttpInterface> {
     let catalogues = (await this.cacheManager.get(
       CacheEnum.CATALOGUES,
     )) as CatalogueEntity[];
@@ -166,10 +178,10 @@ export class CataloguesService {
       await this.cacheManager.set(CacheEnum.CATALOGUES, catalogues);
     }
 
-    return catalogues;
+    return { data: catalogues };
   }
 
-  async loadCache(): Promise<CatalogueEntity[]> {
+  async loadCache(): Promise<ServiceResponseHttpInterface> {
     const catalogues = await this.repository.find({
       relations: { children: true },
       where: { parent: IsNull() },
@@ -178,6 +190,6 @@ export class CataloguesService {
 
     await this.cacheManager.set(CacheEnum.CATALOGUES, catalogues);
 
-    return catalogues;
+    return { data: catalogues };
   }
 }

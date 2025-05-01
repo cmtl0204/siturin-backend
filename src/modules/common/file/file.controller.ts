@@ -1,21 +1,21 @@
 import {
+  Body,
   Controller,
-  Post,
-  UseInterceptors,
-  UploadedFile,
+  Delete,
+  Get,
   Param,
   ParseUUIDPipe,
-  Get,
-  Res,
-  UploadedFiles,
+  Post,
   Query,
-  Delete,
-  Body,
+  Res,
+  UploadedFile,
+  UploadedFiles,
+  UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { FilesService } from './files.service';
-import { getFileName, fileFilter, imageFilter } from '@shared/helpers';
+import { FileService } from './file.service';
+import { fileFilter, getFileName } from '@shared/helpers';
 import { ResponseHttpInterface } from '@shared/interfaces';
 import { join } from 'path';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -24,8 +24,8 @@ import * as fs from 'fs';
 
 @ApiTags('Files')
 @Controller('files')
-export class FilesController {
-  constructor(private readonly filesService: FilesService) {}
+export class FileController {
+  constructor(private readonly filesService: FileService) {}
 
   @ApiOperation({ summary: 'Upload File' })
   @Post(':modelId/upload')

@@ -1,6 +1,6 @@
 import { Global, Module } from '@nestjs/common';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
-import { FilesController } from '@modules/common/file/files.controller';
+import { FileController } from '@modules/common/file/file.controller';
 import { FolderPathsService } from '@modules/common/mail/folder-paths.service';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { config } from '@config';
@@ -36,7 +36,7 @@ import { MailService } from './mail.service';
       }),
     }),
   ],
-  controllers: [FilesController],
+  controllers: [FileController],
   providers: [MailService, FolderPathsService],
   exports: [MailService, FolderPathsService],
 })

@@ -58,7 +58,7 @@ export class AuthController {
     const serviceResponse = await this.authService.changePassword(id, payload);
 
     return {
-      data: serviceResponse,
+      data: serviceResponse.data,
       message: 'La contraseña fue cambiada',
       title: 'Contraseña Actualizada',
     };
@@ -71,7 +71,7 @@ export class AuthController {
     const serviceResponse = await this.authService.findProfile(user.id);
 
     return {
-      data: serviceResponse,
+      data: serviceResponse.data,
       message: `profile`,
       title: `Success`,
     };
@@ -86,7 +86,7 @@ export class AuthController {
     const serviceResponse = await this.authService.findUserInformation(user.id);
 
     return {
-      data: serviceResponse,
+      data: serviceResponse.data,
       message: 'La información del usuario fue actualizada',
       title: 'Atualizado',
     };
@@ -105,7 +105,7 @@ export class AuthController {
     );
 
     return {
-      data: serviceResponse,
+      data: serviceResponse.data,
       message: 'El perfil fue actualizado',
       title: 'Actualizado',
     };
@@ -134,8 +134,8 @@ export class AuthController {
   @Auth()
   @Get('refresh-token')
   @HttpCode(HttpStatus.CREATED)
-  refreshToken(@User() user: UserEntity) {
-    const serviceResponse = this.authService.refreshToken(user);
+  async refreshToken(@User() user: UserEntity): Promise<ResponseHttpInterface> {
+    const serviceResponse = await this.authService.refreshToken(user);
 
     return {
       data: serviceResponse.data,
@@ -155,7 +155,7 @@ export class AuthController {
 
     return {
       data: serviceResponse.data,
-      message: `Su código fue enviado a ${serviceResponse.data}`,
+      message: `Su código fue enviado a ${JSON.stringify(serviceResponse.data)}`,
       title: 'Código Enviado',
     };
   }

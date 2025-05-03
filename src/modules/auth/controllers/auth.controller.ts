@@ -17,7 +17,7 @@ import { Auth, PublicRoute, User } from '@auth/decorators';
 import { UserEntity } from '@auth/entities';
 import {
   PasswordChangeDto,
-  SignInDto,
+  SignInDto, SignUpExternalDto,
   UpdateProfileDto,
   UpdateUserInformationDto,
 } from '@auth/dto';
@@ -45,6 +45,22 @@ export class AuthController {
       data: serviceResponse.data,
       message: 'Correct Access',
       title: 'Welcome',
+    };
+  }
+
+  @ApiOperation({ summary: 'SignUpExternal' })
+  @PublicRoute()
+  @Post('sign-up-external')
+  @HttpCode(HttpStatus.CREATED)
+  async signUpExternal(
+    @Body() payload: SignUpExternalDto,
+  ): Promise<ResponseHttpInterface> {
+    const serviceResponse = await this.authService.signUpExternal(payload);
+
+    return {
+      data: serviceResponse.data,
+      message: 'Por favor inicie sesión',
+      title: 'Usuario creado correctamente',
     };
   }
 

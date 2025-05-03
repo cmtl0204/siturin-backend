@@ -186,6 +186,7 @@ export class UserEntity {
   @Column({
     name: 'lastname',
     type: 'varchar',
+    nullable: true,
     comment: 'Apellidos',
   })
   lastname: string;

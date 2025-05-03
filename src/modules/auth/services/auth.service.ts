@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as Bcrypt from 'bcrypt';
-import { plainToInstance } from 'class-transformer';
 import { Repository } from 'typeorm';
 import { add, isBefore } from 'date-fns';
 import { TransactionalCodeEntity, UserEntity } from '@auth/entities';
@@ -19,9 +18,8 @@ import {
 } from '@shared/enums';
 import {
   PasswordChangeDto,
-  ReadProfileDto,
-  ReadUserInformationDto,
   SignInDto,
+  SignUpExternalDto,
   UpdateProfileDto,
   UpdateUserInformationDto,
 } from '@auth/dto';
@@ -143,6 +141,23 @@ export class AuthService {
         auth: userRest,
       },
     };
+  }
+
+  async signUpExternal(
+    payload: SignUpExternalDto,
+  ): Promise<ServiceResponseHttpInterface> {
+    const user = this.repository.create();
+
+    user.identification = payload.identification;
+    user.email = payload.email;
+    user.username = payload.email;
+    user.name = payload.name;
+    user.password = payload.password;
+    user.passwordChanged = true;
+
+    const userCreated = await this.repository.save(user);
+
+    return { data: userCreated };
   }
 
   async findProfile(id: string): Promise<ServiceResponseHttpInterface> {

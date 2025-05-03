@@ -9,6 +9,7 @@ export * from './auth/read-profile.dto';
 export * from './auth/read-user-information.dto';
 export * from './auth/sign-in.dto';
 export * from './auth/password-change.dto';
+export * from './auth/sign-up-external.dto';
 
 // Users
 export * from './users/create-user.dto';

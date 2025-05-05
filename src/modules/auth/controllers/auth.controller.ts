@@ -9,6 +9,7 @@ import {
   Patch,
   Post,
   Put,
+  Query,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -17,7 +18,8 @@ import { Auth, PublicRoute, User } from '@auth/decorators';
 import { UserEntity } from '@auth/entities';
 import {
   PasswordChangeDto,
-  SignInDto, SignUpExternalDto,
+  SignInDto,
+  SignUpExternalDto,
   UpdateProfileDto,
   UpdateUserInformationDto,
 } from '@auth/dto';
@@ -222,10 +224,42 @@ export class AuthController {
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<ResponseHttpInterface> {
     const response = await this.authService.uploadAvatar(avatar, id);
+
     return {
       data: response,
       message: 'Imagen Subida Correctamente',
       title: 'Imagen Subida',
+    };
+  }
+
+  @PublicRoute()
+  @Get('verify-identification/:identification')
+  @HttpCode(HttpStatus.OK)
+  async verifyIdentification(
+    @Param('identification') identification: string,
+  ): Promise<ResponseHttpInterface> {
+    const serviceResponse =
+      await this.authService.verifyIdentification(identification);
+
+    return {
+      data: serviceResponse.data,
+      message: `Existe Identificacion`,
+      title: 'Existe',
+    };
+  }
+
+  @PublicRoute()
+  @Get('verify-ruc-pending-payment/:ruc')
+  @HttpCode(HttpStatus.OK)
+  async verifyRucPendingPayment(
+    @Param('ruc') ruc: string,
+  ): Promise<ResponseHttpInterface> {
+    const serviceResponse = await this.authService.verifyRucPendingPayment(ruc);
+
+    return {
+      data: serviceResponse.data,
+      message: `Existe RUC`,
+      title: 'Existe',
     };
   }
 }

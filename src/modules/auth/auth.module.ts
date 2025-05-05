@@ -20,6 +20,7 @@ import { AuthService } from '@auth/services/auth.service';
 import { RolesService } from '@auth/services/roles.service';
 import { MenusService } from '@auth/services/menus.service';
 import { VerifyUserMiddleware } from '@auth/middlewares';
+import { coreProviders } from '@modules/core/core.provider';
 
 @Global()
 @Module({
@@ -51,6 +52,7 @@ import { VerifyUserMiddleware } from '@auth/middlewares';
       useClass: JwtGuard,
     },
     ...authProviders,
+    ...coreProviders,
     AuthService,
     RolesService,
     UsersService,

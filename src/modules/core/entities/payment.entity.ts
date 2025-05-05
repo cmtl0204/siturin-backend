@@ -3,9 +3,12 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { UserEntity } from '@auth/entities';
 
 @Entity('payments', { schema: 'core' })
 export class PaymentEntity {
@@ -55,4 +58,19 @@ export class PaymentEntity {
     comment: 'Codigo de la tabla migrada',
   })
   idTemp: number;
+
+  @Column({
+    name: 'ruc',
+    type: 'varchar',
+    unique: true,
+    comment: 'Numero de RUC',
+  })
+  ruc: string;
+
+  @Column({
+    name: 'has_debt',
+    type: 'boolean',
+    comment: 'true=tiene deuda;false=no tiende deuda',
+  })
+  hasDebt: boolean;
 }

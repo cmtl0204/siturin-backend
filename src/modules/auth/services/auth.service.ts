@@ -13,6 +13,7 @@ import { TransactionalCodeEntity, UserEntity } from '@auth/entities';
 import { PayloadTokenInterface } from 'src/modules/auth/interfaces';
 import {
   AuthRepositoryEnum,
+  CoreRepositoryEnum,
   MailSubjectEnum,
   MailTemplateEnum,
 } from '@shared/enums';
@@ -29,6 +30,7 @@ import { config } from '@config';
 import { ConfigType } from '@nestjs/config';
 import { MailDataInterface } from '@modules/common/mail/interfaces/mail-data.interface';
 import { UsersService } from './users.service';
+import { PaymentEntity } from '@modules/core/entities';
 
 @Injectable()
 export class AuthService {
@@ -39,6 +41,8 @@ export class AuthService {
     private repository: Repository<UserEntity>,
     @Inject(AuthRepositoryEnum.TRANSACTIONAL_CODE_REPOSITORY)
     private transactionalCodeRepository: Repository<TransactionalCodeEntity>,
+    @Inject(CoreRepositoryEnum.PAYMENT_REPOSITORY)
+    private paymentRepository: Repository<PaymentEntity>,
     @Inject(config.KEY) private configService: ConfigType<typeof config>,
     private readonly userService: UsersService,
     private jwtService: JwtService,
@@ -107,11 +111,15 @@ export class AuthService {
       },
       relations: {
         roles: true,
+        payment: true,
       },
     });
 
     if (!user) {
-      throw new UnauthorizedException(`Usuario y/o contraseña no válidos`);
+      throw new UnauthorizedException({
+        error: 'Sin Autorización',
+        message: 'Usuario y/o contraseña no válidos',
+      });
     }
 
     if (user?.suspendedAt)
@@ -121,9 +129,17 @@ export class AuthService {
       });
 
     if (user?.maxAttempts === 0)
-      throw new UnauthorizedException(
-        'Ha excedido el número máximo de intentos permitidos',
-      );
+      throw new UnauthorizedException({
+        error: 'Sin Autorización',
+        message: 'Ha excedido el número máximo de intentos permitidos',
+      });
+
+    if (user?.payment.hasDebt)
+      throw new UnauthorizedException({
+        error: 'El RUC ingresado mantiene pendiente el pago',
+        message:
+          'De la Contribución Uno por Mil sobre Activos Fijos, cobrados por esta Cartera de Estado, dentro del periodo de vigencia de la Ley de Turismo de Registro Oficial Suplemento No. 733 de 27 de Diciembre 2002, por favor sírvase asistir a la oficina zonal en la que se encuentra registrado su establecimiento para el trámite de revisión y declaración respectiva.',
+      });
 
     if (!(await this.checkPassword(payload.password, user))) {
       throw new UnauthorizedException(
@@ -419,5 +435,25 @@ export class AuthService {
     }
 
     return false;
+  }
+
+  async verifyIdentification(
+    identification: string,
+  ): Promise<ServiceResponseHttpInterface> {
+    const user = await this.repository.findOneBy({ identification });
+
+    return { data: user };
+  }
+
+  async verifyRucPendingPayment(
+    ruc: string,
+  ): Promise<ServiceResponseHttpInterface> {
+    const payment = await this.paymentRepository.findOneBy({ ruc });
+
+    if (!payment) {
+      return { data: false };
+    }
+
+    return { data: payment?.hasDebt };
   }
 }

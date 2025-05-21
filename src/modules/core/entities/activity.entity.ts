@@ -3,9 +3,12 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
 
 @Entity('activities', { schema: 'core' })
 export class ActivityEntity {
@@ -47,8 +50,39 @@ export class ActivityEntity {
   /** Inverse Relationship **/
 
   /** Foreign Keys **/
+  @ManyToOne(() => CatalogueEntity, { nullable: true })
+  @JoinColumn({ name: 'geographic_area_id' })
+  geographicArea: CatalogueEntity;
+  @Column({
+    type: 'uuid',
+    name: 'geographic_area_id',
+    nullable: true,
+    comment: 'Continente y Galapagos',
+  })
+  geographicAreaId: string;
 
   /** Columns **/
+  @Column({
+    name: 'code',
+    type: 'varchar',
+    comment: 'Codigo',
+  })
+  code: string;
+
+  @Column({
+    name: 'name',
+    type: 'varchar',
+    comment: 'Nombre',
+  })
+  name: string;
+
+  @Column({
+    name: 'sort',
+    type: 'integer',
+    comment: 'Orden',
+  })
+  sort: number;
+
   @Column({
     name: 'id_temp',
     type: 'bigint',

@@ -21,10 +21,12 @@ import { RolesService } from '@auth/services/roles.service';
 import { MenusService } from '@auth/services/menus.service';
 import { VerifyUserMiddleware } from '@auth/middlewares';
 import { coreProviders } from '@modules/core/core.provider';
+import { HttpModule } from '@nestjs/axios';
 
 @Global()
 @Module({
   imports: [
+    HttpModule,
     DatabaseModule,
     MailModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),

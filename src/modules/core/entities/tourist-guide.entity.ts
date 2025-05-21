@@ -2,10 +2,11 @@ import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
-  Entity,
+  Entity, JoinColumn, ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { ProcessEntity } from '@modules/core/entities/process.entity';
 
 @Entity('tourist_guides', { schema: 'core' })
 export class TouristGuideEntity {
@@ -47,8 +48,39 @@ export class TouristGuideEntity {
   /** Inverse Relationship **/
 
   /** Foreign Keys **/
+  @ManyToOne(() => ProcessEntity, { nullable: true })
+  @JoinColumn({ name: 'process_id' })
+  process: ProcessEntity;
+  @Column({
+    type: 'uuid',
+    name: 'process_id',
+    nullable: true,
+    comment: 'Actividad',
+  })
+  processId: string;
 
   /** Columns **/
+  @Column({
+    name: 'identification',
+    type: 'varchar',
+    comment: '',
+  })
+  identification: string;
+
+  @Column({
+    name: 'name',
+    type: 'varchar',
+    comment: '',
+  })
+  name: string;
+
+  @Column({
+    name: 'is_guide',
+    type: 'boolean',
+    comment: '',
+  })
+  isGuide: boolean;
+
   @Column({
     name: 'id_temp',
     type: 'bigint',

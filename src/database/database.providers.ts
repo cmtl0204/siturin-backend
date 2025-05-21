@@ -28,4 +28,22 @@ export const databaseProviders = [
       return dataSource.initialize();
     },
   },
+  {
+    provide: ConfigEnum.PG_DATA_SOURCE_SITURIN_OLD,
+    inject: [config.KEY],
+    useFactory: async (configService: ConfigType<typeof config>) => {
+      const { username, host, database, password, port } =
+        configService.database;
+      const dataSource = new DataSource({
+        type: 'postgres',
+        host,
+        port,
+        username,
+        password,
+        database: 'siturin_old_1',
+        // dropSchema: true,
+      });
+      return dataSource.initialize();
+    },
+  },
 ];

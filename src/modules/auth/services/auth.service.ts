@@ -31,6 +31,8 @@ import { ConfigType } from '@nestjs/config';
 import { MailDataInterface } from '@modules/common/mail/interfaces/mail-data.interface';
 import { UsersService } from './users.service';
 import { PaymentEntity } from '@modules/core/entities';
+import { lastValueFrom } from 'rxjs';
+import { HttpService } from '@nestjs/axios';
 
 @Injectable()
 export class AuthService {
@@ -47,6 +49,7 @@ export class AuthService {
     private readonly userService: UsersService,
     private jwtService: JwtService,
     private readonly nodemailerService: MailService,
+    private readonly httpService: HttpService,
   ) {}
 
   async changePassword(
@@ -128,26 +131,35 @@ export class AuthService {
         message: 'Su usuario se encuentra suspendido',
       });
 
-    if (user?.maxAttempts === 0)
-      throw new UnauthorizedException({
-        error: 'Sin Autorización',
-        message: 'Ha excedido el número máximo de intentos permitidos',
-      });
-
-    if (user?.payment.hasDebt)
-      throw new UnauthorizedException({
-        error: 'El RUC ingresado mantiene pendiente el pago',
-        message:
-          'De la Contribución Uno por Mil sobre Activos Fijos, cobrados por esta Cartera de Estado, dentro del periodo de vigencia de la Ley de Turismo de Registro Oficial Suplemento No. 733 de 27 de Diciembre 2002, por favor sírvase asistir a la oficina zonal en la que se encuentra registrado su establecimiento para el trámite de revisión y declaración respectiva.',
-      });
-
-    if (!(await this.checkPassword(payload.password, user))) {
-      throw new UnauthorizedException(
-        `Usuario y/o contraseña no válidos, ${user.maxAttempts - 1} intentos restantes`,
-      );
+    if (payload.username.includes('@turismo.gob.ec')) {
+      if (!(await this.signInLDAP(payload)))
+        throw new UnauthorizedException({
+          error: 'Sin Autorización',
+          message: 'Usuario y/o contraseña no válidos',
+        });
     }
 
-    const { password, suspendedAt, maxAttempts, ...userRest } = user;
+    if (!payload.username.includes('@turismo.gob.ec')) {
+      if (user?.payment?.hasDebt)
+        throw new UnauthorizedException({
+          error: 'El RUC ingresado mantiene pendiente el pago',
+          message:
+            'De la Contribución Uno por Mil sobre Activos Fijos, cobrados por esta Cartera de Estado, dentro del periodo de vigencia de la Ley de Turismo de Registro Oficial Suplemento No. 733 de 27 de Diciembre 2002, por favor sírvase asistir a la oficina zonal en la que se encuentra registrado su establecimiento para el trámite de revisión y declaración respectiva.',
+        });
+
+      if (user?.maxAttempts === 0)
+        throw new UnauthorizedException({
+          error: 'Sin Autorización',
+          message: 'Ha excedido el número máximo de intentos permitidos',
+        });
+
+      if (!(await this.checkPassword(payload.password, user))) {
+        throw new UnauthorizedException(
+          `Usuario y/o contraseña no válidos, ${user.maxAttempts - 1} intentos restantes`,
+        );
+      }
+    }
+    const { password, suspendedAt, maxAttempts, roles, ...userRest } = user;
 
     await this.repository.update(user.id, { activatedAt: new Date() });
 
@@ -155,8 +167,17 @@ export class AuthService {
       data: {
         accessToken: await this.generateJwt(user),
         auth: userRest,
+        roles,
       },
     };
+  }
+
+  async signInLDAP(payload: SignInDto): Promise<boolean> {
+    const url = `${this.configService.urlLDAP}/${payload.username.split('@')[0]}/${payload.password}`;
+
+    const response = await lastValueFrom(this.httpService.get(url));
+    console.log(response.data);
+    return response.data.data;
   }
 
   async signUpExternal(

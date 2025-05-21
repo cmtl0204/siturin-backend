@@ -7,7 +7,8 @@ import {
   Entity,
   JoinColumn,
   ManyToMany,
-  ManyToOne, OneToOne,
+  ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -46,7 +47,7 @@ export class UserEntity {
   @ManyToMany(() => RoleEntity, (role) => role.users)
   roles: RoleEntity[];
 
-  @OneToOne(() => PaymentEntity)
+  @OneToOne(() => PaymentEntity, (entity) => entity.user)
   payment: PaymentEntity;
 
   /** Foreign Keys **/

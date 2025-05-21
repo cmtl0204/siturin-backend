@@ -3,9 +3,12 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne, OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { UserEntity } from '@auth/entities';
 
 @Entity('internal_users', { schema: 'core' })
 export class InternalUserEntity {
@@ -47,8 +50,25 @@ export class InternalUserEntity {
   /** Inverse Relationship **/
 
   /** Foreign Keys **/
+  @OneToOne(() => UserEntity, { nullable: true })
+  @JoinColumn({ name: 'user_id' })
+  user: UserEntity;
+  @Column({
+    type: 'uuid',
+    name: 'user_id',
+    nullable: true,
+    comment: '',
+  })
+  userId: string;
 
   /** Columns **/
+  @Column({
+    name: 'available',
+    type: 'boolean',
+    comment: '',
+  })
+  available: boolean;
+
   @Column({
     name: 'id_temp',
     type: 'bigint',

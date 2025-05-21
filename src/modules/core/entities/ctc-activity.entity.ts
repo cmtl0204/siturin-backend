@@ -3,9 +3,13 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { ProcessEntity } from '@modules/core/entities/process.entity';
+import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
 
 @Entity('ctc_activities', { schema: 'core' })
 export class CtcActivityEntity {
@@ -47,6 +51,27 @@ export class CtcActivityEntity {
   /** Inverse Relationship **/
 
   /** Foreign Keys **/
+  @ManyToOne(() => ProcessEntity, { nullable: true })
+  @JoinColumn({ name: 'process_id' })
+  process: ProcessEntity;
+  @Column({
+    type: 'uuid',
+    name: 'process_id',
+    nullable: true,
+    comment: '',
+  })
+  processId: string;
+
+  @ManyToOne(() => CatalogueEntity, { nullable: true })
+  @JoinColumn({ name: 'activity_id' })
+  activity: CatalogueEntity;
+  @Column({
+    type: 'uuid',
+    name: 'activity_id',
+    nullable: true,
+    comment: '',
+  })
+  activityId: string;
 
   /** Columns **/
   @Column({

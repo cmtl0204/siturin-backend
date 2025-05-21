@@ -10,7 +10,6 @@ import {
   CacheEnum,
   CatalogueTypeEnum,
   CommonRepositoryEnum,
-  CoreRepositoryEnum,
 } from '@shared/enums';
 import { ReadUserDto } from '@auth/dto';
 import { UserEntity } from '@auth/entities';
@@ -21,7 +20,7 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { PaginationDto } from '@shared/dto';
 
 @Injectable()
-export class CataloguesService {
+export class LocationService {
   clientRedis: any = null;
 
   constructor(

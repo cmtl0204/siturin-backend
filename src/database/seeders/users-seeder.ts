@@ -41,20 +41,20 @@ export class UsersSeeder {
   async createUsers() {
     const users: any[] = [];
 
-    const adminRole = this.roles.find((role) => role.code === RoleEnum.ADMIN);
+    const roles = this.roles;
 
     users.push({
       birthdate: faker.date.birthdate(),
       cellPhone: '0987654321',
       identification: '1234567890001',
-      email: 'admin@correo.com',
+      email: 'cesar.tamayo@turismo.gob.ec',
       lastname: 'Perez',
       name: 'Admin',
       password: 'admin',
       passwordChanged: false,
       personalEmail: faker.internet.email(),
-      roles: [adminRole],
-      username: 'admin@correo.com',
+      roles: roles,
+      username: 'cesar.tamayo@turismo.gob.ec',
     });
 
     for (const user of users) {

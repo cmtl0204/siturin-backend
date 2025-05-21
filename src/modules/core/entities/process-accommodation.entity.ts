@@ -2,10 +2,11 @@ import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
-  Entity,
+  Entity, JoinColumn, ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { ProcessEntity } from '@modules/core/entities/process.entity';
 
 @Entity('process_accommodation', { schema: 'core' })
 export class ProcessAccommodationEntity {
@@ -47,8 +48,46 @@ export class ProcessAccommodationEntity {
   /** Inverse Relationship **/
 
   /** Foreign Keys **/
+  @ManyToOne(() => ProcessEntity, { nullable: true })
+  @JoinColumn({ name: 'process_id' })
+  process: ProcessEntity;
+  @Column({
+    type: 'uuid',
+    name: 'process_id',
+    nullable: true,
+    comment: '',
+  })
+  processId: string;
 
   /** Columns **/
+  @Column({
+    name: 'inactivation_code',
+    type: 'varchar',
+    comment: '',
+  })
+  inactivationCode: string;
+
+  @Column({
+    name: 'inactivation_at',
+    type: 'date',
+    comment: '',
+  })
+  inactivationAt: Date;
+
+  @Column({
+    name: 'rack_year',
+    type: 'integer',
+    comment: '',
+  })
+  rackYear: number;
+
+  @Column({
+    name: 'declaration_at',
+    type: 'timestamp',
+    comment: '',
+  })
+  declarationAt: Date;
+
   @Column({
     name: 'id_temp',
     type: 'bigint',

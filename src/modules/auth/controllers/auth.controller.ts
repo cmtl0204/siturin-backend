@@ -45,8 +45,8 @@ export class AuthController {
 
     return {
       data: serviceResponse.data,
-      message: 'Correct Access',
-      title: 'Welcome',
+      message: 'Acceso Correcto',
+      title: 'Bienvenido/a',
     };
   }
 

@@ -3,9 +3,13 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { UserEntity } from '@auth/entities';
+import { TouristGuideEntity } from '@modules/core/entities/tourist-guide.entity';
 
 @Entity('tourist_licenses', { schema: 'core' })
 export class TouristLicenseEntity {
@@ -47,8 +51,46 @@ export class TouristLicenseEntity {
   /** Inverse Relationship **/
 
   /** Foreign Keys **/
+  @ManyToOne(() => TouristGuideEntity, { nullable: true })
+  @JoinColumn({ name: 'tourist_guide_id' })
+  touristGuide: TouristGuideEntity;
+  @Column({
+    type: 'uuid',
+    name: 'tourist_guide_id',
+    nullable: true,
+    comment: '',
+  })
+  touristGuideId: string;
 
   /** Columns **/
+  @Column({
+    name: 'code',
+    type: 'varchar',
+    comment: '',
+  })
+  code: string;
+
+  @Column({
+    name: 'classification',
+    type: 'varchar',
+    comment: '',
+  })
+  classification: string;
+
+  @Column({
+    name: 'expiration_at',
+    type: 'date',
+    comment: '',
+  })
+  expirationAt: Date;
+
+  @Column({
+    name: 'issue_at',
+    type: 'date',
+    comment: '',
+  })
+  issueAt: Date;
+
   @Column({
     name: 'id_temp',
     type: 'bigint',

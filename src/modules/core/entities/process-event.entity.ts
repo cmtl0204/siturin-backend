@@ -2,10 +2,11 @@ import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
-  Entity,
+  Entity, JoinColumn, ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { ProcessEntity } from '@modules/core/entities/process.entity';
 
 @Entity('process_events', { schema: 'core' })
 export class ProcessEventEntity {
@@ -47,8 +48,25 @@ export class ProcessEventEntity {
   /** Inverse Relationship **/
 
   /** Foreign Keys **/
+  @ManyToOne(() => ProcessEntity, { nullable: true })
+  @JoinColumn({ name: 'process_id' })
+  process: ProcessEntity;
+  @Column({
+    type: 'uuid',
+    name: 'process_id',
+    nullable: true,
+    comment: '',
+  })
+  processId: string;
 
   /** Columns **/
+  @Column({
+    name: 'total_capacities',
+    type: 'integer',
+    comment: '',
+  })
+  totalCapacities: number;
+
   @Column({
     name: 'id_temp',
     type: 'bigint',

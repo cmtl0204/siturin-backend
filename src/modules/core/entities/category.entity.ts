@@ -2,10 +2,12 @@ import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
-  Entity,
+  Entity, JoinColumn, ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { ActivityEntity } from '@modules/core/entities/activity.entity';
+import { ClassificationEntity } from '@modules/core/entities/classification.entity';
 
 @Entity('categories', { schema: 'core' })
 export class CategoryEntity {
@@ -47,12 +49,42 @@ export class CategoryEntity {
   /** Inverse Relationship **/
 
   /** Foreign Keys **/
+  @ManyToOne(() => ClassificationEntity, { nullable: true })
+  @JoinColumn({ name: 'classification_id' })
+  classification: ClassificationEntity;
+  @Column({
+    type: 'uuid',
+    name: 'classification_id',
+    nullable: true,
+    comment: 'Clasificacion',
+  })
+  classificationId: string;
 
   /** Columns **/
+  @Column({
+    name: 'code',
+    type: 'varchar',
+    comment: 'Codigo',
+  })
+  code: string;
+
+  @Column({
+    name: 'name',
+    type: 'varchar',
+    comment: 'Nombre',
+  })
+  name: string;
+
+  @Column({
+    name: 'sort',
+    type: 'integer',
+    comment: 'Orden',
+  })
+  sort: number;
+
   @Column({
     name: 'id_temp',
     type: 'bigint',
     comment: 'Codigo de la tabla migrada',
   })
-  idTemp: number;
-}
+  idTemp: number;}

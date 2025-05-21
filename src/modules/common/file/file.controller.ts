@@ -23,7 +23,7 @@ import { FilterFileDto } from './dto';
 import * as fs from 'fs';
 
 @ApiTags('Files')
-@Controller('files')
+@Controller('common/files')
 export class FileController {
   constructor(private readonly filesService: FileService) {}
 
@@ -48,7 +48,9 @@ export class FileController {
     @Param('modelId', ParseUUIDPipe) modelId: string,
     @Query('typeId') typeId: string,
   ): Promise<ResponseHttpInterface> {
+    console.log(`Upload File`);
     const response = await this.filesService.uploadFile(file, modelId, typeId);
+    console.log(response);
     return {
       data: response,
       message: 'Archivo Subido Correctamente',

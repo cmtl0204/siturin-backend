@@ -4,14 +4,15 @@ import {
   DeleteDateColumn,
   Entity,
   JoinColumn,
-  OneToOne,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { UserEntity } from '@auth/entities';
+import { ProcessEntity } from '@modules/core/entities/process.entity';
+import { EstablishmentEntity } from '@modules/core/entities/establishment.entity';
 
-@Entity('external_users', { schema: 'core' })
-export class ExternalUserEntity {
+@Entity('establishment_address', { schema: 'core' })
+export class EstablishmentAddress {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -50,29 +51,57 @@ export class ExternalUserEntity {
   /** Inverse Relationship **/
 
   /** Foreign Keys **/
-  @OneToOne(() => UserEntity, { nullable: true })
-  @JoinColumn({ name: 'user_id' })
-  user: UserEntity;
+  @ManyToOne(() => EstablishmentEntity, { nullable: true })
+  @JoinColumn({ name: 'establishment_id' })
+  establishment: EstablishmentEntity;
   @Column({
     type: 'uuid',
-    name: 'user_id',
+    name: 'establishment_id',
     nullable: true,
     comment: '',
   })
-  userId: string;
+  establishmentId: string;
 
   /** Columns **/
   @Column({
-    name: 'has_term_condition',
-    type: 'boolean',
-    comment: '',
+    name: 'main_street',
+    type: 'text',
+    comment: 'Codigo',
   })
-  hasTermCondition: boolean;
+  mainStreet: string;
 
   @Column({
-    name: 'id_temp',
-    type: 'bigint',
-    comment: 'Codigo de la tabla migrada',
+    name: 'number_street',
+    type: 'text',
+    comment: '',
   })
-  idTemp: number;
+  numberStreet: string;
+
+  @Column({
+    name: 'secondary_street',
+    type: 'text',
+    comment: 'Nombre',
+  })
+  secondaryStreet: string;
+
+  @Column({
+    name: 'reference_street',
+    type: 'text',
+    comment: '',
+  })
+  referenceStreet: string;
+
+  @Column({
+    name: 'latitude',
+    type: 'float',
+    comment: '',
+  })
+  latitude: number;
+
+  @Column({
+    name: 'longitude',
+    type: 'float',
+    comment: '',
+  })
+  longitude: number;
 }

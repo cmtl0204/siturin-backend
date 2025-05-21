@@ -26,7 +26,7 @@ import { PublicRoute } from '@auth/decorators';
 
 @ApiTags('Catalogues')
 @Controller('catalogues')
-export class UbicationController {
+export class LocationController {
   constructor(private catalogueService: CataloguesService) {}
 
   @Post()

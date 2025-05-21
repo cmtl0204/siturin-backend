@@ -3,9 +3,15 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { InternalUserEntity } from '@modules/core/entities/internal-user.entity';
+import { UserEntity } from '@auth/entities';
+import { ZoneEntity } from '@modules/core/entities/zone.entity';
+import { DpaEntity } from '@modules/common/dpa/dpa.entity';
 
 @Entity('internal_dpa_users', { schema: 'core' })
 export class InternalDpaUserEntity {
@@ -47,8 +53,37 @@ export class InternalDpaUserEntity {
   /** Inverse Relationship **/
 
   /** Foreign Keys **/
+  @OneToOne(() => InternalUserEntity, { nullable: true })
+  @JoinColumn({ name: 'internal_user_id' })
+  internalUser: UserEntity;
+  @Column({
+    type: 'uuid',
+    name: 'internal_user_id',
+    nullable: true,
+    comment: '',
+  })
+  internalUserId: string;
+
+  @OneToOne(() => DpaEntity, { nullable: true })
+  @JoinColumn({ name: 'dpa_id' })
+  dpa: DpaEntity;
+  @Column({
+    type: 'uuid',
+    name: 'dpa_id',
+    nullable: true,
+    comment: '',
+  })
+  dpaId: string;
 
   /** Columns **/
+  @Column({
+    name: 'has_process',
+    type: 'boolean',
+    default: false,
+    comment: '',
+  })
+  hasProcess: boolean;
+
   @Column({
     name: 'id_temp',
     type: 'bigint',

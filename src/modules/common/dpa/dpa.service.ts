@@ -21,7 +21,7 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { PaginationDto } from '@shared/dto';
 
 @Injectable()
-export class CataloguesService {
+export class DpaService {
   clientRedis: any = null;
 
   constructor(

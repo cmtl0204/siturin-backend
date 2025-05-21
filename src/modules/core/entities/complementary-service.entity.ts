@@ -2,10 +2,11 @@ import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
-  Entity,
+  Entity, JoinColumn, ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { ProcessEntity } from '@modules/core/entities/process.entity';
 
 @Entity('complementary_services', { schema: 'core' })
 export class ComplementaryServiceEntity {
@@ -47,8 +48,32 @@ export class ComplementaryServiceEntity {
   /** Inverse Relationship **/
 
   /** Foreign Keys **/
+  @ManyToOne(() => ProcessEntity, { nullable: true })
+  @JoinColumn({ name: 'process_id' })
+  process: ProcessEntity;
+  @Column({
+    type: 'uuid',
+    name: 'process_id',
+    nullable: true,
+    comment: '',
+  })
+  processId: string;
 
   /** Columns **/
+  @Column({
+    name: 'model_id',
+    type: 'uuid',
+    comment: '',
+  })
+  modelId: string;
+
+  @Column({
+    name: 'capacity',
+    type: 'integer',
+    comment: '',
+  })
+  capacity: number;
+
   @Column({
     name: 'id_temp',
     type: 'bigint',

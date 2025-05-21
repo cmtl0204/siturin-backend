@@ -19,6 +19,7 @@ import { CataloguesSeeder } from '@database/seeders/catalogues-seeder';
     UsersSeeder,
     RolesSeeder,
     MenusSeeder,
+
   ],
   exports: [...databaseProviders, DatabaseSeeder],
 })

@@ -3,9 +3,12 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { ClassificationEntity,CategoryEntity } from '@modules/core/entities';
 
 @Entity('category_configurations', { schema: 'core' })
 export class CategoryConfigurationEntity {
@@ -47,6 +50,27 @@ export class CategoryConfigurationEntity {
   /** Inverse Relationship **/
 
   /** Foreign Keys **/
+  @ManyToOne(() => ClassificationEntity, { nullable: true })
+  @JoinColumn({ name: 'classification_id' })
+  classification: ClassificationEntity;
+  @Column({
+    type: 'uuid',
+    name: 'classification_id',
+    nullable: true,
+    comment: 'Clasificacion',
+  })
+  classificationId: string;
+
+  @ManyToOne(() => CategoryEntity, { nullable: true })
+  @JoinColumn({ name: 'category_id' })
+  category: CategoryEntity;
+  @Column({
+    type: 'uuid',
+    name: 'category_id',
+    nullable: true,
+    comment: '',
+  })
+  categoryId: string;
 
   /** Columns **/
   @Column({
@@ -55,4 +79,25 @@ export class CategoryConfigurationEntity {
     comment: 'Codigo de la tabla migrada',
   })
   idTemp: number;
+
+  @Column({
+    name: 'min',
+    type: 'integer',
+    comment: '',
+  })
+  min: number;
+
+  @Column({
+    name: 'max',
+    type: 'integer',
+    comment: '',
+  })
+  max: number;
+
+  @Column({
+    name: 'sort',
+    type: 'integer',
+    comment: '',
+  })
+  sort: number;
 }

@@ -13,10 +13,32 @@ export class RolesSeeder {
 
   private async createRoles() {
     const roles: CreateRoleDto[] = [];
-    roles.push({
-      code: RoleEnum.ADMIN,
-      name: 'Administrador',
-    });
+    roles.push(
+      {
+        code: RoleEnum.ADMIN,
+        name: 'Administrador',
+      },
+      {
+        code: RoleEnum.EXTERNAL,
+        name: 'Usuario Externo',
+      },
+      {
+        code: RoleEnum.GAD,
+        name: 'GAD',
+      },
+      {
+        code: RoleEnum.DAC,
+        name: 'DAC',
+      },
+      {
+        code: RoleEnum.SPECIALIST,
+        name: 'Especialista Zonal',
+      },
+      {
+        code: RoleEnum.TECHNICIAN,
+        name: 'Técnico Zonal',
+      },
+    );
 
     for (const role of roles) {
       await this.rolesService.create(role);

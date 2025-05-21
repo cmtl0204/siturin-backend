@@ -4,14 +4,14 @@ import {
   DeleteDateColumn,
   Entity,
   JoinColumn,
-  OneToOne,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { UserEntity } from '@auth/entities';
+import { ProcessEntity } from '@modules/core/entities/process.entity';
 
-@Entity('external_users', { schema: 'core' })
-export class ExternalUserEntity {
+@Entity('breach_causes', { schema: 'core' })
+export class InactivationCauseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -50,29 +50,29 @@ export class ExternalUserEntity {
   /** Inverse Relationship **/
 
   /** Foreign Keys **/
-  @OneToOne(() => UserEntity, { nullable: true })
-  @JoinColumn({ name: 'user_id' })
-  user: UserEntity;
+  @ManyToOne(() => ProcessEntity, { nullable: true })
+  @JoinColumn({ name: 'process_id' })
+  process: ProcessEntity;
   @Column({
     type: 'uuid',
-    name: 'user_id',
+    name: 'process_id',
     nullable: true,
-    comment: '',
+    comment: 'Actividad',
   })
-  userId: string;
+  processId: string;
 
   /** Columns **/
   @Column({
-    name: 'has_term_condition',
-    type: 'boolean',
-    comment: '',
+    name: 'code',
+    type: 'varchar',
+    comment: 'Codigo',
   })
-  hasTermCondition: boolean;
+  code: string;
 
   @Column({
-    name: 'id_temp',
-    type: 'bigint',
-    comment: 'Codigo de la tabla migrada',
+    name: 'name',
+    type: 'varchar',
+    comment: 'Nombre',
   })
-  idTemp: number;
+  name: string;
 }

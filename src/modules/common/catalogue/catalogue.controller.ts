@@ -25,7 +25,7 @@ import { CatalogueTypeEnum } from '@shared/enums';
 import { PublicRoute } from '@auth/decorators';
 
 @ApiTags('Catalogues')
-@Controller('catalogues')
+@Controller('common/catalogues')
 export class CatalogueController {
   constructor(private catalogueService: CataloguesService) {}
 
@@ -134,9 +134,9 @@ export class CatalogueController {
   @Get('cache/get')
   @HttpCode(HttpStatus.OK)
   async findCache(): Promise<ResponseHttpInterface> {
-    const response = await this.catalogueService.findCache();
+    const serviceResponse = await this.catalogueService.findCache();
     return {
-      data: response,
+      data: serviceResponse.data,
       message: `Cache de Catalogos`,
       title: `Cache`,
     };

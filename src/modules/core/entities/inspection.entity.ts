@@ -3,9 +3,12 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { ProcessEntity } from '@modules/core/entities';
 
 @Entity('inspections', { schema: 'core' })
 export class InspectionEntity {
@@ -47,8 +50,53 @@ export class InspectionEntity {
   /** Inverse Relationship **/
 
   /** Foreign Keys **/
+  @ManyToOne(() => ProcessEntity, { nullable: true })
+  @JoinColumn({ name: 'process_id' })
+  process: ProcessEntity;
+  @Column({
+    type: 'uuid',
+    name: 'process_id',
+    nullable: true,
+    comment: 'Actividad',
+  })
+  processId: string;
 
   /** Columns **/
+  @Column({
+    name: 'attended_at',
+    type: 'timestamp',
+    comment: '',
+  })
+  attendedAt: Date;
+
+  @Column({
+    name: 'is_current',
+    type: 'boolean',
+    comment: '',
+  })
+  isCurrent: boolean;
+
+  @Column({
+    name: 'inspection_at',
+    type: 'timestamp',
+    comment: '',
+  })
+  inspectionAt: Date;
+
+  @Column({
+    name: 'request_at',
+    type: 'timestamp',
+    comment: '',
+  })
+  requestAt: Date;
+
+  @Column({
+    name: 'observation',
+    type: 'text',
+    comment: '',
+  })
+  observation: string;
+
   @Column({
     name: 'id_temp',
     type: 'bigint',

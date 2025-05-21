@@ -2,10 +2,11 @@ import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
-  Entity,
+  Entity, JoinColumn, ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { ProcessEntity } from '@modules/core/entities/process.entity';
 
 @Entity('process_ctc', { schema: 'core' })
 export class ProcessCtcEntity {
@@ -47,8 +48,67 @@ export class ProcessCtcEntity {
   /** Inverse Relationship **/
 
   /** Foreign Keys **/
+  @ManyToOne(() => ProcessEntity, { nullable: true })
+  @JoinColumn({ name: 'process_id' })
+  process: ProcessEntity;
+  @Column({
+    type: 'uuid',
+    name: 'process_id',
+    nullable: true,
+    comment: '',
+  })
+  processId: string;
 
   /** Columns **/
+  @Column({
+    name: 'total_beds',
+    type: 'integer',
+    comment: '',
+  })
+  totalBeds: number;
+
+  @Column({
+    name: 'total_capacities',
+    type: 'integer',
+    comment: '',
+  })
+  totalCapacities: number;
+
+  @Column({
+    name: 'total_rooms',
+    type: 'integer',
+    comment: '',
+  })
+  totalRooms: number;
+
+  @Column({
+    name: 'total_tables',
+    type: 'integer',
+    comment: '',
+  })
+  totalTables: number;
+
+  @Column({
+    name: 'has_property_registration_certificate',
+    type: 'boolean',
+    comment: '',
+  })
+  hasPropertyRegistrationCertificate: boolean;
+
+  @Column({
+    name: 'has_technical_report',
+    type: 'boolean',
+    comment: '',
+  })
+  hasTechnicalReport: boolean;
+
+  @Column({
+    name: 'has_statute',
+    type: 'boolean',
+    comment: '',
+  })
+  hasStatute: boolean;
+
   @Column({
     name: 'id_temp',
     type: 'bigint',

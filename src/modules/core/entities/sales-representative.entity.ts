@@ -2,10 +2,11 @@ import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
-  Entity,
+  Entity, JoinColumn, ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { ProcessEntity } from '@modules/core/entities/process.entity';
 
 @Entity('sales_representatives', { schema: 'core' })
 export class SalesRepresentativeEntity {
@@ -47,8 +48,53 @@ export class SalesRepresentativeEntity {
   /** Inverse Relationship **/
 
   /** Foreign Keys **/
+  @ManyToOne(() => ProcessEntity, { nullable: true })
+  @JoinColumn({ name: 'process_id' })
+  process: ProcessEntity;
+  @Column({
+    type: 'uuid',
+    name: 'process_id',
+    nullable: true,
+    comment: 'Actividad',
+  })
+  processId: string;
 
   /** Columns **/
+  @Column({
+    name: 'legal_name',
+    type: 'varchar',
+    comment: '',
+  })
+  legalName: string;
+
+  @Column({
+    name: 'ruc',
+    type: 'varchar',
+    comment: '',
+  })
+  ruc: string;
+
+  @Column({
+    name: 'has_professional_degree',
+    type: 'boolean',
+    comment: '',
+  })
+  hasProfessionalDegree: boolean;
+
+  @Column({
+    name: 'has_contract',
+    type: 'boolean',
+    comment: '',
+  })
+  hasContract: boolean;
+
+  @Column({
+    name: 'has_work_experience',
+    type: 'boolean',
+    comment: '',
+  })
+  hasWorkExperience: boolean;
+
   @Column({
     name: 'id_temp',
     type: 'bigint',

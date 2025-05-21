@@ -3,6 +3,8 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -47,8 +49,68 @@ export class RoomRateEntity {
   /** Inverse Relationship **/
 
   /** Foreign Keys **/
+  @ManyToOne(() => RoomRateEntity, { nullable: true })
+  @JoinColumn({ name: 'room_id' })
+  room: RoomRateEntity;
+  @Column({
+    type: 'uuid',
+    name: 'room_id',
+    nullable: true,
+    comment: '',
+  })
+  roomId: string;
 
   /** Columns **/
+  @Column({
+    name: 'high_room',
+    type: 'decimal',
+    precision: 20,
+    scale: 2,
+    comment: '',
+  })
+  highRoom: string;
+
+  @Column({
+    name: 'low_room',
+    type: 'decimal',
+    precision: 20,
+    scale: 2,
+    comment: '',
+  })
+  lowRoom: string;
+
+  @Column({
+    name: 'high_person',
+    type: 'decimal',
+    precision: 20,
+    scale: 2,
+    comment: '',
+  })
+  highPerson: string;
+
+  @Column({
+    name: 'low_person',
+    type: 'decimal',
+    precision: 20,
+    scale: 2,
+    comment: '',
+  })
+  lowPerson: string;
+
+  @Column({
+    name: 'year',
+    type: 'integer',
+    comment: '',
+  })
+  year: number;
+
+  @Column({
+    name: 'declaration_at',
+    type: 'timestamp',
+    comment: '',
+  })
+  declarationAt: Date;
+
   @Column({
     name: 'id_temp',
     type: 'bigint',

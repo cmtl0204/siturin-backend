@@ -40,12 +40,12 @@ export class FileEntity {
   deletedAt: Date;
 
   @Column({
-    name: 'is_visible',
+    name: 'enabled',
     type: 'boolean',
     default: true,
     comment: 'true=visible, false=no visible',
   })
-  isVisible: boolean;
+  enabled: boolean;
 
   @Column({
     name: 'model_id',
@@ -60,7 +60,12 @@ export class FileEntity {
   })
   @JoinColumn({ name: 'type_id' })
   type: CatalogueEntity;
-  @Column({ type: 'uuid', name: 'type_id', comment: 'Tipo de documento' })
+  @Column({
+    type: 'uuid',
+    name: 'type_id',
+    nullable: true,
+    comment: 'Tipo de documento',
+  })
   typeId: string;
 
   /** Columns **/

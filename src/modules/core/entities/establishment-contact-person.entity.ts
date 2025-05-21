@@ -4,14 +4,14 @@ import {
   DeleteDateColumn,
   Entity,
   JoinColumn,
-  OneToOne,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { UserEntity } from '@auth/entities';
+import { EstablishmentEntity } from '@modules/core/entities/establishment.entity';
 
-@Entity('external_users', { schema: 'core' })
-export class ExternalUserEntity {
+@Entity('establishment_contact_persons', { schema: 'core' })
+export class EstablishmentContactPersonEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -50,29 +50,50 @@ export class ExternalUserEntity {
   /** Inverse Relationship **/
 
   /** Foreign Keys **/
-  @OneToOne(() => UserEntity, { nullable: true })
-  @JoinColumn({ name: 'user_id' })
-  user: UserEntity;
+  @ManyToOne(() => EstablishmentEntity, { nullable: true })
+  @JoinColumn({ name: 'establishment_id' })
+  establishment: EstablishmentEntity;
   @Column({
     type: 'uuid',
-    name: 'user_id',
+    name: 'establishment_id',
     nullable: true,
     comment: '',
   })
-  userId: string;
+  establishmentId: string;
 
   /** Columns **/
   @Column({
-    name: 'has_term_condition',
-    type: 'boolean',
-    comment: '',
+    name: 'identification',
+    type: 'varchar',
+    comment: 'Codigo',
   })
-  hasTermCondition: boolean;
+  identification: string;
 
   @Column({
-    name: 'id_temp',
-    type: 'bigint',
-    comment: 'Codigo de la tabla migrada',
+    name: 'email',
+    type: 'varchar',
+    comment: '',
   })
-  idTemp: number;
+  email: string;
+
+  @Column({
+    name: 'name',
+    type: 'varchar',
+    comment: 'Nombre',
+  })
+  name: string;
+
+  @Column({
+    name: 'phone',
+    type: 'varchar',
+    comment: '',
+  })
+  phone: string;
+
+  @Column({
+    name: 'secondary_phone',
+    type: 'varchar',
+    comment: '',
+  })
+  secondaryPhone: string;
 }

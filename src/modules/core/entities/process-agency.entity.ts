@@ -3,9 +3,12 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { ProcessEntity } from '@modules/core/entities/process.entity';
 
 @Entity('process_agencies', { schema: 'core' })
 export class ProcessAgencyEntity {
@@ -47,8 +50,25 @@ export class ProcessAgencyEntity {
   /** Inverse Relationship **/
 
   /** Foreign Keys **/
+  @ManyToOne(() => ProcessEntity, { nullable: true })
+  @JoinColumn({ name: 'process_id' })
+  process: ProcessEntity;
+  @Column({
+    type: 'uuid',
+    name: 'process_id',
+    nullable: true,
+    comment: '',
+  })
+  processId: string;
 
   /** Columns **/
+  @Column({
+    name: 'total_accredited_staff_language',
+    type: 'integer',
+    comment: '',
+  })
+  totalAccreditedStaffLanguage: number;
+
   @Column({
     name: 'id_temp',
     type: 'bigint',

@@ -23,5 +23,7 @@ export const config = registerAs('config', () => {
     port: parseInt(process.env.PORT!, 10),
     appUrl: process.env.APP_URL,
     env: process.env.ENV,
+    urlLDAP: process.env.URL_LDAP,
+    urlDinardap: process.env.URL_DINARDAP,
   };
 });

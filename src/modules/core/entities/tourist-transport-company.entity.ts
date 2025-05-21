@@ -3,9 +3,13 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
+import { ProcessEntity } from '@modules/core/entities/process.entity';
 
 @Entity('tourist_transport_companies', { schema: 'core' })
 export class TouristTransportCompanyEntity {
@@ -47,8 +51,61 @@ export class TouristTransportCompanyEntity {
   /** Inverse Relationship **/
 
   /** Foreign Keys **/
+  @ManyToOne(() => ProcessEntity, { nullable: true })
+  @JoinColumn({ name: 'process_id' })
+  process: ProcessEntity;
+  @Column({
+    type: 'uuid',
+    name: 'process_id',
+    nullable: true,
+    comment: 'Actividad',
+  })
+  processId: string;
+
+  @ManyToOne(() => CatalogueEntity, { nullable: true })
+  @JoinColumn({ name: 'ruc_type_id' })
+  rucType: CatalogueEntity;
+  @Column({
+    type: 'uuid',
+    name: 'ruc_type_id',
+    nullable: true,
+    comment: '',
+  })
+  rucTypeId: string;
+
+  @ManyToOne(() => CatalogueEntity, { nullable: true })
+  @JoinColumn({ name: 'type_id' })
+  type: CatalogueEntity;
+  @Column({
+    type: 'uuid',
+    name: 'type_id',
+    nullable: true,
+    comment: '',
+  })
+  typeId: string;
 
   /** Columns **/
+  @Column({
+    name: 'authorization_number',
+    type: 'varchar',
+    comment: '',
+  })
+  authorizationNumber: string;
+
+  @Column({
+    name: 'ruc',
+    type: 'varchar',
+    comment: '',
+  })
+  ruc: string;
+
+  @Column({
+    name: 'legal_name',
+    type: 'varchar',
+    comment: '',
+  })
+  legalName: string;
+
   @Column({
     name: 'id_temp',
     type: 'bigint',

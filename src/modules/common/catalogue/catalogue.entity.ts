@@ -67,6 +67,14 @@ export class CatalogueEntity {
 
   /** Columns **/
   @Column({
+    name: 'acronym',
+    type: 'varchar',
+    nullable: true,
+    comment: '',
+  })
+  acronym: string;
+
+  @Column({
     name: 'code',
     type: 'varchar',
     comment: 'Codigo del catalogo',
@@ -76,6 +84,7 @@ export class CatalogueEntity {
   @Column({
     name: 'description',
     type: 'varchar',
+    nullable: true,
     comment: 'Descripcion del catalogo',
   })
   description: string;
@@ -98,6 +107,7 @@ export class CatalogueEntity {
   @Column({
     name: 'sort',
     type: 'int',
+    nullable: true,
     comment: 'Orden',
   })
   sort: number;
@@ -108,4 +118,19 @@ export class CatalogueEntity {
     comment: 'Tipo de menu',
   })
   type: string;
+
+  @Column({
+    name: 'id_temp',
+    type: 'bigint',
+    comment: '',
+  })
+  idTemp: string;
+
+  @Column({
+    name: 'id_temp_parent',
+    type: 'bigint',
+    nullable: true,
+    comment: '',
+  })
+  idTempParent: string;
 }

@@ -8,10 +8,10 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { UserEntity } from '@auth/entities';
+import { CantonEntity } from '@modules/common/location/canton.entity';
 
-@Entity('payments', { schema: 'core' })
-export class PaymentEntity {
+@Entity('parishes', { schema: 'common' })
+export class ParishEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -39,48 +39,50 @@ export class PaymentEntity {
   })
   deletedAt: Date;
 
+  @ManyToOne(() => CantonEntity)
+  @JoinColumn({ name: 'canton_id' })
+  province: CantonEntity;
+  @Column({
+    type: 'integer',
+    name: 'canton_id',
+    nullable: true,
+    comment: 'Canton',
+  })
+  cantonId: number;
+
+  @Column({
+    name: 'name',
+    type: 'varchar',
+    comment: 'nombre parroquia',
+  })
+  name: string;
+
+  @Column({
+    name: 'province_code',
+    type: 'int',
+    comment: 'codigo de la provincia',
+  })
+  provinceCode: number;
+
+  @Column({
+    name: 'canton_code',
+    type: 'int',
+    comment: 'codigo del canton',
+  })
+  cantonCode: number;
+
+  @Column({
+    name: 'parish_code',
+    type: 'int',
+    comment: 'codigo de la parroquia',
+  })
+  parishCode: number;
+
   @Column({
     name: 'enabled',
     type: 'boolean',
     default: true,
-    comment: 'true=visible, false=no visible',
+    comment: 'true=activo, false=inactivo',
   })
   enabled: boolean;
-
-  /** Inverse Relationship **/
-
-  /** Foreign Keys **/
-  @ManyToOne(() => UserEntity, { nullable: true })
-  @JoinColumn({ name: 'user_id' })
-  user: UserEntity;
-  @Column({
-    type: 'uuid',
-    name: 'user_id',
-    nullable: true,
-    comment: '',
-  })
-  userId: string;
-
-  /** Columns **/
-  @Column({
-    name: 'id_temp',
-    type: 'bigint',
-    comment: 'Codigo de la tabla migrada',
-  })
-  idTemp: number;
-
-  @Column({
-    name: 'ruc',
-    type: 'varchar',
-    unique: true,
-    comment: 'Numero de RUC',
-  })
-  ruc: string;
-
-  @Column({
-    name: 'has_debt',
-    type: 'boolean',
-    comment: 'true=tiene deuda;false=no tiende deuda',
-  })
-  hasDebt: boolean;
 }

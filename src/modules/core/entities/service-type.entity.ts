@@ -4,14 +4,15 @@ import {
   DeleteDateColumn,
   Entity,
   JoinColumn,
-  OneToOne,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { UserEntity } from '@auth/entities';
+import { ActivityEntity } from '@modules/core/entities/activity.entity';
+import { ProcessEntity } from '@modules/core/entities/process.entity';
 
-@Entity('external_users', { schema: 'core' })
-export class ExternalUserEntity {
+@Entity('service_types', { schema: 'core' })
+export class ServiceTypeEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -50,24 +51,31 @@ export class ExternalUserEntity {
   /** Inverse Relationship **/
 
   /** Foreign Keys **/
-  @OneToOne(() => UserEntity, { nullable: true })
-  @JoinColumn({ name: 'user_id' })
-  user: UserEntity;
+  @ManyToOne(() => ProcessEntity, { nullable: true })
+  @JoinColumn({ name: 'process_id' })
+  process: ProcessEntity;
   @Column({
     type: 'uuid',
-    name: 'user_id',
+    name: 'process_id',
     nullable: true,
-    comment: '',
+    comment: 'Actividad',
   })
-  userId: string;
+  processId: string;
 
   /** Columns **/
   @Column({
-    name: 'has_term_condition',
-    type: 'boolean',
-    comment: '',
+    name: 'code',
+    type: 'varchar',
+    comment: 'Codigo',
   })
-  hasTermCondition: boolean;
+  code: string;
+
+  @Column({
+    name: 'name',
+    type: 'varchar',
+    comment: 'Nombre',
+  })
+  name: string;
 
   @Column({
     name: 'id_temp',

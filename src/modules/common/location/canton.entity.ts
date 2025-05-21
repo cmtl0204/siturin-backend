@@ -8,10 +8,10 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { CantonEntity } from '@modules/common/ubication/canton.entity';
+import { ProvinceEntity } from '@modules/common/location/province.entity';
 
-@Entity('parishes', { schema: 'common' })
-export class ParishEntity {
+@Entity('cantons', { schema: 'common' })
+export class CantonEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -39,21 +39,21 @@ export class ParishEntity {
   })
   deletedAt: Date;
 
-  @ManyToOne(() => CantonEntity)
-  @JoinColumn({ name: 'canton_id' })
-  province: CantonEntity;
+  @ManyToOne(() => ProvinceEntity)
+  @JoinColumn({ name: 'province_id' })
+  province: ProvinceEntity;
   @Column({
     type: 'integer',
-    name: 'canton_id',
+    name: 'province_id',
     nullable: true,
-    comment: 'Canton',
+    comment: 'Province',
   })
-  cantonId: number;
+  provinceId: number;
 
   @Column({
     name: 'name',
     type: 'varchar',
-    comment: 'nombre parroquia',
+    comment: 'nombre canton',
   })
   name: string;
 
@@ -70,13 +70,6 @@ export class ParishEntity {
     comment: 'codigo del canton',
   })
   cantonCode: number;
-
-  @Column({
-    name: 'parish_code',
-    type: 'int',
-    comment: 'codigo de la parroquia',
-  })
-  parishCode: number;
 
   @Column({
     name: 'enabled',

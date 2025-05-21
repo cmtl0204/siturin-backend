@@ -8,10 +8,10 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ProvinceEntity } from '@modules/common/ubication/province.entity';
+import { ProcessEntity } from '@modules/core/entities/process.entity';
 
-@Entity('cantons', { schema: 'common' })
-export class CantonEntity {
+@Entity('inactivation_causes', { schema: 'core' })
+export class InactivationCauseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -39,43 +39,40 @@ export class CantonEntity {
   })
   deletedAt: Date;
 
-  @ManyToOne(() => ProvinceEntity)
-  @JoinColumn({ name: 'province_id' })
-  province: ProvinceEntity;
-  @Column({
-    type: 'integer',
-    name: 'province_id',
-    nullable: true,
-    comment: 'Province',
-  })
-  provinceId: number;
-
-  @Column({
-    name: 'name',
-    type: 'varchar',
-    comment: 'nombre canton',
-  })
-  name: string;
-
-  @Column({
-    name: 'province_code',
-    type: 'int',
-    comment: 'codigo de la provincia',
-  })
-  provinceCode: number;
-
-  @Column({
-    name: 'canton_code',
-    type: 'int',
-    comment: 'codigo del canton',
-  })
-  cantonCode: number;
-
   @Column({
     name: 'enabled',
     type: 'boolean',
     default: true,
-    comment: 'true=activo, false=inactivo',
+    comment: 'true=visible, false=no visible',
   })
   enabled: boolean;
+
+  /** Inverse Relationship **/
+
+  /** Foreign Keys **/
+  @ManyToOne(() => ProcessEntity, { nullable: true })
+  @JoinColumn({ name: 'process_id' })
+  process: ProcessEntity;
+  @Column({
+    type: 'uuid',
+    name: 'process_id',
+    nullable: true,
+    comment: 'Actividad',
+  })
+  processId: string;
+
+  /** Columns **/
+  @Column({
+    name: 'code',
+    type: 'varchar',
+    comment: 'Codigo',
+  })
+  code: string;
+
+  @Column({
+    name: 'name',
+    type: 'varchar',
+    comment: 'Nombre',
+  })
+  name: string;
 }

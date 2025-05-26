@@ -1,6 +1,6 @@
-import { CatalogueDto } from './catalogue.dto';
+import { DpaDto } from './dpa.dto';
 
-export class CreateCatalogueDto extends CatalogueDto {}
+export class CreateDpaDto extends DpaDto {}
 
 /*
 const ES_I18N_MESSAGES = JSON.parse(

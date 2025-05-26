@@ -63,11 +63,11 @@ export class InternalUserEntity {
 
   /** Columns **/
   @Column({
-    name: 'available',
+    name: 'is_available',
     type: 'boolean',
     comment: '',
   })
-  available: boolean;
+  isAvailable: boolean;
 
   @Column({
     name: 'id_temp',

@@ -1,20 +1,12 @@
+import { IsNotEmpty, IsNumber, IsString, MinLength } from 'class-validator';
 import {
-  IsEnum,
-  IsNotEmpty,
-  IsNumber,
-  IsString,
-  MinLength,
-} from 'class-validator';
-import { CatalogueStateEnum, CatalogueTypeEnum } from '@shared/enums';
-import {
-  isEnumValidationOptions,
   isNotEmptyValidationOptions,
   isNumberValidationOptions,
   isStringValidationOptions,
   minLengthValidationOptions,
 } from '@shared/dto-validation';
 
-export class CatalogueDto {
+export class DpaDto {
   @IsNotEmpty(isNotEmptyValidationOptions())
   @IsString(isStringValidationOptions())
   readonly code: string;
@@ -28,10 +20,4 @@ export class CatalogueDto {
 
   @IsNumber({}, isNumberValidationOptions())
   readonly sort: number;
-
-  @IsEnum(CatalogueStateEnum, isEnumValidationOptions())
-  readonly state: CatalogueStateEnum;
-
-  @IsString(isStringValidationOptions())
-  readonly type: CatalogueTypeEnum;
 }

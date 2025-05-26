@@ -25,7 +25,14 @@ export const databaseProviders = [
         synchronize: true,
         subscribers: [AuditSubscriber],
       });
-      return dataSource.initialize();
+
+      await dataSource.initialize();
+
+      await dataSource.query(`CREATE SCHEMA IF NOT EXISTS auth`);
+      await dataSource.query(`CREATE SCHEMA IF NOT EXISTS common`);
+      await dataSource.query(`CREATE SCHEMA IF NOT EXISTS core`);
+
+      return dataSource;
     },
   },
   {

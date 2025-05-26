@@ -9,10 +9,12 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
+import { ZoneEntity } from '@modules/core/entities';
 
 @Entity('dpa', { schema: 'common' })
 export class DpaEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @CreateDateColumn({
@@ -40,12 +42,12 @@ export class DpaEntity {
   deletedAt: Date;
 
   @Column({
-    name: 'is_visible',
+    name: 'enabled',
     type: 'boolean',
     default: true,
     comment: 'true=visible, false=no visible',
   })
-  isVisible: boolean;
+  enabled: boolean;
 
   /** Inverse Relationship **/
   @OneToMany(() => DpaEntity, (category) => category.parent)
@@ -65,6 +67,28 @@ export class DpaEntity {
   })
   parentId: string;
 
+  @ManyToOne(() => CatalogueEntity, { nullable: true })
+  @JoinColumn({ name: 'type_id' })
+  type: CatalogueEntity;
+  @Column({
+    type: 'uuid',
+    name: 'type_id',
+    nullable: true,
+    comment: '',
+  })
+  typeId: string;
+
+  @ManyToOne(() => ZoneEntity, { nullable: true })
+  @JoinColumn({ name: 'zone_id' })
+  zone: ZoneEntity;
+  @Column({
+    type: 'uuid',
+    name: 'zone_id',
+    nullable: true,
+    comment: '',
+  })
+  zoneId: string;
+
   /** Columns **/
   @Column({
     name: 'code',
@@ -76,7 +100,8 @@ export class DpaEntity {
   @Column({
     name: 'description',
     type: 'varchar',
-    comment: 'Descripcion del catalogo',
+    nullable: true,
+    comment: '',
   })
   description: string;
 
@@ -88,24 +113,49 @@ export class DpaEntity {
   name: string;
 
   @Column({
-    name: 'required',
-    type: 'boolean',
-    default: true,
-    comment: 'Si el catalogo es requerido o no',
+    name: 'latitude',
+    type: 'float',
+    nullable: true,
+    comment: '',
   })
-  required: boolean;
+  latitude: number;
+
+  @Column({
+    name: 'longitude',
+    type: 'float',
+    nullable: true,
+    comment: '',
+  })
+  longitude: number;
 
   @Column({
     name: 'sort',
     type: 'int',
+    nullable: true,
     comment: 'Orden',
   })
   sort: number;
 
   @Column({
-    name: 'type',
+    name: 'zone_type',
     type: 'varchar',
-    comment: 'Tipo de menu',
+    nullable: true,
+    comment: 'Rural o Urbana',
   })
-  type: string;
+  zoneType: string;
+
+  @Column({
+    name: 'id_temp',
+    type: 'bigint',
+    comment: '',
+  })
+  idTemp: string;
+
+  @Column({
+    name: 'id_temp_parent',
+    type: 'bigint',
+    nullable: true,
+    comment: '',
+  })
+  idTempParent: string;
 }

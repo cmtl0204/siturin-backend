@@ -7,32 +7,28 @@ import {
   HttpStatus,
   Param,
   ParseUUIDPipe,
-  Patch,
   Post,
   Put,
   Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ResponseHttpInterface } from '@shared/interfaces';
-import { CataloguesService } from '@modules/common/catalogue/catalogue.service';
 import {
   CreateCatalogueDto,
   FilterCatalogueDto,
   UpdateCatalogueDto,
 } from '@modules/common/catalogue/dto';
-import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
-import { CatalogueTypeEnum } from '@shared/enums';
-import { PublicRoute } from '@auth/decorators';
+import { DpaService } from '@modules/common/dpa/dpa.service';
 
 @ApiTags('Catalogues')
 @Controller('catalogues')
 export class DpaController {
-  constructor(private catalogueService: CataloguesService) {}
+  constructor(private service: DpaService) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() payload: CreateCatalogueDto) {
-    const data = await this.catalogueService.create(payload);
+    const data = await this.service.create(payload);
 
     return {
       data,
@@ -40,24 +36,12 @@ export class DpaController {
     };
   }
 
-  @ApiOperation({ summary: 'List all catalogues' })
-  @Get('catalogue')
-  @HttpCode(HttpStatus.OK)
-  async catalogue(@Query('type') type: CatalogueTypeEnum) {
-    const response = await this.catalogueService.catalogue(type);
-    return {
-      data: response,
-      message: `catalogue`,
-      title: `Catalogue`,
-    } as ResponseHttpInterface;
-  }
-
   @ApiOperation({ summary: 'List of catalogues' })
   // @Roles(RoleEnum.ADMIN)
   @Get()
   @HttpCode(HttpStatus.OK)
   async findAll(@Query() params: FilterCatalogueDto) {
-    const response = await this.catalogueService.findAll(params);
+    const response = await this.service.findAll(params);
     return {
       data: response.data,
       pagination: response.pagination,
@@ -68,7 +52,7 @@ export class DpaController {
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
-    const data = await this.catalogueService.findOne(id);
+    const data = await this.service.findOne(id);
     return {
       data,
       message: `show ${id}`,
@@ -82,7 +66,7 @@ export class DpaController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() payload: UpdateCatalogueDto,
   ) {
-    const data = await this.catalogueService.update(id, payload);
+    const data = await this.service.update(id, payload);
 
     return {
       data: data,
@@ -94,49 +78,12 @@ export class DpaController {
   @Delete(':id')
   @HttpCode(HttpStatus.CREATED)
   async remove(@Param('id', ParseUUIDPipe) id: string) {
-    const data = await this.catalogueService.remove(id);
+    const data = await this.service.remove(id);
 
     return {
       data,
       message: `Catalogue deleted ${id}`,
       title: `Deleted`,
-    };
-  }
-
-  @Patch('remove-all')
-  @HttpCode(HttpStatus.CREATED)
-  async removeAll(@Body() payload: CatalogueEntity[]) {
-    const data = await this.catalogueService.removeAll(payload);
-
-    return {
-      data,
-      message: `Catalogues deleted`,
-      title: `Deleted`,
-    };
-  }
-
-  @PublicRoute()
-  @ApiOperation({ summary: 'Find Cache' })
-  @Get('cache/get')
-  @HttpCode(HttpStatus.OK)
-  async findCache(): Promise<ResponseHttpInterface> {
-    const response = await this.catalogueService.findCache();
-    return {
-      data: response,
-      message: `Cache de Catalogos`,
-      title: `Cache`,
-    };
-  }
-
-  @ApiOperation({ summary: 'Load Cache' })
-  @Get('cache/load')
-  @HttpCode(HttpStatus.OK)
-  async loadCache(): Promise<ResponseHttpInterface> {
-    const response = await this.catalogueService.loadCache();
-    return {
-      data: response,
-      message: `Load Cache de Catalogos`,
-      title: `Load Cache`,
     };
   }
 }

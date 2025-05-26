@@ -115,20 +115,6 @@ export class CatalogueController {
     };
   }
 
-  @Patch('remove-all')
-  @HttpCode(HttpStatus.CREATED)
-  async removeAll(
-    @Body() payload: CatalogueEntity[],
-  ): Promise<ResponseHttpInterface> {
-    const data = await this.catalogueService.removeAll(payload);
-
-    return {
-      data,
-      message: `Catalogues deleted`,
-      title: `Deleted`,
-    };
-  }
-
   @PublicRoute()
   @ApiOperation({ summary: 'Find Cache' })
   @Get('cache/get')

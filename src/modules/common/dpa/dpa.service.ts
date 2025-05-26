@@ -1,17 +1,11 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { FindOptionsWhere, ILike, IsNull, Repository } from 'typeorm';
 import {
-  CreateCatalogueDto,
   FilterCatalogueDto,
   UpdateCatalogueDto,
 } from '@modules/common/catalogue/dto';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
-import {
-  CacheEnum,
-  CatalogueTypeEnum,
-  CommonRepositoryEnum,
-  CoreRepositoryEnum,
-} from '@shared/enums';
+import { CacheEnum, CommonRepositoryEnum } from '@shared/enums';
 import { ReadUserDto } from '@auth/dto';
 import { UserEntity } from '@auth/entities';
 import { plainToInstance } from 'class-transformer';
@@ -19,41 +13,28 @@ import { ServiceResponseHttpInterface } from '@shared/interfaces';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { PaginationDto } from '@shared/dto';
+import { DpaEntity } from '@modules/common/dpa/dpa.entity';
+import { CreateDpaDto, UpdateDpaDto } from '@modules/common/dpa/dto';
 
 @Injectable()
 export class DpaService {
   clientRedis: any = null;
 
   constructor(
-    @Inject(CommonRepositoryEnum.CATALOGUE_REPOSITORY)
-    private repository: Repository<CatalogueEntity>,
+    @Inject(CommonRepositoryEnum.DPA_REPOSITORY)
+    private repository: Repository<DpaEntity>,
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
   ) {}
 
-  async create(payload: CreateCatalogueDto): Promise<CatalogueEntity> {
-    const newCatalogue = this.repository.create(payload);
+  async create(payload: CreateDpaDto): Promise<DpaEntity> {
+    const entity = this.repository.create(payload);
 
-    return await this.repository.save(newCatalogue);
-  }
-
-  async catalogue(type: CatalogueTypeEnum): Promise<CatalogueEntity[]> {
-    const data = await this.repository.find({
-      where: { type },
-    });
-
-    return data;
+    return await this.repository.save(entity);
   }
 
   async findAll(
     params?: FilterCatalogueDto,
   ): Promise<ServiceResponseHttpInterface> {
-    //Pagination & Filter by search
-    if (params && params?.limit > 0 && params?.page >= 0) {
-      return await this.paginateAndFilter(params);
-    }
-
-    // Filter By Type
-
     //All
     const data = await this.repository.findAndCount();
 
@@ -84,19 +65,7 @@ export class DpaService {
     return catalogue;
   }
 
-  async findByType(type: string) {
-    const catalogue = await this.repository.find({
-      where: { type },
-    });
-
-    if (!catalogue) {
-      throw new NotFoundException('Catalogue not found');
-    }
-
-    return catalogue;
-  }
-
-  async update(id: string, payload: UpdateCatalogueDto) {
+  async update(id: string, payload: UpdateDpaDto) {
     const catalogue = await this.repository.findOneBy({ id });
 
     if (!catalogue) {
@@ -108,7 +77,7 @@ export class DpaService {
     return this.repository.save(catalogue);
   }
 
-  async remove(id: string): Promise<CatalogueEntity> {
+  async remove(id: string): Promise<DpaEntity> {
     const catalogue = await this.repository.findOneBy({ id });
 
     if (!catalogue) {
@@ -116,68 +85,5 @@ export class DpaService {
     }
 
     return await this.repository.softRemove(catalogue);
-  }
-
-  async removeAll(payload: CatalogueEntity[]): Promise<CatalogueEntity[]> {
-    return await this.repository.softRemove(payload);
-  }
-
-  private async paginateAndFilter(params: FilterCatalogueDto) {
-    let where: FindOptionsWhere<UserEntity> | FindOptionsWhere<UserEntity>[];
-    where = {};
-    let { page, search } = params;
-    const { limit } = params;
-
-    if (search) {
-      search = search.trim();
-      page = 0;
-      where = [];
-      where.push({ name: ILike(`%${search}%`) });
-    }
-
-    const response = await this.repository.findAndCount({
-      where,
-      take: limit,
-      skip: PaginationDto.getOffset(limit, page),
-    });
-
-    return {
-      data: plainToInstance(ReadUserDto, response[0]),
-      pagination: { limit, totalItems: response[1] },
-    };
-  }
-
-  async findCache(): Promise<CatalogueEntity[]> {
-    let catalogues = (await this.cacheManager.get(
-      CacheEnum.CATALOGUES,
-    )) as CatalogueEntity[];
-
-    if (
-      catalogues === null ||
-      catalogues === undefined ||
-      catalogues.length === 0
-    ) {
-      catalogues = await this.repository.find({
-        relations: { children: true },
-        where: { parent: IsNull() },
-        order: { type: 'asc', sort: 'asc', name: 'asc' },
-      });
-
-      await this.cacheManager.set(CacheEnum.CATALOGUES, catalogues);
-    }
-
-    return catalogues;
-  }
-
-  async loadCache(): Promise<CatalogueEntity[]> {
-    const catalogues = await this.repository.find({
-      relations: { children: true },
-      where: { parent: IsNull() },
-      order: { type: 'asc', sort: 'asc', name: 'asc' },
-    });
-
-    await this.cacheManager.set(CacheEnum.CATALOGUES, catalogues);
-
-    return catalogues;
   }
 }

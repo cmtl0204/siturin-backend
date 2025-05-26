@@ -50,13 +50,6 @@ export class CataloguesService {
   async findAll(
     params?: FilterCatalogueDto,
   ): Promise<ServiceResponseHttpInterface> {
-    //Pagination & Filter by search
-    if (params && params?.limit > 0 && params?.page >= 0) {
-      return await this.paginateAndFilter(params);
-    }
-
-    // Filter By Type
-
     //All
     const data = await this.repository.findAndCount();
 
@@ -124,39 +117,6 @@ export class CataloguesService {
     }
 
     return { data: await this.repository.softRemove(catalogue) };
-  }
-
-  async removeAll(
-    payload: CatalogueEntity[],
-  ): Promise<ServiceResponseHttpInterface> {
-    return { data: await this.repository.softRemove(payload) };
-  }
-
-  private async paginateAndFilter(
-    params: FilterCatalogueDto,
-  ): Promise<ServiceResponseHttpInterface> {
-    let where: FindOptionsWhere<UserEntity> | FindOptionsWhere<UserEntity>[];
-    where = {};
-    let { page, search } = params;
-    const { limit } = params;
-
-    if (search) {
-      search = search.trim();
-      page = 0;
-      where = [];
-      where.push({ name: ILike(`%${search}%`) });
-    }
-
-    const response = await this.repository.findAndCount({
-      where,
-      take: limit,
-      skip: PaginationDto.getOffset(limit, page),
-    });
-
-    return {
-      data: plainToInstance(ReadUserDto, response[0]),
-      pagination: { limit, totalItems: response[1] },
-    };
   }
 
   async findCache(): Promise<ServiceResponseHttpInterface> {

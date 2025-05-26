@@ -182,7 +182,6 @@ export class UserEntity {
   @Column({
     name: 'identification',
     type: 'varchar',
-    unique: true,
     nullable: true,
     comment: 'Numero de documento puede ser la cedula',
   })
@@ -258,6 +257,13 @@ export class UserEntity {
     comment: 'Nombre de usuario para ingreso al sistema',
   })
   username: string;
+
+  @Column({
+    name: 'id_temp',
+    type: 'bigint',
+    comment: 'Codigo de la tabla migrada',
+  })
+  idTemp: number;
 
   /** Before Actions **/
   @BeforeInsert()

@@ -2,7 +2,9 @@ import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
-  Entity, JoinColumn, ManyToOne, OneToOne,
+  Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -50,7 +52,7 @@ export class InternalZonalUserEntity {
   /** Inverse Relationship **/
 
   /** Foreign Keys **/
-  @OneToOne(() => InternalUserEntity, { nullable: true })
+  @ManyToOne(() => InternalUserEntity, { nullable: true })
   @JoinColumn({ name: 'internal_user_id' })
   internalUser: UserEntity;
   @Column({
@@ -61,7 +63,7 @@ export class InternalZonalUserEntity {
   })
   internalUserId: string;
 
-  @OneToOne(() => ZoneEntity, { nullable: true })
+  @ManyToOne(() => ZoneEntity, { nullable: true })
   @JoinColumn({ name: 'zone_id' })
   zone: ZoneEntity;
   @Column({

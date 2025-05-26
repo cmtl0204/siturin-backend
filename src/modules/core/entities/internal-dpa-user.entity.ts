@@ -4,13 +4,13 @@ import {
   DeleteDateColumn,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { InternalUserEntity } from '@modules/core/entities/internal-user.entity';
 import { UserEntity } from '@auth/entities';
-import { ZoneEntity } from '@modules/core/entities/zone.entity';
 import { DpaEntity } from '@modules/common/dpa/dpa.entity';
 
 @Entity('internal_dpa_users', { schema: 'core' })
@@ -53,7 +53,7 @@ export class InternalDpaUserEntity {
   /** Inverse Relationship **/
 
   /** Foreign Keys **/
-  @OneToOne(() => InternalUserEntity, { nullable: true })
+  @ManyToOne(() => InternalUserEntity, { nullable: true })
   @JoinColumn({ name: 'internal_user_id' })
   internalUser: UserEntity;
   @Column({
@@ -64,7 +64,7 @@ export class InternalDpaUserEntity {
   })
   internalUserId: string;
 
-  @OneToOne(() => DpaEntity, { nullable: true })
+  @ManyToOne(() => DpaEntity, { nullable: true })
   @JoinColumn({ name: 'dpa_id' })
   dpa: DpaEntity;
   @Column({

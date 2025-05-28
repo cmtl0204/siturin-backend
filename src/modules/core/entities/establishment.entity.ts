@@ -2,11 +2,12 @@ import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
-  Entity, JoinColumn, ManyToOne,
+  Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { DpaEntity } from '@modules/common/dpa/dpa.entity';
 import { RucEntity } from '@modules/core/entities/ruc.entity';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
 
@@ -61,39 +62,6 @@ export class EstablishmentEntity {
   })
   rucId: string;
 
-  @ManyToOne(() => DpaEntity, { nullable: true })
-  @JoinColumn({ name: 'province_id' })
-  province: DpaEntity;
-  @Column({
-    type: 'uuid',
-    name: 'province_id',
-    nullable: true,
-    comment: '',
-  })
-  provinceId: string;
-
-  @ManyToOne(() => DpaEntity, { nullable: true })
-  @JoinColumn({ name: 'canton_id' })
-  canton: DpaEntity;
-  @Column({
-    type: 'uuid',
-    name: 'canton_id',
-    nullable: true,
-    comment: '',
-  })
-  cantonId: string;
-
-  @ManyToOne(() => DpaEntity, { nullable: true })
-  @JoinColumn({ name: 'parish_id' })
-  parish: DpaEntity;
-  @Column({
-    type: 'uuid',
-    name: 'parish_id',
-    nullable: true,
-    comment: '',
-  })
-  parishId: string;
-
   @ManyToOne(() => CatalogueEntity, { nullable: true })
   @JoinColumn({ name: 'state_id' })
   state: CatalogueEntity;
@@ -104,10 +72,12 @@ export class EstablishmentEntity {
     comment: '',
   })
   stateId: string;
+
   /** Columns **/
   @Column({
     name: 'number',
     type: 'varchar',
+    nullable: true,
     comment: '',
   })
   number: string;
@@ -115,6 +85,8 @@ export class EstablishmentEntity {
   @Column({
     name: 'trade_name',
     type: 'varchar',
+    nullable: true,
+
     comment: '',
   })
   tradeName: string;
@@ -122,6 +94,7 @@ export class EstablishmentEntity {
   @Column({
     name: 'web_page',
     type: 'varchar',
+    nullable: true,
     comment: '',
   })
   webPage: string;

@@ -9,6 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { UserEntity } from '@auth/entities';
+import { RucEntity } from '@modules/core/entities/ruc.entity';
 
 @Entity('payments', { schema: 'core' })
 export class PaymentEntity {
@@ -61,21 +62,25 @@ export class PaymentEntity {
   })
   userId: string;
 
+  @ManyToOne(() => RucEntity, { nullable: true })
+  @JoinColumn({ name: 'ruc_id' })
+  ruc: RucEntity;
+  @Column({
+    type: 'uuid',
+    name: 'ruc_id',
+    nullable: true,
+    comment: '',
+  })
+  rucId: string;
+
   /** Columns **/
   @Column({
-    name: 'id_temp',
-    type: 'bigint',
-    comment: 'Codigo de la tabla migrada',
-  })
-  idTemp: number;
-
-  @Column({
-    name: 'ruc',
-    type: 'varchar',
-    unique: true,
+    name: 'registered_at',
+    type: 'timestamp',
+    nullable: true,
     comment: 'Numero de RUC',
   })
-  ruc: string;
+  registeredAt: Date;
 
   @Column({
     name: 'has_debt',
@@ -83,4 +88,12 @@ export class PaymentEntity {
     comment: 'true=tiene deuda;false=no tiende deuda',
   })
   hasDebt: boolean;
+
+  @Column({
+    name: 'id_temp',
+    type: 'bigint',
+    comment: 'Codigo de la tabla migrada',
+  })
+  idTemp: number;
+
 }

@@ -4,11 +4,12 @@ import {
   DeleteDateColumn,
   Entity,
   JoinColumn,
-  ManyToOne,
+  ManyToOne, OneToMany, OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
+import { PaymentEntity } from '@modules/core/entities/payment.entity';
 
 @Entity('rucs', { schema: 'core' })
 export class RucEntity {
@@ -48,6 +49,8 @@ export class RucEntity {
   enabled: boolean;
 
   /** Inverse Relationship **/
+  @OneToOne(() => PaymentEntity, (entity) => entity.ruc)
+  payment: PaymentEntity;
 
   /** Foreign Keys **/
   @ManyToOne(() => CatalogueEntity, { nullable: true })

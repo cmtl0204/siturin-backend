@@ -2,12 +2,16 @@ import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
-  Entity, JoinColumn, ManyToOne,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
 import { ActivityEntity } from '@modules/core/entities/activity.entity';
+import { ObservationEntity } from '@modules/core/entities/observation.entity';
 
 @Entity('classifications', { schema: 'core' })
 export class ClassificationEntity {
@@ -47,6 +51,8 @@ export class ClassificationEntity {
   enabled: boolean;
 
   /** Inverse Relationship **/
+  @OneToMany(() => ObservationEntity, (entity) => entity.modelId)
+  observations: ObservationEntity[];
 
   /** Foreign Keys **/
   @ManyToOne(() => ActivityEntity, { nullable: true })
@@ -67,6 +73,59 @@ export class ClassificationEntity {
     comment: 'Codigo',
   })
   code: string;
+
+  @Column({
+    name: 'is_complementary_service',
+    type: 'boolean',
+    comment: '',
+  })
+  isComplementaryService: boolean;
+
+  @Column({
+    name: 'max_rooms',
+    type: 'integer',
+    nullable:true,
+    comment: '',
+  })
+  maxRooms: number;
+
+  @Column({
+    name: 'max_places',
+    type: 'integer',
+    nullable:true,
+    comment: '',
+  })
+  maxPlaces: number;
+
+  @Column({
+    name: 'min_rooms',
+    type: 'integer',
+    nullable:true,
+    comment: '',
+  })
+  minRooms: number;
+
+  @Column({
+    name: 'min_places',
+    type: 'integer',
+    nullable:true,
+    comment: '',
+  })
+  minPlaces: number;
+
+  @Column({
+    name: 'has_categorization',
+    type: 'boolean',
+    comment: '',
+  })
+  hasCategorization: boolean;
+
+  @Column({
+    name: 'has_regulation',
+    type: 'boolean',
+    comment: '',
+  })
+  hasRegulation: boolean;
 
   @Column({
     name: 'name',

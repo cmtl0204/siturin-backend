@@ -2,11 +2,12 @@ import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
-  Entity, JoinColumn, ManyToOne,
+  Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ActivityEntity } from '@modules/core/entities/activity.entity';
 import { ClassificationEntity } from '@modules/core/entities/classification.entity';
 
 @Entity('categories', { schema: 'core' })
@@ -64,9 +65,17 @@ export class CategoryEntity {
   @Column({
     name: 'code',
     type: 'varchar',
+    nullable: true,
     comment: 'Codigo',
   })
   code: string;
+
+  @Column({
+    name: 'has_regulation',
+    type: 'boolean',
+    comment: '',
+  })
+  hasRegulation: boolean;
 
   @Column({
     name: 'name',
@@ -78,6 +87,7 @@ export class CategoryEntity {
   @Column({
     name: 'sort',
     type: 'integer',
+    nullable: true,
     comment: 'Orden',
   })
   sort: number;
@@ -87,4 +97,5 @@ export class CategoryEntity {
     type: 'bigint',
     comment: 'Codigo de la tabla migrada',
   })
-  idTemp: number;}
+  idTemp: number;
+}

@@ -40,12 +40,12 @@ export class CatalogueEntity {
   deletedAt: Date;
 
   @Column({
-    name: 'is_visible',
+    name: 'enabled',
     type: 'boolean',
     default: true,
     comment: 'true=visible, false=no visible',
   })
-  isVisible: boolean;
+  enabled: boolean;
 
   /** Inverse Relationship **/
   @OneToMany(() => CatalogueEntity, (category) => category.parent)

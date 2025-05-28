@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ClassificationEntity,CategoryEntity } from '@modules/core/entities';
+import { CategoryEntity, ClassificationEntity } from '@modules/core/entities';
 
 @Entity('category_configurations', { schema: 'core' })
 export class CategoryConfigurationEntity {

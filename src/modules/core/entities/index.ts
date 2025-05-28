@@ -10,6 +10,8 @@ export { ComplementaryServiceEntity } from './complementary-service.entity';
 export { ComplementaryServiceRegulationEntity } from './complementary-service-regulation.entity';
 export { CtcActivityEntity } from './ctc-activity.entity';
 export { EstablishmentEntity } from './establishment.entity';
+export { EstablishmentAddressEntity } from './establishment-address.entity';
+export { EstablishmentContactPersonEntity } from './establishment-contact-person.entity';
 export { ExternalUserEntity } from './external-user.entity';
 export { InspectionEntity } from './inspection.entity';
 export { InternalDpaUserEntity } from './internal-dpa-user.entity';
@@ -18,6 +20,7 @@ export { InternalZonalUserEntity } from './internal-zonal-user.entity';
 export { JuridicalPersonEntity } from './juridical-person.entity';
 export { LandTransportEntity } from './land-transport.entity';
 export { ModelCatalogueEntity } from './model-catalogue.entity';
+export { ObservationEntity } from './observation.entity';
 export { PaymentEntity } from './payment.entity';
 export { ProcessEntity } from './process.entity';
 export { ProcessAccommodationEntity } from './process-accommodation.entity';
@@ -52,6 +55,8 @@ import { ComplementaryServiceEntity } from './complementary-service.entity';
 import { ComplementaryServiceRegulationEntity } from './complementary-service-regulation.entity';
 import { CtcActivityEntity } from './ctc-activity.entity';
 import { EstablishmentEntity } from './establishment.entity';
+import { EstablishmentAddressEntity } from './establishment-address.entity';
+import { EstablishmentContactPersonEntity } from './establishment-contact-person.entity';
 import { ExternalUserEntity } from './external-user.entity';
 import { InspectionEntity } from './inspection.entity';
 import { InternalDpaUserEntity } from './internal-dpa-user.entity';
@@ -60,7 +65,9 @@ import { InternalZonalUserEntity } from './internal-zonal-user.entity';
 import { JuridicalPersonEntity } from './juridical-person.entity';
 import { LandTransportEntity } from './land-transport.entity';
 import { ModelCatalogueEntity } from './model-catalogue.entity';
+import { ObservationEntity } from './observation.entity';
 import { PaymentEntity } from './payment.entity';
+import { ProcessEntity } from './process.entity';
 import { ProcessAccommodationEntity } from './process-accommodation.entity';
 import { ProcessAgencyEntity } from './process-agency.entity';
 import { ProcessCtcEntity } from './process-ctc.entity';
@@ -94,6 +101,8 @@ export const entities = [
   ComplementaryServiceRegulationEntity,
   CtcActivityEntity,
   EstablishmentEntity,
+  EstablishmentAddressEntity,
+  EstablishmentContactPersonEntity,
   ExternalUserEntity,
   InspectionEntity,
   InternalDpaUserEntity,
@@ -102,7 +111,9 @@ export const entities = [
   JuridicalPersonEntity,
   LandTransportEntity,
   ModelCatalogueEntity,
+  ObservationEntity,
   PaymentEntity,
+  ProcessEntity,
   ProcessAccommodationEntity,
   ProcessAgencyEntity,
   ProcessCtcEntity,

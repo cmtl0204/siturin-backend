@@ -9,6 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { EstablishmentEntity } from '@modules/core/entities/establishment.entity';
+import { ProcessEntity } from '@modules/core/entities/process.entity';
 
 @Entity('establishment_contact_persons', { schema: 'core' })
 export class EstablishmentContactPersonEntity {
@@ -61,7 +62,26 @@ export class EstablishmentContactPersonEntity {
   })
   establishmentId: string;
 
+  @ManyToOne(() => ProcessEntity, { nullable: true })
+  @JoinColumn({ name: 'process_id' })
+  process: ProcessEntity;
+  @Column({
+    type: 'uuid',
+    name: 'process_id',
+    nullable: true,
+    comment: '',
+  })
+  processId: string;
+
   /** Columns **/
+  @Column({
+    name: 'is_current',
+    type: 'boolean',
+    default: true,
+    comment: '',
+  })
+  isCurrent: boolean;
+
   @Column({
     name: 'identification',
     type: 'varchar',

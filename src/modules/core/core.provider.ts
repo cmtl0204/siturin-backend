@@ -12,6 +12,7 @@ import {
   ComplementaryServiceEntity,
   ComplementaryServiceRegulationEntity,
   CtcActivityEntity,
+  EstablishmentAddressEntity,
   EstablishmentEntity,
   ExternalUserEntity,
   InspectionEntity,
@@ -21,10 +22,12 @@ import {
   JuridicalPersonEntity,
   LandTransportEntity,
   ModelCatalogueEntity,
+  ObservationEntity,
   PaymentEntity,
   ProcessAccommodationEntity,
   ProcessAgencyEntity,
   ProcessCtcEntity,
+  ProcessEntity,
   ProcessEventEntity,
   ProcessFoodDrinkEntity,
   ProcessParkEntity,
@@ -117,6 +120,18 @@ export const coreProviders = [
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
+    provide: CoreRepositoryEnum.ESTABLISHMENT_ADDRESS_REPOSITORY,
+    useFactory: (dataSource: DataSource) =>
+      dataSource.getRepository(EstablishmentAddressEntity),
+    inject: [ConfigEnum.PG_DATA_SOURCE],
+  },
+  {
+    provide: CoreRepositoryEnum.ESTABLISHMENT_CONTACT_PERSON_REPOSITORY,
+    useFactory: (dataSource: DataSource) =>
+      dataSource.getRepository(EstablishmentAddressEntity),
+    inject: [ConfigEnum.PG_DATA_SOURCE],
+  },
+  {
     provide: CoreRepositoryEnum.EXTERNAL_USER_REPOSITORY,
     useFactory: (dataSource: DataSource) =>
       dataSource.getRepository(ExternalUserEntity),
@@ -177,6 +192,12 @@ export const coreProviders = [
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
+    provide: CoreRepositoryEnum.PROCESS_REPOSITORY,
+    useFactory: (dataSource: DataSource) =>
+      dataSource.getRepository(ProcessEntity),
+    inject: [ConfigEnum.PG_DATA_SOURCE],
+  },
+  {
     provide: CoreRepositoryEnum.PROCESS_AGENCY_REPOSITORY,
     useFactory: (dataSource: DataSource) =>
       dataSource.getRepository(ProcessAgencyEntity),
@@ -210,6 +231,12 @@ export const coreProviders = [
     provide: CoreRepositoryEnum.PROCESS_TRANSPORT_REPOSITORY,
     useFactory: (dataSource: DataSource) =>
       dataSource.getRepository(ProcessTransportEntity),
+    inject: [ConfigEnum.PG_DATA_SOURCE],
+  },
+  {
+    provide: CoreRepositoryEnum.OBSERVATION_REPOSITORY,
+    useFactory: (dataSource: DataSource) =>
+      dataSource.getRepository(ObservationEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {

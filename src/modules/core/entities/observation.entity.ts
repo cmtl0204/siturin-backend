@@ -3,15 +3,12 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  JoinColumn,
-  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ProcessEntity } from '@modules/core/entities/process.entity';
 
-@Entity('process_contact_persons', { schema: 'core' })
-export class ProcessContactPersonEntity {
+@Entity('observations', { schema: 'core' })
+export class ObservationEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -50,50 +47,19 @@ export class ProcessContactPersonEntity {
   /** Inverse Relationship **/
 
   /** Foreign Keys **/
-  @ManyToOne(() => ProcessEntity, { nullable: true })
-  @JoinColumn({ name: 'process_id' })
-  process: ProcessEntity;
-  @Column({
-    type: 'uuid',
-    name: 'process_id',
-    nullable: true,
-    comment: 'Actividad',
-  })
-  processId: string;
 
   /** Columns **/
   @Column({
-    name: 'identification',
-    type: 'varchar',
-    comment: 'Codigo',
-  })
-  identification: string;
-
-  @Column({
-    name: 'email',
-    type: 'varchar',
+    name: 'model_id',
+    type: 'uuid',
     comment: '',
   })
-  email: string;
+  modelId: string;
 
   @Column({
     name: 'name',
-    type: 'varchar',
-    comment: 'Nombre',
+    type: 'text',
+    comment: '',
   })
   name: string;
-
-  @Column({
-    name: 'phone',
-    type: 'varchar',
-    comment: '',
-  })
-  phone: string;
-
-  @Column({
-    name: 'secondary_phone',
-    type: 'varchar',
-    comment: '',
-  })
-  secondaryPhone: string;
 }

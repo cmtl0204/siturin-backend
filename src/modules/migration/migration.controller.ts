@@ -91,7 +91,8 @@ export class MigrationController {
   @Post('internal-dpa-users')
   @HttpCode(HttpStatus.CREATED)
   async migrateInternalDPAUsers(): Promise<ResponseHttpInterface> {
-    const responseService = await this.migrationService.migrateInternalDPAUsers();
+    const responseService =
+      await this.migrationService.migrateInternalDPAUsers();
 
     return {
       data: responseService.data,
@@ -104,7 +105,48 @@ export class MigrationController {
   @Post('internal-zonal-users')
   @HttpCode(HttpStatus.CREATED)
   async migrateInternalZonalUsers(): Promise<ResponseHttpInterface> {
-    const responseService = await this.migrationService.migrateInternalZonalUsers();
+    const responseService =
+      await this.migrationService.migrateInternalZonalUsers();
+
+    return {
+      data: responseService.data,
+      message: 'created',
+      title: '',
+    };
+  }
+
+  @PublicRoute()
+  @Post('activities')
+  @HttpCode(HttpStatus.CREATED)
+  async migrateActivities(): Promise<ResponseHttpInterface> {
+    const responseService = await this.migrationService.migrateActivities();
+
+    return {
+      data: responseService.data,
+      message: 'created',
+      title: '',
+    };
+  }
+
+  @PublicRoute()
+  @Post('classifications')
+  @HttpCode(HttpStatus.CREATED)
+  async migrateClassifications(): Promise<ResponseHttpInterface> {
+    const responseService =
+      await this.migrationService.migrateClassifications();
+
+    return {
+      data: responseService.data,
+      message: 'created',
+      title: '',
+    };
+  }
+
+  @PublicRoute()
+  @Post('categories')
+  @HttpCode(HttpStatus.CREATED)
+  async migrateCategories(): Promise<ResponseHttpInterface> {
+    const responseService = await this.migrationService.migrateCategories();
 
     return {
       data: responseService.data,
@@ -118,6 +160,72 @@ export class MigrationController {
   @HttpCode(HttpStatus.CREATED)
   async migrateRucs(): Promise<ResponseHttpInterface> {
     const responseService = await this.migrationService.migrateRucs();
+
+    return {
+      data: responseService.data,
+      message: 'created',
+      title: '',
+    };
+  }
+
+  @PublicRoute()
+  @Post('establishments')
+  @HttpCode(HttpStatus.CREATED)
+  async migrateEstablishments(): Promise<ResponseHttpInterface> {
+    const responseService = await this.migrationService.migrateEstablishments();
+
+    return {
+      data: responseService.data,
+      message: 'created',
+      title: '',
+    };
+  }
+
+  @PublicRoute()
+  @Post('category-configurations')
+  @HttpCode(HttpStatus.CREATED)
+  async migrateCategoryConfigurations(): Promise<ResponseHttpInterface> {
+    const responseService =
+      await this.migrationService.migrateCategoryConfigurations();
+
+    return {
+      data: responseService.data,
+      message: 'created',
+      title: '',
+    };
+  }
+
+  @PublicRoute()
+  @Post('payments')
+  @HttpCode(HttpStatus.CREATED)
+  async migratePayments(): Promise<ResponseHttpInterface> {
+    const responseService = await this.migrationService.migratePayments();
+
+    return {
+      data: responseService.data,
+      message: 'created',
+      title: '',
+    };
+  }
+
+  @PublicRoute()
+  @Post('room-types')
+  @HttpCode(HttpStatus.CREATED)
+  async migrateRoomTypes(): Promise<ResponseHttpInterface> {
+    const responseService = await this.migrationService.migrateRoomTypes();
+
+    return {
+      data: responseService.data,
+      message: 'created',
+      title: '',
+    };
+  }
+
+  @PublicRoute()
+  @Post('processes')
+  @HttpCode(HttpStatus.CREATED)
+  async migrateProcesses(): Promise<ResponseHttpInterface> {
+    const responseService = await this.migrationService.migrateProcesses();
 
     return {
       data: responseService.data,

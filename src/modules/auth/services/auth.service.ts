@@ -30,7 +30,7 @@ import { config } from '@config';
 import { ConfigType } from '@nestjs/config';
 import { MailDataInterface } from '@modules/common/mail/interfaces/mail-data.interface';
 import { UsersService } from './users.service';
-import { PaymentEntity } from '@modules/core/entities';
+import { PaymentEntity, RucEntity } from '@modules/core/entities';
 import { lastValueFrom } from 'rxjs';
 import { HttpService } from '@nestjs/axios';
 
@@ -43,8 +43,8 @@ export class AuthService {
     private repository: Repository<UserEntity>,
     @Inject(AuthRepositoryEnum.TRANSACTIONAL_CODE_REPOSITORY)
     private transactionalCodeRepository: Repository<TransactionalCodeEntity>,
-    @Inject(CoreRepositoryEnum.PAYMENT_REPOSITORY)
-    private paymentRepository: Repository<PaymentEntity>,
+    @Inject(CoreRepositoryEnum.RUC_REPOSITORY)
+    private rucRepository: Repository<RucEntity>,
     @Inject(config.KEY) private configService: ConfigType<typeof config>,
     private readonly userService: UsersService,
     private jwtService: JwtService,
@@ -467,14 +467,21 @@ export class AuthService {
   }
 
   async verifyRucPendingPayment(
-    ruc: string,
+    rucNumber: string,
   ): Promise<ServiceResponseHttpInterface> {
-    const payment = await this.paymentRepository.findOneBy({ ruc });
+    const ruc = await this.rucRepository.findOne({
+      relations: { payment: true },
+      where: { number: rucNumber },
+    });
 
-    if (!payment) {
+    if (!ruc) {
       return { data: false };
     }
 
-    return { data: payment?.hasDebt };
+    if (!ruc.payment) {
+      return { data: false };
+    }
+
+    return { data: ruc.payment?.hasDebt };
   }
 }

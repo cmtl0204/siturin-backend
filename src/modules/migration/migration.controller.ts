@@ -233,4 +233,30 @@ export class MigrationController {
       title: '',
     };
   }
+
+  @PublicRoute()
+  @Post('process-addresses')
+  @HttpCode(HttpStatus.CREATED)
+  async migrateProcessesAddresses(): Promise<ResponseHttpInterface> {
+    const responseService = await this.migrationService.migrateProcessAddresses();
+
+    return {
+      data: responseService.data,
+      message: 'created',
+      title: '',
+    };
+  }
+
+  @PublicRoute()
+  @Post('process-contact-persons')
+  @HttpCode(HttpStatus.CREATED)
+  async migrateProcessContactPerson(): Promise<ResponseHttpInterface> {
+    const responseService = await this.migrationService.migrateProcessContactPerson();
+
+    return {
+      data: responseService.data,
+      message: 'created',
+      title: 'process-contact-persons',
+    };
+  }
 }

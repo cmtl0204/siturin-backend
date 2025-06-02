@@ -4,6 +4,7 @@ import {
   ActivityEntity,
   AdventureTourismModalityEntity,
   AssignmentEntity,
+  BreachCauseEntity,
   CadastreEntity,
   CadastreStateEntity,
   CategoryConfigurationEntity,
@@ -12,9 +13,10 @@ import {
   ComplementaryServiceEntity,
   ComplementaryServiceRegulationEntity,
   CtcActivityEntity,
-  EstablishmentAddressEntity,
+  EstablishmentAddressEntity, EstablishmentContactPersonEntity,
   EstablishmentEntity,
   ExternalUserEntity,
+  InactivationCauseEntity,
   InspectionEntity,
   InternalDpaUserEntity,
   InternalUserEntity,
@@ -63,6 +65,12 @@ export const coreProviders = [
     provide: CoreRepositoryEnum.ASSIGNMENT_REPOSITORY,
     useFactory: (dataSource: DataSource) =>
       dataSource.getRepository(AssignmentEntity),
+    inject: [ConfigEnum.PG_DATA_SOURCE],
+  },
+  {
+    provide: CoreRepositoryEnum.BREACH_REPOSITORY,
+    useFactory: (dataSource: DataSource) =>
+      dataSource.getRepository(BreachCauseEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
@@ -128,13 +136,19 @@ export const coreProviders = [
   {
     provide: CoreRepositoryEnum.ESTABLISHMENT_CONTACT_PERSON_REPOSITORY,
     useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(EstablishmentAddressEntity),
+      dataSource.getRepository(EstablishmentContactPersonEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: CoreRepositoryEnum.EXTERNAL_USER_REPOSITORY,
     useFactory: (dataSource: DataSource) =>
       dataSource.getRepository(ExternalUserEntity),
+    inject: [ConfigEnum.PG_DATA_SOURCE],
+  },
+  {
+    provide: CoreRepositoryEnum.INACTIVATION_CAUSE_REPOSITORY,
+    useFactory: (dataSource: DataSource) =>
+      dataSource.getRepository(InactivationCauseEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {

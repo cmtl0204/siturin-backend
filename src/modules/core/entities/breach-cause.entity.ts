@@ -11,7 +11,7 @@ import {
 import { ProcessEntity } from '@modules/core/entities/process.entity';
 
 @Entity('breach_causes', { schema: 'core' })
-export class InactivationCauseEntity {
+export class BreachCauseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -71,7 +71,7 @@ export class InactivationCauseEntity {
 
   @Column({
     name: 'name',
-    type: 'varchar',
+    type: 'text',
     comment: 'Nombre',
   })
   name: string;

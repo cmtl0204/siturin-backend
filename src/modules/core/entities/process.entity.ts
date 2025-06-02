@@ -11,7 +11,6 @@ import {
 import { ActivityEntity } from '@modules/core/entities/activity.entity';
 import { ClassificationEntity } from '@modules/core/entities/classification.entity';
 import { CategoryEntity } from '@modules/core/entities/category.entity';
-import { DpaEntity } from '@modules/common/dpa/dpa.entity';
 import { EstablishmentEntity } from '@modules/core/entities/establishment.entity';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
 
@@ -88,39 +87,6 @@ export class ProcessEntity {
   })
   categoryId: string;
 
-  @ManyToOne(() => DpaEntity, { nullable: true })
-  @JoinColumn({ name: 'province_id' })
-  province: DpaEntity;
-  @Column({
-    type: 'uuid',
-    name: 'province_id',
-    nullable: true,
-    comment: '',
-  })
-  provinceId: string;
-
-  @ManyToOne(() => DpaEntity, { nullable: true })
-  @JoinColumn({ name: 'canton_id' })
-  canton: DpaEntity;
-  @Column({
-    type: 'uuid',
-    name: 'canton_id',
-    nullable: true,
-    comment: '',
-  })
-  cantonId: string;
-
-  @ManyToOne(() => DpaEntity, { nullable: true })
-  @JoinColumn({ name: 'parish_id' })
-  parish: DpaEntity;
-  @Column({
-    type: 'uuid',
-    name: 'parish_id',
-    nullable: true,
-    comment: '',
-  })
-  parishId: string;
-
   @ManyToOne(() => EstablishmentEntity, { nullable: true })
   @JoinColumn({ name: 'establishment_id' })
   establishment: EstablishmentEntity;
@@ -166,15 +132,15 @@ export class ProcessEntity {
   causeInactivationTypeId: string;
 
   @ManyToOne(() => CatalogueEntity, { nullable: true })
-  @JoinColumn({ name: 'local_type_id' })
-  localType: CatalogueEntity;
+  @JoinColumn({ name: 'state_id' })
+  state: CatalogueEntity;
   @Column({
     type: 'uuid',
-    name: 'local_type_id',
+    name: 'state_id',
     nullable: true,
     comment: '',
   })
-  localTypeId: string;
+  stateId: string;
 
   /** Columns **/
   @Column({
@@ -187,27 +153,15 @@ export class ProcessEntity {
   @Column({
     name: 'attended_at',
     type: 'timestamp',
+    nullable: true,
     comment: 'Fecha de atencion de la solicitud del registro',
   })
   attendedAt: Date;
 
   @Column({
-    name: 'establishment_number',
-    type: 'varchar',
-    comment: '',
-  })
-  establishmentNumber: string;
-
-  @Column({
-    name: 'web_page',
-    type: 'varchar',
-    comment: '',
-  })
-  webPage: string;
-
-  @Column({
     name: 'has_tourist_activity_document',
     type: 'boolean',
+    nullable: true,
     comment: '',
   })
   hasTouristActivityDocument: boolean;
@@ -215,20 +169,23 @@ export class ProcessEntity {
   @Column({
     name: 'has_person_designation',
     type: 'boolean',
+    nullable: true,
     comment: '',
   })
   hasPersonDesignation: boolean;
 
   @Column({
-    name: 'has_protected_area',
+    name: 'is_protected_area',
     type: 'boolean',
+    nullable: true,
     comment: '',
   })
-  hasProtectedArea: boolean;
+  isProtectedArea: boolean;
 
   @Column({
     name: 'has_protected_area_contract',
     type: 'boolean',
+    nullable: true,
     comment: '',
   })
   hasProtectedAreaContract: boolean;
@@ -236,6 +193,7 @@ export class ProcessEntity {
   @Column({
     name: 'inspection_expiration_at',
     type: 'timestamp',
+    nullable: true,
     comment: '',
   })
   inspectionExpirationAt: Date;
@@ -243,6 +201,7 @@ export class ProcessEntity {
   @Column({
     name: 'total_men',
     type: 'integer',
+    default: 0,
     comment: '',
   })
   totalMen: number;
@@ -250,6 +209,7 @@ export class ProcessEntity {
   @Column({
     name: 'total_women',
     type: 'integer',
+    default: 0,
     comment: '',
   })
   totalWomen: number;
@@ -257,6 +217,7 @@ export class ProcessEntity {
   @Column({
     name: 'total_men_disability',
     type: 'integer',
+    default: 0,
     comment: '',
   })
   totalMenDisability: number;
@@ -264,16 +225,18 @@ export class ProcessEntity {
   @Column({
     name: 'total_women_disability',
     type: 'integer',
+    default: 0,
     comment: '',
   })
   totalWomenDisability: number;
 
   @Column({
-    name: 'land_use',
-    type: 'varchar',
+    name: 'has_land_use',
+    type: 'boolean',
+    nullable: true,
     comment: '',
   })
-  landUse: string;
+  hasLandUse: boolean;
 
   @Column({
     name: 'id_temp',

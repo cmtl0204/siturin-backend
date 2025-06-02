@@ -7,6 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { ProcessEntity } from '@modules/core/entities/process.entity';
+import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
 
 @Entity('process_parks', { schema: 'core' })
 export class ProcessParkEntity {
@@ -58,6 +59,17 @@ export class ProcessParkEntity {
     comment: '',
   })
   processId: string;
+
+  @ManyToOne(() => CatalogueEntity, { nullable: true })
+  @JoinColumn({ name: 'local_type_id' })
+  localType: CatalogueEntity;
+  @Column({
+    type: 'uuid',
+    name: 'local_type_id',
+    nullable: true,
+    comment: '',
+  })
+  localTypeId: string;
 
   /** Columns **/
   @Column({

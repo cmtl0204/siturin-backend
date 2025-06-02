@@ -8,6 +8,7 @@ import {
 } from '@shared/enums';
 import {
   ActivityEntity,
+  BreachCauseEntity,
   CategoryConfigurationEntity,
   CategoryEntity,
   ClassificationEntity,
@@ -15,6 +16,7 @@ import {
   EstablishmentContactPersonEntity,
   EstablishmentEntity,
   ExternalUserEntity,
+  InactivationCauseEntity,
   InternalDpaUserEntity,
   InternalUserEntity,
   InternalZonalUserEntity,
@@ -74,6 +76,10 @@ export class MigrationService {
     private readonly roomTypeRepository: Repository<RoomTypeEntity>,
     @Inject(CoreRepositoryEnum.PROCESS_REPOSITORY)
     private readonly processRepository: Repository<ProcessEntity>,
+    @Inject(CoreRepositoryEnum.INACTIVATION_CAUSE_REPOSITORY)
+    private readonly inactivationCauseRepository: Repository<InactivationCauseEntity>,
+    @Inject(CoreRepositoryEnum.BREACH_REPOSITORY)
+    private readonly breachCauseRepository: Repository<BreachCauseEntity>,
   ) {}
 
   async getData(table: string): Promise<any> {
@@ -90,6 +96,30 @@ export class MigrationService {
              inner join siturin.catastros c on c.tramite_id = t.id
       where tipo_id <> 46
         and c.user_id is null;
+    `);
+  }
+
+  async getProcessAddresses(): Promise<any> {
+    return await this.dataSource.query(`
+      SELECT *
+      FROM siturin.tramites t
+             inner join siturin.catastros c on c.tramite_id = t.id
+      where tipo_id <> 46
+        and c.user_id is null
+        and t.ubicacion is not null
+      ;
+    `);
+  }
+
+  async getProcessContactPerson(): Promise<any> {
+    return await this.dataSource.query(`
+      SELECT *
+      FROM siturin.tramites t
+             inner join siturin.catastros c on c.tramite_id = t.id
+      where tipo_id <> 46
+        and c.user_id is null
+        and t.persona_contacto is not null limit 100
+      ;
     `);
   }
 
@@ -541,7 +571,6 @@ export class MigrationService {
 
     const establishments = await this.establishmentRepository.find();
     const rucs = await this.rucRepository.find();
-    const dpa = await this.dpaRepository.find();
     const catalogues = await this.catalogueRepository.find();
 
     for (const item of data) {
@@ -564,15 +593,6 @@ export class MigrationService {
         const ruc = rucs.find((x) => x.idTemp == item.ruc_id);
 
         if (ruc) entity.rucId = ruc.id;
-
-        // const province = dpa.find((x) => x.idTemp == item.provincia_id);
-        // if (province) entity.provinceId = province.id;
-        //
-        // const canton = dpa.find((x) => x.idTemp == item.canton_id);
-        // if (canton) entity.cantonId = canton.id;
-        //
-        // const parish = dpa.find((x) => x.idTemp == item.parroquia_id);
-        // if (parish) entity.parishId = parish.id;
 
         const state = catalogues.find((x) => x.idTemp == item.estado_id);
         if (state) entity.stateId = state.id;
@@ -696,15 +716,13 @@ export class MigrationService {
 
   async migrateProcesses() {
     const data = await this.getProcesses();
-    return { data };
 
     const table = await this.processRepository.find();
     const catalogues = await this.catalogueRepository.find();
-    const dpa = await this.dpaRepository.find();
     const activities = await this.activityRepository.find();
     const classifications = await this.classificationRepository.find();
     const categories = await this.categoryRepository.find();
-    const establishment = await this.establishmentRepository.find();
+    const establishments = await this.establishmentRepository.find();
 
     for (const item of data) {
       const exists = table.find((register) => register.idTemp == item.id);
@@ -716,21 +734,155 @@ export class MigrationService {
         entity.deletedAt = item.deleted_at;
         entity.idTemp = item.id;
 
-        // entity.code = item.codigo;
-        // entity.isBed = item.es_cama;
-        // entity.isRoom = item.es_habitacion;
-        // entity.isPlace = item.es_plaza;
-        // entity.name = item.nombre;
-
-        const geographicArea = catalogues.find(
-          (x) => x.idTemp == item.zona_geografica_id,
+        const activity = activities.find((x) => x.idTemp == item.actividad_id);
+        const classification = classifications.find(
+          (x) => x.idTemp == item.clasificacion_id,
+        );
+        const category = categories.find((x) => x.idTemp == item.categoria_id);
+        const state = catalogues.find((x) => x.idTemp == item.estado_id);
+        const type = catalogues.find((x) => x.idTemp == item.tipo_id);
+        const causeInactivationType = catalogues.find(
+          (x) => x.idTemp == item.tipo_causa_inactivacion_id,
+        );
+        const establishment = establishments.find(
+          (x) => x.idTemp == item.establecimiento_id,
+        );
+        const legalEntity = catalogues.find(
+          (x) => x.idTemp == item.personeria_juridica_id,
         );
 
-        if (geographicArea) {
-          // entity.geographicAreaId = geographicArea.id;
-        }
+        if (activity) entity.activityId = activity.id;
+        if (classification) entity.classificationId = classification.id;
+        if (category) entity.categoryId = category.id;
+        if (state) entity.stateId = state.id;
+        if (type) entity.typeId = type.id;
+        if (causeInactivationType)
+          entity.causeInactivationTypeId = causeInactivationType.id;
+        if (establishment) entity.establishmentId = establishment.id;
+        if (legalEntity) entity.legalEntityId = legalEntity.id;
+
+        entity.registeredAt = item.fecha;
+        entity.hasTouristActivityDocument =
+          item.tiene_documento_actividad_turistica || false;
+        entity.hasPersonDesignation = item.tiene_nombramiento_vigente || false;
+        entity.totalMen = item.total_hombres || 0;
+        entity.totalWomen = item.total_mujeres || 0;
+        entity.totalMenDisability = item.total_hombres_discapacidad || 0;
+        entity.totalWomenDisability = item.total_mujeres_discapacidad || 0;
+        entity.hasLandUse = item.uso_suelos || false;
+        entity.attendedAt = item.fecha_atendido;
+        entity.isProtectedArea = item.es_area_protegida;
+        entity.hasProtectedAreaContract = item.contrato_area_protegida;
+        entity.inspectionExpirationAt = item.fecha_limite_inspeccion;
 
         await this.processRepository.save(entity);
+      }
+    }
+
+    return { data: null };
+  }
+
+  async migrateProcessAddresses() {
+    const data = await this.getProcessAddresses();
+
+    const dpa = await this.dpaRepository.find();
+    const establishments = await this.establishmentRepository.find();
+    const processes = await this.processRepository.find();
+
+    for (const item of data) {
+      const entity = this.establishmentAddressRepository.create();
+
+      const province = dpa.find((x) => x.idTemp == item.provincia_id);
+      const canton = dpa.find((x) => x.idTemp == item.canton_id);
+      const parish = dpa.find((x) => x.idTemp == item.parroquia_id);
+      const establishment = establishments.find(
+        (x) => x.idTemp == item.establecimiento_id,
+      );
+      const process = processes.find((x) => x.idTemp == item.id);
+
+      entity.createdAt = item.created_at || new Date();
+      entity.updatedAt = item.updated_at || new Date();
+
+      entity.isCurrent = false;
+
+      if (!item.deleted_at) entity.isCurrent = true;
+
+      entity.establishmentId = establishment?.id!;
+      entity.processId = process?.id!;
+      entity.provinceId = province?.id!;
+      entity.cantonId = canton?.id!;
+      entity.parishId = parish?.id!;
+
+      if (item.ubicacion) {
+        if (item.ubicacion.callePrincipal) {
+          entity.mainStreet = item.ubicacion.callePrincipal;
+          entity.secondaryStreet = item.ubicacion.calleInterseccion;
+          entity.numberStreet = item.ubicacion.calleNumeracion;
+        } else {
+          entity.mainStreet = item.ubicacion.direccion;
+        }
+
+        entity.referenceStreet = item.ubicacion.calleReferencia;
+        entity.latitude = isNaN(item.ubicacion.latitud)
+          ? item.ubicacion.latitud
+          : 0;
+        entity.longitude = isNaN(item.ubicacion.longitud)
+          ? item.ubicacion.longitud
+          : 0;
+
+        await this.establishmentAddressRepository.save(entity);
+      }
+    }
+
+    return { data: null };
+  }
+
+  async migrateProcessContactPerson() {
+    const data = await this.getProcessContactPerson();
+
+    const establishments = await this.establishmentRepository.find();
+    const processes = await this.processRepository.find();
+
+    for (const item of data) {
+      const entity = this.establishmentContactPersonRepository.create();
+
+      const establishment = establishments.find(
+        (x) => x.idTemp == item.establecimiento_id,
+      );
+      const process = processes.find((x) => x.idTemp == item.id);
+
+      entity.createdAt = item.created_at || new Date();
+      entity.updatedAt = item.updated_at || new Date();
+
+      entity.isCurrent = false;
+
+      if (!item.deleted_at) entity.isCurrent = true;
+
+      entity.establishmentId = establishment?.id!;
+      entity.processId = process?.id!;
+
+      if (item.persona_contacto) {
+        if (item.persona_contacto.identificacion) {
+          entity.identification = item.persona_contacto.identificacion;
+        }
+
+        if (item.persona_contacto.nombres) {
+          entity.name = item.persona_contacto.nombres;
+        }
+
+        if (item.persona_contacto.telefonoPrincipal) {
+          entity.phone = item.persona_contacto.telefonoPrincipal;
+        }
+
+        if (item.persona_contacto.telefonoSecundario) {
+          entity.secondaryPhone = item.persona_contacto.telefonoSecundario;
+        }
+
+        if (item.persona_contacto.correo) {
+          entity.email = item.persona_contacto.correo;
+        }
+
+        const x = await this.establishmentContactPersonRepository.save(entity);
       }
     }
 

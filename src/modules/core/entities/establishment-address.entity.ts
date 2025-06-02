@@ -119,6 +119,7 @@ export class EstablishmentAddressEntity {
   @Column({
     name: 'main_street',
     type: 'text',
+    nullable:true,
     comment: '',
   })
   mainStreet: string;
@@ -126,6 +127,7 @@ export class EstablishmentAddressEntity {
   @Column({
     name: 'number_street',
     type: 'text',
+    nullable:true,
     comment: '',
   })
   numberStreet: string;
@@ -133,6 +135,7 @@ export class EstablishmentAddressEntity {
   @Column({
     name: 'secondary_street',
     type: 'text',
+    nullable:true,
     comment: 'Nombre',
   })
   secondaryStreet: string;
@@ -140,6 +143,7 @@ export class EstablishmentAddressEntity {
   @Column({
     name: 'reference_street',
     type: 'text',
+    nullable:true,
     comment: '',
   })
   referenceStreet: string;
@@ -147,6 +151,7 @@ export class EstablishmentAddressEntity {
   @Column({
     name: 'latitude',
     type: 'float',
+    nullable:true,
     comment: '',
   })
   latitude: number;
@@ -154,6 +159,7 @@ export class EstablishmentAddressEntity {
   @Column({
     name: 'longitude',
     type: 'float',
+    nullable:true,
     comment: '',
   })
   longitude: number;

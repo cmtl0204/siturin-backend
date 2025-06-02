@@ -85,6 +85,7 @@ export class EstablishmentContactPersonEntity {
   @Column({
     name: 'identification',
     type: 'varchar',
+    nullable: true,
     comment: 'Codigo',
   })
   identification: string;
@@ -92,6 +93,7 @@ export class EstablishmentContactPersonEntity {
   @Column({
     name: 'email',
     type: 'varchar',
+    nullable: true,
     comment: '',
   })
   email: string;
@@ -99,6 +101,7 @@ export class EstablishmentContactPersonEntity {
   @Column({
     name: 'name',
     type: 'varchar',
+    nullable: true,
     comment: 'Nombre',
   })
   name: string;
@@ -106,6 +109,7 @@ export class EstablishmentContactPersonEntity {
   @Column({
     name: 'phone',
     type: 'varchar',
+    nullable: true,
     comment: '',
   })
   phone: string;
@@ -113,6 +117,7 @@ export class EstablishmentContactPersonEntity {
   @Column({
     name: 'secondary_phone',
     type: 'varchar',
+    nullable: true,
     comment: '',
   })
   secondaryPhone: string;

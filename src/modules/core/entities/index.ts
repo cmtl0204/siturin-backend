@@ -1,6 +1,7 @@
 export { ActivityEntity } from './activity.entity';
 export { AdventureTourismModalityEntity } from './adventure-tourism-modality.entity';
 export { AssignmentEntity } from './assignment.entity';
+export { BreachCauseEntity } from './breach-cause.entity';
 export { CadastreEntity } from './cadastre.entity';
 export { CadastreStateEntity } from './cadastre-state.entity';
 export { CategoryEntity } from './category.entity';
@@ -13,6 +14,7 @@ export { EstablishmentEntity } from './establishment.entity';
 export { EstablishmentAddressEntity } from './establishment-address.entity';
 export { EstablishmentContactPersonEntity } from './establishment-contact-person.entity';
 export { ExternalUserEntity } from './external-user.entity';
+export { InactivationCauseEntity } from './inactivation-cause.entity';
 export { InspectionEntity } from './inspection.entity';
 export { InternalDpaUserEntity } from './internal-dpa-user.entity';
 export { InternalUserEntity } from './internal-user.entity';
@@ -46,6 +48,7 @@ export { ZoneEntity } from './zone.entity';
 import { ActivityEntity } from './activity.entity';
 import { AdventureTourismModalityEntity } from './adventure-tourism-modality.entity';
 import { AssignmentEntity } from './assignment.entity';
+import { BreachCauseEntity } from './breach-cause.entity';
 import { CadastreEntity } from './cadastre.entity';
 import { CadastreStateEntity } from './cadastre-state.entity';
 import { CategoryEntity } from './category.entity';
@@ -58,6 +61,7 @@ import { EstablishmentEntity } from './establishment.entity';
 import { EstablishmentAddressEntity } from './establishment-address.entity';
 import { EstablishmentContactPersonEntity } from './establishment-contact-person.entity';
 import { ExternalUserEntity } from './external-user.entity';
+import { InactivationCauseEntity } from './inactivation-cause.entity';
 import { InspectionEntity } from './inspection.entity';
 import { InternalDpaUserEntity } from './internal-dpa-user.entity';
 import { InternalUserEntity } from './internal-user.entity';
@@ -92,6 +96,7 @@ export const entities = [
   ActivityEntity,
   AdventureTourismModalityEntity,
   AssignmentEntity,
+  BreachCauseEntity,
   CadastreEntity,
   CadastreStateEntity,
   CategoryEntity,
@@ -104,6 +109,7 @@ export const entities = [
   EstablishmentAddressEntity,
   EstablishmentContactPersonEntity,
   ExternalUserEntity,
+  InactivationCauseEntity,
   InspectionEntity,
   InternalDpaUserEntity,
   InternalUserEntity,

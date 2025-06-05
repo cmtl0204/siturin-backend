@@ -888,4 +888,56 @@ export class MigrationService {
 
     return { data: null };
   }
+
+  async migrateProcessTransport() {
+    const data = await this.getProcessContactPerson();
+
+    const establishments = await this.establishmentRepository.find();
+    const processes = await this.processRepository.find();
+
+    for (const item of data) {
+      const entity = this.establishmentContactPersonRepository.create();
+
+      const establishment = establishments.find(
+        (x) => x.idTemp == item.establecimiento_id,
+      );
+      const process = processes.find((x) => x.idTemp == item.id);
+
+      entity.createdAt = item.created_at || new Date();
+      entity.updatedAt = item.updated_at || new Date();
+
+      entity.isCurrent = false;
+
+      if (!item.deleted_at) entity.isCurrent = true;
+
+      entity.establishmentId = establishment?.id!;
+      entity.processId = process?.id!;
+
+      if (item.persona_contacto) {
+        if (item.persona_contacto.identificacion) {
+          entity.identification = item.persona_contacto.identificacion;
+        }
+
+        if (item.persona_contacto.nombres) {
+          entity.name = item.persona_contacto.nombres;
+        }
+
+        if (item.persona_contacto.telefonoPrincipal) {
+          entity.phone = item.persona_contacto.telefonoPrincipal;
+        }
+
+        if (item.persona_contacto.telefonoSecundario) {
+          entity.secondaryPhone = item.persona_contacto.telefonoSecundario;
+        }
+
+        if (item.persona_contacto.correo) {
+          entity.email = item.persona_contacto.correo;
+        }
+
+        const x = await this.establishmentContactPersonRepository.save(entity);
+      }
+    }
+
+    return { data: null };
+  }
 }

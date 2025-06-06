@@ -8,7 +8,6 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ActivityEntity } from '@modules/core/entities/activity.entity';
 import { ProcessEntity } from '@modules/core/entities/process.entity';
 
 @Entity('kitchen_types', { schema: 'core' })
@@ -66,6 +65,7 @@ export class KitchenTypeEntity {
   @Column({
     name: 'code',
     type: 'varchar',
+    nullable:true,
     comment: 'Codigo',
   })
   code: string;
@@ -73,6 +73,7 @@ export class KitchenTypeEntity {
   @Column({
     name: 'name',
     type: 'varchar',
+    nullable:true,
     comment: 'Nombre',
   })
   name: string;

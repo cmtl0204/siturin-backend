@@ -13,7 +13,8 @@ import {
   ComplementaryServiceEntity,
   ComplementaryServiceRegulationEntity,
   CtcActivityEntity,
-  EstablishmentAddressEntity, EstablishmentContactPersonEntity,
+  EstablishmentAddressEntity,
+  EstablishmentContactPersonEntity,
   EstablishmentEntity,
   ExternalUserEntity,
   InactivationCauseEntity,
@@ -47,6 +48,8 @@ import {
   TouristTransportCompanyEntity,
   ZoneEntity,
 } from '@modules/core/entities';
+import { KitchenTypeEntity } from '@modules/core/entities/kitchen-type.entity';
+import { ServiceTypeEntity } from '@modules/core/entities/service-type.entity';
 
 export const coreProviders = [
   {
@@ -182,6 +185,12 @@ export const coreProviders = [
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
+    provide: CoreRepositoryEnum.KITCHEN_TYPE_REPOSITORY,
+    useFactory: (dataSource: DataSource) =>
+      dataSource.getRepository(KitchenTypeEntity),
+    inject: [ConfigEnum.PG_DATA_SOURCE],
+  },
+  {
     provide: CoreRepositoryEnum.LAND_TRANSPORT_REPOSITORY,
     useFactory: (dataSource: DataSource) =>
       dataSource.getRepository(LandTransportEntity),
@@ -298,6 +307,12 @@ export const coreProviders = [
     provide: CoreRepositoryEnum.SALES_REPRESENTATIVE_REPOSITORY,
     useFactory: (dataSource: DataSource) =>
       dataSource.getRepository(SalesRepresentativeEntity),
+    inject: [ConfigEnum.PG_DATA_SOURCE],
+  },
+  {
+    provide: CoreRepositoryEnum.SERVICE_TYPE_REPOSITORY,
+    useFactory: (dataSource: DataSource) =>
+      dataSource.getRepository(ServiceTypeEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {

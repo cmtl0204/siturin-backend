@@ -77,6 +77,7 @@ export class ProcessAccommodationEntity {
   @Column({
     name: 'inactivation_code',
     type: 'varchar',
+    nullable: true,
     comment: '',
   })
   inactivationCode: string;
@@ -84,6 +85,7 @@ export class ProcessAccommodationEntity {
   @Column({
     name: 'inactivation_at',
     type: 'date',
+    nullable: true,
     comment: '',
   })
   inactivationAt: Date;
@@ -91,6 +93,7 @@ export class ProcessAccommodationEntity {
   @Column({
     name: 'rack_year',
     type: 'integer',
+    nullable: true,
     comment: '',
   })
   rackYear: number;
@@ -98,6 +101,7 @@ export class ProcessAccommodationEntity {
   @Column({
     name: 'declaration_at',
     type: 'timestamp',
+    nullable: true,
     comment: '',
   })
   declarationAt: Date;

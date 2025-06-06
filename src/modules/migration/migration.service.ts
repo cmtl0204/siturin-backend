@@ -20,8 +20,16 @@ import {
   InternalDpaUserEntity,
   InternalUserEntity,
   InternalZonalUserEntity,
+  LandTransportEntity,
   PaymentEntity,
+  ProcessAccommodationEntity,
+  ProcessAgencyEntity,
+  ProcessCtcEntity,
   ProcessEntity,
+  ProcessEventEntity,
+  ProcessFoodDrinkEntity,
+  ProcessParkEntity,
+  ProcessTransportEntity,
   RoomTypeEntity,
   RucEntity,
   ZoneEntity,
@@ -30,6 +38,8 @@ import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
 import { DpaEntity } from '@modules/common/dpa/dpa.entity';
 import { UserEntity } from '@auth/entities';
 import { ObservationEntity } from '@modules/core/entities/observation.entity';
+import { KitchenTypeEntity } from '@modules/core/entities/kitchen-type.entity';
+import { ServiceTypeEntity } from '@modules/core/entities/service-type.entity';
 
 @Injectable()
 export class MigrationService {
@@ -80,6 +90,26 @@ export class MigrationService {
     private readonly inactivationCauseRepository: Repository<InactivationCauseEntity>,
     @Inject(CoreRepositoryEnum.BREACH_REPOSITORY)
     private readonly breachCauseRepository: Repository<BreachCauseEntity>,
+    @Inject(CoreRepositoryEnum.PROCESS_FOOD_DRINK_REPOSITORY)
+    private readonly processFoodDrinkRepository: Repository<ProcessFoodDrinkEntity>,
+    @Inject(CoreRepositoryEnum.KITCHEN_TYPE_REPOSITORY)
+    private readonly kitchenTypeRepository: Repository<KitchenTypeEntity>,
+    @Inject(CoreRepositoryEnum.SERVICE_TYPE_REPOSITORY)
+    private readonly serviceTypeRepository: Repository<ServiceTypeEntity>,
+    @Inject(CoreRepositoryEnum.PROCESS_ACCOMMODATION_REPOSITORY)
+    private readonly processAccommodationRepository: Repository<ProcessAccommodationEntity>,
+    @Inject(CoreRepositoryEnum.PROCESS_CTC_REPOSITORY)
+    private readonly processCtcRepository: Repository<ProcessCtcEntity>,
+    @Inject(CoreRepositoryEnum.PROCESS_EVENT_REPOSITORY)
+    private readonly processEventRepository: Repository<ProcessEventEntity>,
+    @Inject(CoreRepositoryEnum.PROCESS_AGENCY_REPOSITORY)
+    private readonly processAgencyRepository: Repository<ProcessAgencyEntity>,
+    @Inject(CoreRepositoryEnum.PROCESS_PARK_REPOSITORY)
+    private readonly processParkRepository: Repository<ProcessParkEntity>,
+    @Inject(CoreRepositoryEnum.PROCESS_TRANSPORT_REPOSITORY)
+    private readonly processTransportRepository: Repository<ProcessTransportEntity>,
+    @Inject(CoreRepositoryEnum.LAND_TRANSPORT_REPOSITORY)
+    private readonly landTransportRepository: Repository<LandTransportEntity>,
   ) {}
 
   async getData(table: string): Promise<any> {
@@ -519,11 +549,11 @@ export class MigrationService {
 
   async migrateRucs() {
     const data = await this.getData('siturin.rucs');
-    const rucs = await this.rucRepository.find();
+    const table = await this.rucRepository.find();
     const catalogues = await this.catalogueRepository.find();
 
     for (const item of data) {
-      const exists = rucs.find((register) => register.idTemp == item.id);
+      const exists = table.find((register) => register.idTemp == item.id);
 
       if (!exists) {
         const entity = this.rucRepository.create();
@@ -837,7 +867,7 @@ export class MigrationService {
     return { data: null };
   }
 
-  async migrateProcessContactPerson() {
+  async migrateProcessContactPersons() {
     const data = await this.getProcessContactPerson();
 
     const establishments = await this.establishmentRepository.find();
@@ -889,52 +919,285 @@ export class MigrationService {
     return { data: null };
   }
 
-  async migrateProcessTransport() {
-    const data = await this.getProcessContactPerson();
+  async migrateProcessFoodDrinks() {
+    const data = await this.getData('siturin.tramite_alimentos_bebidas');
 
-    const establishments = await this.establishmentRepository.find();
+    const table = await this.processFoodDrinkRepository.find();
+    const processes = await this.processRepository.find();
+    const catalogues = await this.catalogueRepository.find();
+
+    for (const item of data) {
+      const exists = table.find((register) => register.idTemp == item.id);
+
+      if (!exists) {
+        const entity = this.processFoodDrinkRepository.create();
+
+        entity.createdAt = item.created_at || new Date();
+        entity.updatedAt = item.updated_at || new Date();
+        entity.deletedAt = item.deleted_at;
+        entity.idTemp = item.id;
+
+        entity.establishmentName = item.nombre_establecimiento;
+        entity.hasFranchiseGrantCertificate =
+          item.tiene_certificado_concesion_franquicia;
+        entity.score = item.puntaje;
+        entity.totalTables = item.total_mesas;
+        entity.totalCapacities = item.total_capacidades;
+
+        const process = processes.find((x) => x.idTemp == item.tramite_id);
+
+        const establishmentType = catalogues.find(
+          (x) => x.idTemp == item.tipo_establecimiento_id,
+        );
+
+        if (process) entity.processId = process.id;
+
+        if (establishmentType)
+          entity.establishmentTypeId = establishmentType.id;
+
+        await this.processFoodDrinkRepository.save(entity);
+
+        if (Array.isArray(item.tipos_cocina)) {
+          for (const tc of item.tipos_cocina) {
+            if (tc?.codigo) {
+              const kitchenType = this.kitchenTypeRepository.create();
+              kitchenType.idTemp = item.id;
+              kitchenType.code = tc.codigo;
+              kitchenType.name = tc.nombre;
+
+              if (process) kitchenType.processId = process.id;
+
+              await this.kitchenTypeRepository.save(kitchenType);
+            }
+          }
+        }
+
+        if (Array.isArray(item.tipos_servicio)) {
+          for (const ts of item.tipos_servicio) {
+            if (ts?.codigo) {
+              const serviceType = this.serviceTypeRepository.create();
+              serviceType.idTemp = item.id;
+              serviceType.code = ts.codigo;
+              serviceType.name = ts.nombre;
+              if (process) serviceType.processId = process.id;
+
+              await this.serviceTypeRepository.save(serviceType);
+            }
+          }
+        }
+      }
+    }
+
+    return { data: null };
+  }
+
+  async migrateProcessAccommodation() {
+    const data = await this.getData('siturin.tramite_alojamientos');
+
+    const table = await this.processAccommodationRepository.find();
     const processes = await this.processRepository.find();
 
     for (const item of data) {
-      const entity = this.establishmentContactPersonRepository.create();
+      const exists = table.find((register) => register.idTemp == item.id);
 
-      const establishment = establishments.find(
-        (x) => x.idTemp == item.establecimiento_id,
-      );
-      const process = processes.find((x) => x.idTemp == item.id);
+      if (!exists) {
+        const entity = this.processAccommodationRepository.create();
 
-      entity.createdAt = item.created_at || new Date();
-      entity.updatedAt = item.updated_at || new Date();
+        entity.createdAt = item.created_at || new Date();
+        entity.updatedAt = item.updated_at || new Date();
+        entity.deletedAt = item.deleted_at;
+        entity.idTemp = item.id;
 
-      entity.isCurrent = false;
+        entity.inactivationCode = item.codigo_inactivacion;
+        entity.inactivationAt = item.fecha_inactivacion;
+        entity.rackYear = item.anio_rack;
+        entity.declarationAt = item.fecha_declaracion;
 
-      if (!item.deleted_at) entity.isCurrent = true;
+        const process = processes.find((x) => x.idTemp == item.tramite_id);
 
-      entity.establishmentId = establishment?.id!;
-      entity.processId = process?.id!;
+        if (process) entity.processId = process.id;
 
-      if (item.persona_contacto) {
-        if (item.persona_contacto.identificacion) {
-          entity.identification = item.persona_contacto.identificacion;
-        }
+        await this.processAccommodationRepository.save(entity);
+      }
+    }
 
-        if (item.persona_contacto.nombres) {
-          entity.name = item.persona_contacto.nombres;
-        }
+    return { data: null };
+  }
 
-        if (item.persona_contacto.telefonoPrincipal) {
-          entity.phone = item.persona_contacto.telefonoPrincipal;
-        }
+  async migrateProcessEvents() {
+    const data = await this.getData('siturin.tramite_eventos');
 
-        if (item.persona_contacto.telefonoSecundario) {
-          entity.secondaryPhone = item.persona_contacto.telefonoSecundario;
-        }
+    const table = await this.processEventRepository.find();
+    const processes = await this.processRepository.find();
 
-        if (item.persona_contacto.correo) {
-          entity.email = item.persona_contacto.correo;
-        }
+    for (const item of data) {
+      const exists = table.find((register) => register.idTemp == item.id);
 
-        const x = await this.establishmentContactPersonRepository.save(entity);
+      if (!exists) {
+        const entity = this.processEventRepository.create();
+
+        entity.createdAt = item.created_at || new Date();
+        entity.updatedAt = item.updated_at || new Date();
+        entity.deletedAt = item.deleted_at;
+        entity.idTemp = item.id;
+
+        entity.totalCapacities = item.total_capacidades;
+
+        const process = processes.find((x) => x.idTemp == item.tramite_id);
+
+        if (process) entity.processId = process.id;
+
+        await this.processEventRepository.save(entity);
+      }
+    }
+
+    return { data: null };
+  }
+
+  async migrateProcessCtc() {
+    const data = await this.getData('siturin.tramite_ctc');
+
+    const table = await this.processCtcRepository.find();
+    const processes = await this.processRepository.find();
+
+    for (const item of data) {
+      const exists = table.find((register) => register.idTemp == item.id);
+
+      if (!exists) {
+        const entity = this.processCtcRepository.create();
+
+        entity.createdAt = item.created_at || new Date();
+        entity.updatedAt = item.updated_at || new Date();
+        entity.deletedAt = item.deleted_at;
+        entity.idTemp = item.id;
+
+        entity.totalBeds = item.total_camas;
+        entity.totalCapacities = item.total_capacidades;
+        entity.totalRooms = item.total_habitaciones;
+        entity.totalTables = item.total_mesas;
+        entity.totalPlaces = item.total_plazas;
+        entity.hasPropertyRegistrationCertificate =
+          item.tiene_certificado_registro_propiedad;
+        entity.hasTechnicalReport = item.tiene_informe_tecnico;
+        entity.hasStatute = item.tiene_estatuo;
+
+        const process = processes.find((x) => x.idTemp == item.tramite_id);
+
+        if (process) entity.processId = process.id;
+
+        await this.processCtcRepository.save(entity);
+      }
+    }
+
+    return { data: null };
+  }
+
+  async migrateProcessAgencies() {
+    const data = await this.getData(
+      'siturin.tramite_operaciones_intermediaciones',
+    );
+
+    const table = await this.processAgencyRepository.find();
+    const processes = await this.processRepository.find();
+    const catalogues = await this.catalogueRepository.find();
+    
+    for (const item of data) {
+      const exists = table.find((register) => register.idTemp == item.id);
+
+      if (!exists) {
+        const entity = this.processAgencyRepository.create();
+
+        entity.createdAt = item.created_at || new Date();
+        entity.updatedAt = item.updated_at || new Date();
+        entity.deletedAt = item.deleted_at;
+        entity.idTemp = item.id;
+
+        entity.totalAccreditedStaffLanguage = item.personal_acreditado_idioma;
+
+        const process = processes.find((x) => x.idTemp == item.tramite_id);
+        const permanentPhysicalSpace = catalogues.find(
+          (x) => x.idTemp == item.espacio_fisico_permanente_id,
+        );
+
+        if (process) entity.processId = process.id;
+        if (permanentPhysicalSpace)
+          entity.permanentPhysicalSpaceId = permanentPhysicalSpace.id;
+
+        await this.processAgencyRepository.save(entity);
+      }
+    }
+
+    return { data: null };
+  }
+
+  async migrateProcessParks() {
+    const data = await this.getData('siturin.tramite_parques');
+
+    const table = await this.processParkRepository.find();
+    const processes = await this.processRepository.find();
+
+    for (const item of data) {
+      const exists = table.find((register) => register.idTemp == item.id);
+
+      if (!exists) {
+        const entity = this.processParkRepository.create();
+
+        entity.createdAt = item.created_at || new Date();
+        entity.updatedAt = item.updated_at || new Date();
+        entity.deletedAt = item.deleted_at;
+        entity.idTemp = item.id;
+
+        entity.totalCapacities = item.total_capacidades;
+
+        const process = processes.find((x) => x.idTemp == item.tramite_id);
+
+        if (process) entity.processId = process.id;
+
+        await this.processParkRepository.save(entity);
+      }
+    }
+
+    return { data: null };
+  }
+
+  async migrateProcessTransports() {
+    const data = await this.getData('siturin.tramite_transportes');
+
+    const table = await this.processTransportRepository.find();
+    const processes = await this.processRepository.find();
+    const catalogues = await this.catalogueRepository.find();
+
+    for (const item of data) {
+      const exists = table.find((register) => register.idTemp == item.id);
+
+      if (!exists) {
+        const entity = this.processTransportRepository.create();
+
+        entity.createdAt = item.created_at || new Date();
+        entity.updatedAt = item.updated_at || new Date();
+        entity.deletedAt = item.deleted_at;
+        entity.idTemp = item.id;
+
+        entity.certified = item.certificado;
+        entity.certifiedCode = item.codigo_certificado;
+        entity.certifiedIssueAt = item.fecha_emision_certificado;
+        entity.certifiedExpirationAt = item.fecha_caducidad_certificado;
+        entity.totalUnits = item.total_unidades;
+        entity.totalSeats = item.total_asientos;
+
+        const process = processes.find((x) => x.idTemp == item.id);
+        const localType = catalogues.find(
+          (x) => x.idTemp == item.tipo_local_id,
+        );
+        const airlineType = catalogues.find(
+          (x) => x.idTemp == item.tipo_aerolinea_id,
+        );
+
+        if (process) entity.processId = process.id;
+        if (localType) entity.localTypeId = localType.id;
+        if (airlineType) entity.airlineTypeId = airlineType.id;
+
+        await this.processTransportRepository.save(entity);
       }
     }
 

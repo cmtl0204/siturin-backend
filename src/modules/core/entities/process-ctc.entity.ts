@@ -2,7 +2,9 @@ import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
-  Entity, JoinColumn, ManyToOne,
+  Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -75,6 +77,7 @@ export class ProcessCtcEntity {
   @Column({
     name: 'total_beds',
     type: 'integer',
+    nullable: true,
     comment: '',
   })
   totalBeds: number;
@@ -82,13 +85,23 @@ export class ProcessCtcEntity {
   @Column({
     name: 'total_capacities',
     type: 'integer',
+    nullable: true,
     comment: '',
   })
   totalCapacities: number;
 
   @Column({
+    name: 'total_places',
+    type: 'integer',
+    nullable: true,
+    comment: '',
+  })
+  totalPlaces: number;
+
+  @Column({
     name: 'total_rooms',
     type: 'integer',
+    nullable: true,
     comment: '',
   })
   totalRooms: number;
@@ -96,6 +109,7 @@ export class ProcessCtcEntity {
   @Column({
     name: 'total_tables',
     type: 'integer',
+    nullable: true,
     comment: '',
   })
   totalTables: number;
@@ -103,6 +117,7 @@ export class ProcessCtcEntity {
   @Column({
     name: 'has_property_registration_certificate',
     type: 'boolean',
+    nullable: true,
     comment: '',
   })
   hasPropertyRegistrationCertificate: boolean;
@@ -110,6 +125,7 @@ export class ProcessCtcEntity {
   @Column({
     name: 'has_technical_report',
     type: 'boolean',
+    nullable: true,
     comment: '',
   })
   hasTechnicalReport: boolean;
@@ -117,6 +133,7 @@ export class ProcessCtcEntity {
   @Column({
     name: 'has_statute',
     type: 'boolean',
+    nullable: true,
     comment: '',
   })
   hasStatute: boolean;

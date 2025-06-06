@@ -8,7 +8,6 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ActivityEntity } from '@modules/core/entities/activity.entity';
 import { ProcessEntity } from '@modules/core/entities/process.entity';
 
 @Entity('service_types', { schema: 'core' })

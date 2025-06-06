@@ -251,7 +251,98 @@ export class MigrationController {
   @Post('process-contact-persons')
   @HttpCode(HttpStatus.CREATED)
   async migrateProcessContactPerson(): Promise<ResponseHttpInterface> {
-    const responseService = await this.migrationService.migrateProcessContactPerson();
+    const responseService = await this.migrationService.migrateProcessContactPersons();
+
+    return {
+      data: responseService.data,
+      message: 'created',
+      title: 'process-contact-persons',
+    };
+  }
+
+  @PublicRoute()
+  @Post('process-food-drinks')
+  @HttpCode(HttpStatus.CREATED)
+  async migrateProcessFoodDrinks(): Promise<ResponseHttpInterface> {
+    const responseService = await this.migrationService.migrateProcessFoodDrinks();
+
+    return {
+      data: responseService.data,
+      message: 'created',
+      title: 'process-contact-persons',
+    };
+  }
+
+  @PublicRoute()
+  @Post('process-accommodation')
+  @HttpCode(HttpStatus.CREATED)
+  async migrateProcessAccommodation(): Promise<ResponseHttpInterface> {
+    const responseService = await this.migrationService.migrateProcessAccommodation();
+
+    return {
+      data: responseService.data,
+      message: 'created',
+      title: 'process-contact-persons',
+    };
+  }
+
+  @PublicRoute()
+  @Post('process-events')
+  @HttpCode(HttpStatus.CREATED)
+  async migrateProcessEvents(): Promise<ResponseHttpInterface> {
+    const responseService = await this.migrationService.migrateProcessEvents();
+
+    return {
+      data: responseService.data,
+      message: 'created',
+      title: 'process-contact-persons',
+    };
+  }
+
+  @PublicRoute()
+  @Post('process-ctc')
+  @HttpCode(HttpStatus.CREATED)
+  async migrateProcessCtc(): Promise<ResponseHttpInterface> {
+    const responseService = await this.migrationService.migrateProcessCtc();
+
+    return {
+      data: responseService.data,
+      message: 'created',
+      title: 'process-contact-persons',
+    };
+  }
+
+  @PublicRoute()
+  @Post('process-agencies')
+  @HttpCode(HttpStatus.CREATED)
+  async migrateProcessAgencies(): Promise<ResponseHttpInterface> {
+    const responseService = await this.migrationService.migrateProcessAgencies();
+
+    return {
+      data: responseService.data,
+      message: 'created',
+      title: 'process-contact-persons',
+    };
+  }
+
+  @PublicRoute()
+  @Post('process-parks')
+  @HttpCode(HttpStatus.CREATED)
+  async migrateProcessParks(): Promise<ResponseHttpInterface> {
+    const responseService = await this.migrationService.migrateProcessParks();
+
+    return {
+      data: responseService.data,
+      message: 'created',
+      title: 'process-contact-persons',
+    };
+  }
+
+  @PublicRoute()
+  @Post('process-transports')
+  @HttpCode(HttpStatus.CREATED)
+  async migrateProcessTransports(): Promise<ResponseHttpInterface> {
+    const responseService = await this.migrationService.migrateProcessTransports();
 
     return {
       data: responseService.data,

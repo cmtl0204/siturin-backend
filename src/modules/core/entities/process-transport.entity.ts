@@ -64,7 +64,7 @@ export class ProcessTransportEntity {
 
   @ManyToOne(() => CatalogueEntity, { nullable: true })
   @JoinColumn({ name: 'airline_type_id' })
-  type: CatalogueEntity;
+  airlineType: CatalogueEntity;
   @Column({
     type: 'uuid',
     name: 'airline_type_id',
@@ -88,6 +88,7 @@ export class ProcessTransportEntity {
   @Column({
     name: 'certified',
     type: 'varchar',
+    nullable: true,
     comment: '',
   })
   certified: string;
@@ -95,6 +96,7 @@ export class ProcessTransportEntity {
   @Column({
     name: 'certified_code',
     type: 'varchar',
+    nullable: true,
     comment: '',
   })
   certifiedCode: string;
@@ -102,6 +104,7 @@ export class ProcessTransportEntity {
   @Column({
     name: 'certified_issue_at',
     type: 'date',
+    nullable: true,
     comment: '',
   })
   certifiedIssueAt: Date;
@@ -109,6 +112,7 @@ export class ProcessTransportEntity {
   @Column({
     name: 'certified_expiration_at',
     type: 'date',
+    nullable: true,
     comment: '',
   })
   certifiedExpirationAt: Date;
@@ -116,6 +120,7 @@ export class ProcessTransportEntity {
   @Column({
     name: 'total_units',
     type: 'integer',
+    nullable: true,
     comment: '',
   })
   totalUnits: number;
@@ -123,6 +128,7 @@ export class ProcessTransportEntity {
   @Column({
     name: 'total_seats',
     type: 'integer',
+    nullable: true,
     comment: '',
   })
   totalSeats: number;

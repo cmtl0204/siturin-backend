@@ -63,15 +63,15 @@ export class ProcessAgencyEntity {
   processId: string;
 
   @ManyToOne(() => CatalogueEntity, { nullable: true })
-  @JoinColumn({ name: 'local_type_id' })
-  localType: CatalogueEntity;
+  @JoinColumn({ name: 'permanent_physical_space_id' })
+  permanentPhysicalSpace: CatalogueEntity;
   @Column({
     type: 'uuid',
-    name: 'local_type_id',
+    name: 'permanent_physical_space_id',
     nullable: true,
     comment: '',
   })
-  localTypeId: string;
+  permanentPhysicalSpaceId: string;
 
   /** Columns **/
   @Column({

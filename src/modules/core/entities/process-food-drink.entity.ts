@@ -88,6 +88,7 @@ export class ProcessFoodDrinkEntity {
   @Column({
     name: 'establishment_name',
     type: 'varchar',
+    nullable: true,
     comment: '',
   })
   establishmentName: string;
@@ -95,6 +96,7 @@ export class ProcessFoodDrinkEntity {
   @Column({
     name: 'has_franchise_grant_certificate',
     type: 'boolean',
+    nullable: true,
     comment: '',
   })
   hasFranchiseGrantCertificate: boolean;
@@ -104,6 +106,7 @@ export class ProcessFoodDrinkEntity {
     type: 'decimal',
     precision: 10,
     scale: 2,
+    nullable: true,
     comment: '',
   })
   score: string;
@@ -111,6 +114,7 @@ export class ProcessFoodDrinkEntity {
   @Column({
     name: 'total_tables',
     type: 'integer',
+    nullable: true,
     comment: '',
   })
   totalTables: number;
@@ -118,6 +122,7 @@ export class ProcessFoodDrinkEntity {
   @Column({
     name: 'total_capacities',
     type: 'integer',
+    nullable: true,
     comment: '',
   })
   totalCapacities: number;

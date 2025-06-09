@@ -2,7 +2,9 @@ import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
-  Entity, JoinColumn, ManyToOne,
+  Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -63,6 +65,7 @@ export class TouristGuideEntity {
   @Column({
     name: 'identification',
     type: 'varchar',
+    nullable: true,
     comment: '',
   })
   identification: string;
@@ -70,6 +73,7 @@ export class TouristGuideEntity {
   @Column({
     name: 'name',
     type: 'varchar',
+    nullable: true,
     comment: '',
   })
   name: string;
@@ -77,6 +81,7 @@ export class TouristGuideEntity {
   @Column({
     name: 'is_guide',
     type: 'boolean',
+    default: false,
     comment: '',
   })
   isGuide: boolean;

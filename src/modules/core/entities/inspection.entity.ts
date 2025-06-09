@@ -8,7 +8,9 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ProcessEntity } from '@modules/core/entities';
+import { InternalUserEntity, ProcessEntity } from '@modules/core/entities';
+import { UserEntity } from '@auth/entities';
+import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
 
 @Entity('inspections', { schema: 'core' })
 export class InspectionEntity {
@@ -61,24 +63,49 @@ export class InspectionEntity {
   })
   processId: string;
 
-  /** Columns **/
+  @ManyToOne(() => InternalUserEntity, { nullable: true })
+  @JoinColumn({ name: 'internal_user_id' })
+  internalUser: UserEntity;
   @Column({
-    name: 'attended_at',
-    type: 'timestamp',
+    type: 'uuid',
+    name: 'internal_user_id',
+    nullable: true,
     comment: '',
   })
-  attendedAt: Date;
+  internalUserId: string;
 
+  @ManyToOne(() => CatalogueEntity, { nullable: true })
+  @JoinColumn({ name: 'blood_type_id' })
+  state: CatalogueEntity;
+  @Column({
+    type: 'uuid',
+    name: 'blood_type_id',
+    nullable: true,
+    comment: 'A+, A-, B+, B-, AB+ AB-, O+, O-',
+  })
+  stateId: string;
+
+  /** Columns **/
   @Column({
     name: 'is_current',
     type: 'boolean',
+    nullable: true,
     comment: '',
   })
   isCurrent: boolean;
 
   @Column({
+    name: 'attended_at',
+    type: 'timestamp',
+    nullable: true,
+    comment: '',
+  })
+  attendedAt: Date;
+
+  @Column({
     name: 'inspection_at',
     type: 'timestamp',
+    nullable: true,
     comment: '',
   })
   inspectionAt: Date;
@@ -86,16 +113,10 @@ export class InspectionEntity {
   @Column({
     name: 'request_at',
     type: 'timestamp',
+    nullable: true,
     comment: '',
   })
   requestAt: Date;
-
-  @Column({
-    name: 'observation',
-    type: 'text',
-    comment: '',
-  })
-  observation: string;
 
   @Column({
     name: 'id_temp',

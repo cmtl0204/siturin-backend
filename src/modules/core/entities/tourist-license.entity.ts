@@ -8,7 +8,6 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { UserEntity } from '@auth/entities';
 import { TouristGuideEntity } from '@modules/core/entities/tourist-guide.entity';
 
 @Entity('tourist_licenses', { schema: 'core' })

@@ -2,10 +2,13 @@ import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
-  Entity,
+  Entity, JoinColumn, ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { CategoryEntity } from '@modules/core/entities/category.entity';
+import { RoomEntity } from '@modules/core/entities/room.entity';
+import { RoomTypeEntity } from '@modules/core/entities/room-type.entity';
 
 @Entity('room_capacities', { schema: 'core' })
 export class RoomCapacityEntity {
@@ -47,7 +50,27 @@ export class RoomCapacityEntity {
   /** Inverse Relationship **/
 
   /** Foreign Keys **/
+  @ManyToOne(() => CategoryEntity, { nullable: true })
+  @JoinColumn({ name: 'category_id' })
+  category: CategoryEntity;
+  @Column({
+    type: 'uuid',
+    name: 'category_id',
+    nullable: true,
+    comment: '',
+  })
+  categoryId: string;
 
+  @ManyToOne(() => RoomTypeEntity, { nullable: true })
+  @JoinColumn({ name: 'room_type_id' })
+  roomType: RoomTypeEntity;
+  @Column({
+    type: 'uuid',
+    name: 'room_type_id',
+    nullable: true,
+    comment: '',
+  })
+  roomTypeId: string;
   /** Columns **/
   @Column({
     name: 'id_temp',

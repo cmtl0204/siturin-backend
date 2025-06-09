@@ -2,7 +2,9 @@ import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
-  Entity, JoinColumn, ManyToOne,
+  Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -63,6 +65,7 @@ export class RoomEntity {
   @Column({
     name: 'total_beds',
     type: 'integer',
+    nullable: true,
     comment: '',
   })
   totalBeds: number;
@@ -70,6 +73,7 @@ export class RoomEntity {
   @Column({
     name: 'total_rooms',
     type: 'integer',
+    nullable: true,
     comment: '',
   })
   totalRooms: number;
@@ -77,6 +81,7 @@ export class RoomEntity {
   @Column({
     name: 'total_places',
     type: 'integer',
+    nullable: true,
     comment: '',
   })
   totalPlaces: number;

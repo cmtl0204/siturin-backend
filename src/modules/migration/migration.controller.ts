@@ -18,7 +18,7 @@ export class MigrationController {
     return {
       data: responseService.data,
       message: 'created',
-      title: '',
+      title: 'catalogues',
     };
   }
 
@@ -31,7 +31,7 @@ export class MigrationController {
     return {
       data: responseService.data,
       message: 'created',
-      title: '',
+      title: 'zones',
     };
   }
 
@@ -44,7 +44,7 @@ export class MigrationController {
     return {
       data: responseService.data,
       message: 'created',
-      title: '',
+      title: 'dpa',
     };
   }
 
@@ -97,7 +97,7 @@ export class MigrationController {
     return {
       data: responseService.data,
       message: 'created',
-      title: '',
+      title: 'internal-dpa-users',
     };
   }
 
@@ -111,7 +111,7 @@ export class MigrationController {
     return {
       data: responseService.data,
       message: 'created',
-      title: '',
+      title: 'internal-zonal-users',
     };
   }
 
@@ -124,7 +124,7 @@ export class MigrationController {
     return {
       data: responseService.data,
       message: 'created',
-      title: '',
+      title: 'activities',
     };
   }
 
@@ -138,7 +138,7 @@ export class MigrationController {
     return {
       data: responseService.data,
       message: 'created',
-      title: '',
+      title: 'classifications',
     };
   }
 
@@ -151,7 +151,7 @@ export class MigrationController {
     return {
       data: responseService.data,
       message: 'created',
-      title: '',
+      title: 'classifications',
     };
   }
 
@@ -164,7 +164,7 @@ export class MigrationController {
     return {
       data: responseService.data,
       message: 'created',
-      title: '',
+      title: 'classifications',
     };
   }
 
@@ -177,7 +177,7 @@ export class MigrationController {
     return {
       data: responseService.data,
       message: 'created',
-      title: '',
+      title: 'establishments',
     };
   }
 
@@ -191,7 +191,7 @@ export class MigrationController {
     return {
       data: responseService.data,
       message: 'created',
-      title: '',
+      title: 'category-configurations',
     };
   }
 
@@ -204,7 +204,7 @@ export class MigrationController {
     return {
       data: responseService.data,
       message: 'created',
-      title: '',
+      title: 'payments',
     };
   }
 
@@ -217,7 +217,7 @@ export class MigrationController {
     return {
       data: responseService.data,
       message: 'created',
-      title: '',
+      title: 'payments',
     };
   }
 
@@ -230,7 +230,7 @@ export class MigrationController {
     return {
       data: responseService.data,
       message: 'created',
-      title: '',
+      title: 'payments',
     };
   }
 
@@ -238,12 +238,13 @@ export class MigrationController {
   @Post('process-addresses')
   @HttpCode(HttpStatus.CREATED)
   async migrateProcessesAddresses(): Promise<ResponseHttpInterface> {
-    const responseService = await this.migrationService.migrateProcessAddresses();
+    const responseService =
+      await this.migrationService.migrateProcessAddresses();
 
     return {
       data: responseService.data,
       message: 'created',
-      title: '',
+      title: 'payments',
     };
   }
 
@@ -251,7 +252,8 @@ export class MigrationController {
   @Post('process-contact-persons')
   @HttpCode(HttpStatus.CREATED)
   async migrateProcessContactPerson(): Promise<ResponseHttpInterface> {
-    const responseService = await this.migrationService.migrateProcessContactPersons();
+    const responseService =
+      await this.migrationService.migrateProcessContactPersons();
 
     return {
       data: responseService.data,
@@ -264,12 +266,13 @@ export class MigrationController {
   @Post('process-food-drinks')
   @HttpCode(HttpStatus.CREATED)
   async migrateProcessFoodDrinks(): Promise<ResponseHttpInterface> {
-    const responseService = await this.migrationService.migrateProcessFoodDrinks();
+    const responseService =
+      await this.migrationService.migrateProcessFoodDrinks();
 
     return {
       data: responseService.data,
       message: 'created',
-      title: 'process-contact-persons',
+      title: 'process-food-drinks',
     };
   }
 
@@ -277,12 +280,13 @@ export class MigrationController {
   @Post('process-accommodation')
   @HttpCode(HttpStatus.CREATED)
   async migrateProcessAccommodation(): Promise<ResponseHttpInterface> {
-    const responseService = await this.migrationService.migrateProcessAccommodation();
+    const responseService =
+      await this.migrationService.migrateProcessAccommodation();
 
     return {
       data: responseService.data,
       message: 'created',
-      title: 'process-contact-persons',
+      title: 'process-accommodation',
     };
   }
 
@@ -295,7 +299,7 @@ export class MigrationController {
     return {
       data: responseService.data,
       message: 'created',
-      title: 'process-contact-persons',
+      title: 'process-events',
     };
   }
 
@@ -308,7 +312,7 @@ export class MigrationController {
     return {
       data: responseService.data,
       message: 'created',
-      title: 'process-contact-persons',
+      title: 'process-ctc',
     };
   }
 
@@ -316,7 +320,8 @@ export class MigrationController {
   @Post('process-agencies')
   @HttpCode(HttpStatus.CREATED)
   async migrateProcessAgencies(): Promise<ResponseHttpInterface> {
-    const responseService = await this.migrationService.migrateProcessAgencies();
+    const responseService =
+      await this.migrationService.migrateProcessAgencies();
 
     return {
       data: responseService.data,
@@ -342,12 +347,159 @@ export class MigrationController {
   @Post('process-transports')
   @HttpCode(HttpStatus.CREATED)
   async migrateProcessTransports(): Promise<ResponseHttpInterface> {
-    const responseService = await this.migrationService.migrateProcessTransports();
+    const responseService =
+      await this.migrationService.migrateProcessTransports();
 
     return {
       data: responseService.data,
       message: 'created',
-      title: 'process-contact-persons',
+      title: 'process-transports',
+    };
+  }
+
+  @PublicRoute()
+  @Post('assignments')
+  @HttpCode(HttpStatus.CREATED)
+  async migrateAssignments(): Promise<ResponseHttpInterface> {
+    const responseService = await this.migrationService.migrateAssignments();
+
+    return {
+      data: responseService.data,
+      message: 'created',
+      title: 'assignments',
+    };
+  }
+
+  @PublicRoute()
+  @Post('ctc-activities')
+  @HttpCode(HttpStatus.CREATED)
+  async migrateCtcActivities(): Promise<ResponseHttpInterface> {
+    const responseService = await this.migrationService.migrateCtcActivities();
+
+    return {
+      data: responseService.data,
+      message: 'created',
+      title: 'ctc-activities',
+    };
+  }
+
+  @PublicRoute()
+  @Post('tourist-guides')
+  @HttpCode(HttpStatus.CREATED)
+  async migrateTouristGuides(): Promise<ResponseHttpInterface> {
+    const responseService = await this.migrationService.migrateTouristGuides();
+
+    return {
+      data: responseService.data,
+      message: 'created',
+      title: 'tourist-guides',
+    };
+  }
+
+  @PublicRoute()
+  @Post('rooms')
+  @HttpCode(HttpStatus.CREATED)
+  async migrateRooms(): Promise<ResponseHttpInterface> {
+    const responseService = await this.migrationService.migrateRooms();
+
+    return {
+      data: responseService.data,
+      message: 'created',
+      title: 'rooms',
+    };
+  }
+
+  @PublicRoute()
+  @Post('room-rates')
+  @HttpCode(HttpStatus.CREATED)
+  async migrateRoomRates(): Promise<ResponseHttpInterface> {
+    const responseService = await this.migrationService.migrateRoomRates();
+
+    return {
+      data: responseService.data,
+      message: 'created',
+      title: 'room-rates',
+    };
+  }
+
+  @PublicRoute()
+  @Post('room-capacities')
+  @HttpCode(HttpStatus.CREATED)
+  async migrateRoomCapacities(): Promise<ResponseHttpInterface> {
+    const responseService = await this.migrationService.migrateRoomCapacities();
+
+    return {
+      data: responseService.data,
+      message: 'created',
+      title: 'room-capacities',
+    };
+  }
+
+  @PublicRoute()
+  @Post('inspections')
+  @HttpCode(HttpStatus.CREATED)
+  async migrateInspections(): Promise<ResponseHttpInterface> {
+    const responseService = await this.migrationService.migrateInspections();
+
+    return {
+      data: responseService.data,
+      message: 'created',
+      title: 'inspections',
+    };
+  }
+
+  @PublicRoute()
+  @Post('tourist-licenses')
+  @HttpCode(HttpStatus.CREATED)
+  async migrateTouristLicenses(): Promise<ResponseHttpInterface> {
+    const responseService =
+      await this.migrationService.migrateTouristLicenses();
+
+    return {
+      data: responseService.data,
+      message: 'created',
+      title: 'tourist-licenses',
+    };
+  }
+
+  @PublicRoute()
+  @Post('adventure-tourism-modalities')
+  @HttpCode(HttpStatus.CREATED)
+  async migrateAdventureTourismModalities(): Promise<ResponseHttpInterface> {
+    const responseService =
+      await this.migrationService.migrateAdventureTourismModalities();
+
+    return {
+      data: responseService.data,
+      message: 'created',
+      title: 'adventure-tourism-modalities',
+    };
+  }
+
+  @PublicRoute()
+  @Post('sales-representatives')
+  @HttpCode(HttpStatus.CREATED)
+  async migrateSalesRepresentatives(): Promise<ResponseHttpInterface> {
+    const responseService =
+      await this.migrationService.migrateSalesRepresentatives();
+
+    return {
+      data: responseService.data,
+      message: 'created',
+      title: 'sales-representatives',
+    };
+  }
+
+  @PublicRoute()
+  @Post('land-transports')
+  @HttpCode(HttpStatus.CREATED)
+  async migrateLandTransports(): Promise<ResponseHttpInterface> {
+    const responseService = await this.migrationService.migrateLandTransports();
+
+    return {
+      data: responseService.data,
+      message: 'created',
+      title: 'land-transports',
     };
   }
 }

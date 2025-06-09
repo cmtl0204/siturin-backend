@@ -3,9 +3,16 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { DpaEntity } from '@modules/common/dpa/dpa.entity';
+import { ProcessEntity } from '@modules/core/entities/process.entity';
+import { InternalUserEntity } from '@modules/core/entities/internal-user.entity';
+import { UserEntity } from '@auth/entities';
+import { ZoneEntity } from '@modules/core/entities/zone.entity';
 
 @Entity('assignments', { schema: 'core' })
 export class AssignmentEntity {
@@ -47,8 +54,67 @@ export class AssignmentEntity {
   /** Inverse Relationship **/
 
   /** Foreign Keys **/
+  @ManyToOne(() => ProcessEntity, { nullable: true })
+  @JoinColumn({ name: 'process_id' })
+  process: ProcessEntity;
+  @Column({
+    type: 'uuid',
+    name: 'process_id',
+    nullable: true,
+    comment: 'Actividad',
+  })
+  processId: string;
+
+  @ManyToOne(() => InternalUserEntity, { nullable: true })
+  @JoinColumn({ name: 'internal_user_id' })
+  internalUser: UserEntity;
+  @Column({
+    type: 'uuid',
+    name: 'internal_user_id',
+    nullable: true,
+    comment: '',
+  })
+  internalUserId: string;
+
+  @ManyToOne(() => DpaEntity, { nullable: true })
+  @JoinColumn({ name: 'dpa_id' })
+  dpa: DpaEntity;
+  @Column({
+    type: 'uuid',
+    name: 'dpa_id',
+    nullable: true,
+    comment: '',
+  })
+  dpaId: string;
+
+  @ManyToOne(() => ZoneEntity, { nullable: true })
+  @JoinColumn({ name: 'zone_id' })
+  zone: ZoneEntity;
+  @Column({
+    type: 'uuid',
+    name: 'zone_id',
+    nullable: true,
+    comment: '',
+  })
+  zoneId: string;
 
   /** Columns **/
+  @Column({
+    name: 'is_current',
+    type: 'boolean',
+    default: true,
+    comment: '',
+  })
+  isCurrent: boolean;
+
+  @Column({
+    name: 'registered_at',
+    type: 'timestamp',
+    nullable: true,
+    comment: 'Fecha de registro',
+  })
+  registeredAt: Date;
+
   @Column({
     name: 'id_temp',
     type: 'bigint',

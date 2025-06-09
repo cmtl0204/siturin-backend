@@ -2,7 +2,9 @@ import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
-  Entity, JoinColumn, ManyToOne,
+  Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -63,6 +65,7 @@ export class SalesRepresentativeEntity {
   @Column({
     name: 'legal_name',
     type: 'varchar',
+    nullable: true,
     comment: '',
   })
   legalName: string;
@@ -70,6 +73,7 @@ export class SalesRepresentativeEntity {
   @Column({
     name: 'ruc',
     type: 'varchar',
+    nullable: true,
     comment: '',
   })
   ruc: string;
@@ -77,6 +81,7 @@ export class SalesRepresentativeEntity {
   @Column({
     name: 'has_professional_degree',
     type: 'boolean',
+    nullable: true,
     comment: '',
   })
   hasProfessionalDegree: boolean;
@@ -84,6 +89,7 @@ export class SalesRepresentativeEntity {
   @Column({
     name: 'has_contract',
     type: 'boolean',
+    nullable: true,
     comment: '',
   })
   hasContract: boolean;
@@ -91,6 +97,7 @@ export class SalesRepresentativeEntity {
   @Column({
     name: 'has_work_experience',
     type: 'boolean',
+    nullable: true,
     comment: '',
   })
   hasWorkExperience: boolean;

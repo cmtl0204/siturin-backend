@@ -8,15 +8,21 @@ import {
 } from '@shared/enums';
 import {
   ActivityEntity,
+  AdventureTourismModalityEntity,
+  AssignmentEntity,
   BreachCauseEntity,
+  CadastreEntity,
   CategoryConfigurationEntity,
   CategoryEntity,
   ClassificationEntity,
+  ComplementaryServiceRegulationEntity,
+  CtcActivityEntity,
   EstablishmentAddressEntity,
   EstablishmentContactPersonEntity,
   EstablishmentEntity,
   ExternalUserEntity,
   InactivationCauseEntity,
+  InspectionEntity,
   InternalDpaUserEntity,
   InternalUserEntity,
   InternalZonalUserEntity,
@@ -30,8 +36,15 @@ import {
   ProcessFoodDrinkEntity,
   ProcessParkEntity,
   ProcessTransportEntity,
+  RoomCapacityEntity,
+  RoomEntity,
+  RoomRateEntity,
   RoomTypeEntity,
   RucEntity,
+  SalesRepresentativeEntity,
+  TouristGuideEntity,
+  TouristLicenseEntity,
+  TouristTransportCompanyEntity,
   ZoneEntity,
 } from '@modules/core/entities';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
@@ -100,6 +113,8 @@ export class MigrationService {
     private readonly processAccommodationRepository: Repository<ProcessAccommodationEntity>,
     @Inject(CoreRepositoryEnum.PROCESS_CTC_REPOSITORY)
     private readonly processCtcRepository: Repository<ProcessCtcEntity>,
+    @Inject(CoreRepositoryEnum.CTC_ACTIVITY_REPOSITORY)
+    private readonly ctcActivityRepository: Repository<CtcActivityEntity>,
     @Inject(CoreRepositoryEnum.PROCESS_EVENT_REPOSITORY)
     private readonly processEventRepository: Repository<ProcessEventEntity>,
     @Inject(CoreRepositoryEnum.PROCESS_AGENCY_REPOSITORY)
@@ -110,6 +125,30 @@ export class MigrationService {
     private readonly processTransportRepository: Repository<ProcessTransportEntity>,
     @Inject(CoreRepositoryEnum.LAND_TRANSPORT_REPOSITORY)
     private readonly landTransportRepository: Repository<LandTransportEntity>,
+    @Inject(CoreRepositoryEnum.ASSIGNMENT_REPOSITORY)
+    private readonly assignmentRepository: Repository<AssignmentEntity>,
+    @Inject(CoreRepositoryEnum.INSPECTION_REPOSITORY)
+    private readonly inspectionRepository: Repository<InspectionEntity>,
+    @Inject(CoreRepositoryEnum.CADASTRE_REPOSITORY)
+    private readonly cadastreRepository: Repository<CadastreEntity>,
+    @Inject(CoreRepositoryEnum.TOURIST_TRANSPORT_COMPANY_REPOSITORY)
+    private readonly touristTransportCompanyRepository: Repository<TouristTransportCompanyEntity>,
+    @Inject(CoreRepositoryEnum.TOURIST_GUIDE_REPOSITORY)
+    private readonly touristGuideRepository: Repository<TouristGuideEntity>,
+    @Inject(CoreRepositoryEnum.TOURIST_LICENSE_REPOSITORY)
+    private readonly touristLicenseRepository: Repository<TouristLicenseEntity>,
+    @Inject(CoreRepositoryEnum.ROOM_REPOSITORY)
+    private readonly roomRepository: Repository<RoomEntity>,
+    @Inject(CoreRepositoryEnum.ROOM_RATE_REPOSITORY)
+    private readonly roomRateRepository: Repository<RoomRateEntity>,
+    @Inject(CoreRepositoryEnum.ROOM_CAPACITY_REPOSITORY)
+    private readonly roomCapacityRepository: Repository<RoomCapacityEntity>,
+    @Inject(CoreRepositoryEnum.ADVENTURE_TOURISM_MODALITY_REPOSITORY)
+    private readonly adventureTourismModalityRepository: Repository<AdventureTourismModalityEntity>,
+    @Inject(CoreRepositoryEnum.COMPLEMENTARY_SERVICE_REGULATION_REPOSITORY)
+    private readonly complementaryServiceRegulationRepository: Repository<ComplementaryServiceRegulationEntity>,
+    @Inject(CoreRepositoryEnum.SALES_REPRESENTATIVE_REPOSITORY)
+    private readonly salesRepresentativeRepository: Repository<SalesRepresentativeEntity>,
   ) {}
 
   async getData(table: string): Promise<any> {
@@ -1100,7 +1139,7 @@ export class MigrationService {
     const table = await this.processAgencyRepository.find();
     const processes = await this.processRepository.find();
     const catalogues = await this.catalogueRepository.find();
-    
+
     for (const item of data) {
       const exists = table.find((register) => register.idTemp == item.id);
 
@@ -1185,7 +1224,7 @@ export class MigrationService {
         entity.totalUnits = item.total_unidades;
         entity.totalSeats = item.total_asientos;
 
-        const process = processes.find((x) => x.idTemp == item.id);
+        const process = processes.find((x) => x.idTemp == item.tramite_id);
         const localType = catalogues.find(
           (x) => x.idTemp == item.tipo_local_id,
         );
@@ -1198,6 +1237,407 @@ export class MigrationService {
         if (airlineType) entity.airlineTypeId = airlineType.id;
 
         await this.processTransportRepository.save(entity);
+      }
+    }
+
+    return { data: null };
+  }
+
+  async migrateAssignments() {
+    const data = await this.getData('siturin.asignaciones');
+
+    const table = await this.assignmentRepository.find();
+    const processes = await this.processRepository.find();
+    const dpas = await this.dpaRepository.find();
+    const internalUsers = await this.internalUserRepository.find();
+    const zones = await this.zoneRepository.find();
+
+    for (const item of data) {
+      const exists = table.find((register) => register.idTemp == item.id);
+
+      if (!exists) {
+        const entity = this.assignmentRepository.create();
+
+        entity.createdAt = item.created_at || new Date();
+        entity.updatedAt = item.updated_at || new Date();
+        entity.deletedAt = item.deleted_at;
+        entity.idTemp = item.id;
+
+        entity.isCurrent = item.es_actual;
+        entity.registeredAt = item.fecha;
+
+        const process = processes.find((x) => x.idTemp == item.tramite_id);
+        const dpa = dpas.find((x) => x.idTemp == item.dpa_id);
+        const internalUser = internalUsers.find(
+          (x) => x.idTemp == item.usuario_interno_id,
+        );
+        const zone = zones.find((x) => x.idTemp == item.zonal_id);
+
+        if (process) entity.processId = process.id;
+        if (dpa) entity.dpaId = dpa.id;
+        if (internalUser) entity.internalUserId = internalUser.id;
+        if (zone) entity.zoneId = zone.id;
+
+        await this.assignmentRepository.save(entity);
+
+        if (Array.isArray(item.observaciones)) {
+          for (const cc of item.observaciones) {
+            const observation = this.observationRepository.create();
+            observation.modelId = entity.id;
+            observation.name = cc;
+            await this.observationRepository.save(observation);
+          }
+        }
+      }
+    }
+
+    return { data: null };
+  }
+
+  async migrateCtcActivities() {
+    const data = await this.getData('siturin.ctc_actividades');
+
+    const table = await this.ctcActivityRepository.find();
+    const processes = await this.processRepository.find();
+    const catalogues = await this.catalogueRepository.find();
+
+    for (const item of data) {
+      const exists = table.find((register) => register.idTemp == item.id);
+
+      if (!exists) {
+        const entity = this.ctcActivityRepository.create();
+
+        entity.createdAt = item.created_at || new Date();
+        entity.updatedAt = item.updated_at || new Date();
+        entity.deletedAt = item.deleted_at;
+        entity.idTemp = item.id;
+
+        const process = processes.find((x) => x.idTemp == item.tramite_id);
+        const activity = catalogues.find((x) => x.idTemp == item.actividad_id);
+
+        if (process) entity.processId = process.id;
+        if (activity) entity.activityId = activity.id;
+
+        await this.ctcActivityRepository.save(entity);
+      }
+    }
+
+    return { data: null };
+  }
+
+  async migrateTouristGuides() {
+    const data = await this.getData('siturin.guia_turismos');
+
+    const table = await this.touristGuideRepository.find();
+    const processes = await this.processRepository.find();
+
+    for (const item of data) {
+      const exists = table.find((register) => register.idTemp == item.id);
+
+      if (!exists) {
+        const entity = this.touristGuideRepository.create();
+
+        entity.createdAt = item.created_at || new Date();
+        entity.updatedAt = item.updated_at || new Date();
+        entity.deletedAt = item.deleted_at;
+        entity.idTemp = item.id;
+
+        entity.isGuide = item.es_guia;
+        entity.identification = item.cedula;
+        entity.name = item.nombres;
+
+        const process = processes.find((x) => x.idTemp == item.tramite_id);
+
+        if (process) entity.processId = process.id;
+
+        await this.touristGuideRepository.save(entity);
+      }
+    }
+
+    return { data: null };
+  }
+
+  async migrateRooms() {
+    const data = await this.getData('siturin.habitaciones');
+
+    const table = await this.roomRepository.find();
+    const processes = await this.processRepository.find();
+
+    for (const item of data) {
+      const exists = table.find((register) => register.idTemp == item.id);
+
+      if (!exists) {
+        const entity = this.roomRepository.create();
+
+        entity.createdAt = item.created_at || new Date();
+        entity.updatedAt = item.updated_at || new Date();
+        entity.deletedAt = item.deleted_at;
+        entity.idTemp = item.id;
+
+        entity.totalBeds = item.camas;
+        entity.totalPlaces = item.plazas;
+        entity.totalRooms = item.habitaciones;
+
+        const process = processes.find((x) => x.idTemp == item.tramite_id);
+
+        if (process) entity.processId = process.id;
+
+        await this.roomRepository.save(entity);
+      }
+    }
+
+    return { data: null };
+  }
+
+  async migrateRoomRates() {
+    const data = await this.getData('siturin.habitacion_tarifas');
+
+    const table = await this.roomRateRepository.find();
+    const rooms = await this.roomRepository.find();
+
+    for (const item of data) {
+      const exists = table.find((register) => register.idTemp == item.id);
+
+      if (!exists) {
+        const entity = this.roomRateRepository.create();
+
+        entity.createdAt = item.created_at || new Date();
+        entity.updatedAt = item.updated_at || new Date();
+        entity.deletedAt = item.deleted_at;
+        entity.idTemp = item.id;
+
+        entity.highRoom = item.habitacion_temporada_alta;
+        entity.lowRoom = item.habitacion_temporada_baja;
+        entity.highPerson = item.persona_temporada_alta;
+        entity.lowPerson = item.persona_temporada_baja;
+        entity.year = item.anio;
+        entity.declarationAt = item.fecha_declaracion;
+
+        const room = rooms.find((x) => x.idTemp == item.habitacion_id);
+
+        if (room) entity.roomId = room.id;
+
+        await this.roomRateRepository.save(entity);
+      }
+    }
+
+    return { data: null };
+  }
+
+  async migrateRoomCapacities() {
+    const data = await this.getData('siturin.capacidad_habitaciones');
+
+    const table = await this.roomCapacityRepository.find();
+    const categories = await this.categoryRepository.find();
+    const roomTypes = await this.roomTypeRepository.find();
+
+    for (const item of data) {
+      const exists = table.find((register) => register.idTemp == item.id);
+
+      if (!exists) {
+        const entity = this.roomCapacityRepository.create();
+
+        entity.createdAt = item.created_at || new Date();
+        entity.updatedAt = item.updated_at || new Date();
+        entity.deletedAt = item.deleted_at;
+        entity.idTemp = item.id;
+
+        const category = categories.find((x) => x.idTemp == item.categoria_id);
+        const roomType = roomTypes.find(
+          (x) => x.idTemp == item.tipo_habitacion_id,
+        );
+
+        if (category) entity.categoryId = category.id;
+        if (roomType) entity.roomTypeId = roomType.id;
+
+        await this.roomCapacityRepository.save(entity);
+      }
+    }
+
+    return { data: null };
+  }
+
+  async migrateInspections() {
+    const data = await this.getData('siturin.inspecciones');
+
+    const table = await this.inspectionRepository.find();
+    const processes = await this.processRepository.find();
+    const internalUsers = await this.internalUserRepository.find();
+    const catalogues = await this.catalogueRepository.find();
+
+    for (const item of data) {
+      const exists = table.find((register) => register.idTemp == item.id);
+
+      if (!exists) {
+        const entity = this.inspectionRepository.create();
+
+        entity.createdAt = item.created_at || new Date();
+        entity.updatedAt = item.updated_at || new Date();
+        entity.deletedAt = item.deleted_at;
+        entity.idTemp = item.id;
+
+        entity.isCurrent = item.camas;
+        entity.attendedAt = item.plazas;
+        entity.inspectionAt = item.habitaciones;
+        entity.requestAt = item.habitaciones;
+
+        const process = processes.find((x) => x.idTemp == item.tramite_id);
+        const internalUser = internalUsers.find(
+          (x) => x.idTemp == item.usuario_interno_id,
+        );
+        const state = catalogues.find((x) => x.idTemp == item.estado_fecha_id);
+
+        if (process) entity.processId = process.id;
+        if (internalUser) entity.internalUserId = internalUser.id;
+        if (state) entity.stateId = state.id;
+
+        await this.inspectionRepository.save(entity);
+
+        if (Array.isArray(item.observaciones)) {
+          for (const cc of item.observaciones) {
+            const observation = this.observationRepository.create();
+            observation.modelId = entity.id;
+            observation.name = cc;
+            await this.observationRepository.save(observation);
+          }
+        }
+      }
+    }
+
+    return { data: null };
+  }
+
+  async migrateTouristLicenses() {
+    const data = await this.getData('siturin.licencias');
+
+    const table = await this.touristLicenseRepository.find();
+    const touristGuides = await this.touristGuideRepository.find();
+
+    for (const item of data) {
+      const exists = table.find((register) => register.idTemp == item.id);
+
+      if (!exists) {
+        const entity = this.touristLicenseRepository.create();
+
+        entity.createdAt = item.created_at || new Date();
+        entity.updatedAt = item.updated_at || new Date();
+        entity.deletedAt = item.deleted_at;
+        entity.idTemp = item.id;
+
+        entity.code = item.codigo;
+        entity.classification = item.clasificacion;
+        entity.expirationAt = item.fecha_caducidad;
+        entity.issueAt = item.fecha_emision;
+
+        const touristGuide = touristGuides.find(
+          (x) => x.idTemp == item.guia_turismo_id,
+        );
+
+        if (touristGuide) entity.touristGuideId = touristGuide.id;
+
+        await this.touristLicenseRepository.save(entity);
+      }
+    }
+
+    return { data: null };
+  }
+
+  async migrateAdventureTourismModalities() {
+    const data = await this.getData('siturin.modalidad_turismo_aventuras');
+
+    const table = await this.adventureTourismModalityRepository.find();
+    const processes = await this.processRepository.find();
+    const catalogues = await this.catalogueRepository.find();
+
+    for (const item of data) {
+      const exists = table.find((register) => register.idTemp == item.id);
+
+      if (!exists) {
+        const entity = this.adventureTourismModalityRepository.create();
+
+        entity.createdAt = item.created_at || new Date();
+        entity.updatedAt = item.updated_at || new Date();
+        entity.deletedAt = item.deleted_at;
+        entity.idTemp = item.id;
+
+        const process = processes.find((x) => x.idTemp == item.tramite_id);
+        const type = catalogues.find((x) => x.idTemp == item.tipo_id);
+
+        if (process) entity.processId = process.id;
+        if (type) entity.typeId = type.id;
+
+        await this.adventureTourismModalityRepository.save(entity);
+      }
+    }
+
+    return { data: null };
+  }
+
+  async migrateSalesRepresentatives() {
+    const data = await this.getData('siturin.representante_ventas');
+
+    const table = await this.salesRepresentativeRepository.find();
+    const processes = await this.processRepository.find();
+
+    for (const item of data) {
+      const exists = table.find((register) => register.idTemp == item.id);
+
+      if (!exists) {
+        const entity = this.salesRepresentativeRepository.create();
+
+        entity.createdAt = item.created_at || new Date();
+        entity.updatedAt = item.updated_at || new Date();
+        entity.deletedAt = item.deleted_at;
+        entity.idTemp = item.id;
+
+        entity.legalName = item.razon_social;
+        entity.ruc = item.ruc;
+        entity.hasProfessionalDegree = item.tiene_titulo_profesional;
+        entity.hasContract = item.tiene_contrato;
+        entity.hasWorkExperience = item.tiene_experiencia_profesional;
+
+        const process = processes.find((x) => x.idTemp == item.tramite_id);
+
+        if (process) entity.processId = process.id;
+
+        await this.salesRepresentativeRepository.save(entity);
+      }
+    }
+
+    return { data: null };
+  }
+
+  async migrateLandTransports() {
+    const data = await this.getData('siturin.transporte_terrestres');
+
+    const table = await this.landTransportRepository.find();
+    const processes = await this.processRepository.find();
+    const catalogues = await this.catalogueRepository.find();
+
+    for (const item of data) {
+      const exists = table.find((register) => register.idTemp == item.id);
+
+      if (!exists) {
+        const entity = this.landTransportRepository.create();
+
+        entity.createdAt = item.created_at || new Date();
+        entity.updatedAt = item.updated_at || new Date();
+        entity.deletedAt = item.deleted_at;
+        entity.idTemp = item.id;
+
+        entity.plate = item.placa;
+        entity.registration = item.matricula;
+        entity.registrationAt = item.fecha_matricula;
+        entity.registrationExpirationAt = item.fecha_caducidad_matricula;
+        entity.capacity = item.capacidad;
+
+        const process = processes.find((x) => x.idTemp == item.tramite_id);
+        const type = catalogues.find((x) => x.idTemp == item.tipo_id);
+
+        if (process) entity.processId = process.id;
+        if (type) entity.typeId = type.id;
+
+        await this.landTransportRepository.save(entity);
       }
     }
 

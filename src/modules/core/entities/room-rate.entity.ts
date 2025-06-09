@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { RoomEntity } from '@modules/core/entities/room.entity';
 
 @Entity('room_rates', { schema: 'core' })
 export class RoomRateEntity {
@@ -49,9 +50,9 @@ export class RoomRateEntity {
   /** Inverse Relationship **/
 
   /** Foreign Keys **/
-  @ManyToOne(() => RoomRateEntity, { nullable: true })
+  @ManyToOne(() => RoomEntity, { nullable: true })
   @JoinColumn({ name: 'room_id' })
-  room: RoomRateEntity;
+  room: RoomEntity;
   @Column({
     type: 'uuid',
     name: 'room_id',
@@ -66,6 +67,7 @@ export class RoomRateEntity {
     type: 'decimal',
     precision: 20,
     scale: 2,
+    nullable: true,
     comment: '',
   })
   highRoom: string;
@@ -75,6 +77,7 @@ export class RoomRateEntity {
     type: 'decimal',
     precision: 20,
     scale: 2,
+    nullable: true,
     comment: '',
   })
   lowRoom: string;
@@ -84,6 +87,7 @@ export class RoomRateEntity {
     type: 'decimal',
     precision: 20,
     scale: 2,
+    nullable: true,
     comment: '',
   })
   highPerson: string;
@@ -93,6 +97,7 @@ export class RoomRateEntity {
     type: 'decimal',
     precision: 20,
     scale: 2,
+    nullable: true,
     comment: '',
   })
   lowPerson: string;
@@ -100,6 +105,7 @@ export class RoomRateEntity {
   @Column({
     name: 'year',
     type: 'integer',
+    nullable: true,
     comment: '',
   })
   year: number;
@@ -107,6 +113,7 @@ export class RoomRateEntity {
   @Column({
     name: 'declaration_at',
     type: 'timestamp',
+    nullable: true,
     comment: '',
   })
   declarationAt: Date;

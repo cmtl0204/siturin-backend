@@ -82,6 +82,16 @@ export class ProcessAgencyEntity {
   totalAccreditedStaffLanguage: number;
 
   @Column({
+    name: 'percentage_accredited_staff_language',
+    type: 'decimal',
+    precision: 5,
+    scale: 2,
+    nullable: true,
+    comment: '',
+  })
+  percentageAccreditedStaffLanguage: number;
+
+  @Column({
     name: 'id_temp',
     type: 'bigint',
     comment: 'Codigo de la tabla migrada',

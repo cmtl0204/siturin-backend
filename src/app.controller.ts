@@ -4,6 +4,7 @@ import { DatabaseSeeder } from '@database/seeders';
 import { PublicRoute } from '@auth/decorators';
 import { config } from '@config';
 import { ConfigType } from '@nestjs/config';
+
 // import { RucsMigrate } from '@database/migrations/rucs.migration';
 
 @Controller()
@@ -11,7 +12,6 @@ export class AppController {
   constructor(
     private readonly databaseSeeder: DatabaseSeeder,
     @Inject(config.KEY) private configService: ConfigType<typeof config>,
-
   ) {}
 
   @PublicRoute()

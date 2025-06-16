@@ -16,6 +16,7 @@ export class CataloguesSeeder {
     await this.createBloodTypeCatalogues();
     await this.createEthnicOriginCatalogues();
     await this.createIdentificationTypeCatalogues();
+    await this.createSexCatalogues();
     await this.createGenderCatalogues();
     await this.createMaritalStatusCatalogues();
     await this.createYesNoCatalogues();

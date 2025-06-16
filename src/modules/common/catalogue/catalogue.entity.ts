@@ -122,6 +122,7 @@ export class CatalogueEntity {
   @Column({
     name: 'id_temp',
     type: 'bigint',
+    nullable: true,
     comment: '',
   })
   idTemp: string;

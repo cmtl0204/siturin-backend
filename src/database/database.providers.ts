@@ -33,7 +33,6 @@ export const databaseProviders = [
       await dataSource.query(`CREATE SCHEMA IF NOT EXISTS core`);
 
       await dataSource.synchronize();
-
       return dataSource;
     },
   },

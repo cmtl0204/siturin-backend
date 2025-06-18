@@ -5,7 +5,7 @@ import {
   CommonRepositoryEnum,
   ConfigEnum,
   CoreRepositoryEnum,
-} from '@shared/enums';
+} from '../../utils/enums';
 import {
   ActivityEntity,
   AdventureTourismModalityEntity,

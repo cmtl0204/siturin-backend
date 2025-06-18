@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 import { ConfigType } from '@nestjs/config';
-import { ConfigEnum } from '@shared/enums';
+import { ConfigEnum } from '../utils/enums';
 import { config } from '@config';
 import { AuditSubscriber } from '@modules/audit/audit.subscriber';
 

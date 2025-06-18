@@ -10,14 +10,14 @@ import {
   CacheEnum,
   CatalogueTypeEnum,
   CommonRepositoryEnum,
-} from '@shared/enums';
+} from '../../../utils/enums';
 import { ReadUserDto } from '@auth/dto';
 import { UserEntity } from '@auth/entities';
 import { plainToInstance } from 'class-transformer';
-import { ServiceResponseHttpInterface } from '@shared/interfaces';
+import { ServiceResponseHttpInterface } from '../../../utils/interfaces';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { PaginationDto } from '@shared/dto';
+import { PaginationDto } from '../../../utils/dto';
 
 @Injectable()
 export class CataloguesService {

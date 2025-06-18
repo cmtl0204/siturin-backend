@@ -16,7 +16,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Auth } from '@auth/decorators';
 import { CreateMenuDto, FilterMenuDto, UpdateMenuDto } from '@auth/dto';
 import { MenuEntity } from '@auth/entities';
-import { ResponseHttpInterface } from '@shared/interfaces';
+import { ResponseHttpInterface } from '../../../utils/interfaces';
 import { MenusService } from '@auth/services/menus.service';
 
 @ApiTags('Menus')

@@ -1,14 +1,14 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { CoreRepositoryEnum } from '@shared/enums';
-import { ServiceResponseHttpInterface } from '@shared/interfaces';
+import { CoreRepositoryEnum } from '../../../../utils/enums';
+import { ServiceResponseHttpInterface } from '../../../../utils/interfaces';
 import { CadastreEntity } from '@modules/core/entities';
 import {
   CreateCadastreDto,
   UpdateCadastreDto,
 } from '@modules/core/dac/dto/cadastre';
-import { PaginationDto } from '@shared/dto';
-import { PaginateFilterService } from '@shared/pagination/paginate-filter.service';
+import { PaginationDto } from '../../../../utils/dto';
+import { PaginateFilterService } from '../../../../utils/pagination/paginate-filter.service';
 
 @Injectable()
 export class CadastreService {

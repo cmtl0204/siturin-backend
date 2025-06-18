@@ -2,7 +2,7 @@ import { IsString, IsNotEmpty } from 'class-validator';
 import {
   isNotEmptyValidationOptions,
   isStringValidationOptions,
-} from '@shared/dto-validation';
+} from '../../../../utils/dto-validation';
 
 export class RoleDto {
   @IsNotEmpty(isNotEmptyValidationOptions())

@@ -3,7 +3,7 @@ import {
   isNotEmptyValidationOptions,
   isPositiveValidationOptions,
   isStringValidationOptions,
-} from '@shared/dto-validation';
+} from '../dto-validation';
 
 export class PaginationDto {
   @IsNotEmpty(isNotEmptyValidationOptions())

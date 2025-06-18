@@ -15,7 +15,7 @@ import {
   isStringValidationOptions,
   maxLengthValidationOptions,
   minLengthValidationOptions,
-} from '@shared/dto-validation';
+} from '../../../../utils/dto-validation';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
 
 export class UserDto {

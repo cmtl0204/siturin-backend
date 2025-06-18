@@ -16,7 +16,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Auth } from '@auth/decorators';
 import { CreateRoleDto, FilterRoleDto, UpdateRoleDto } from '@auth/dto';
 import { RoleEntity } from '@auth/entities';
-import { ResponseHttpInterface } from '@shared/interfaces';
+import { ResponseHttpInterface } from '../../../utils/interfaces';
 import { RolesService } from '@auth/services/roles.service';
 
 @ApiTags('Roles')

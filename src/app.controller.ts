@@ -1,5 +1,5 @@
 import { Controller, Inject, Post } from '@nestjs/common';
-import { ResponseHttpInterface } from '@shared/interfaces';
+import { ResponseHttpInterface } from './utils/interfaces';
 import { DatabaseSeeder } from '@database/seeders';
 import { PublicRoute } from '@auth/decorators';
 import { config } from '@config';

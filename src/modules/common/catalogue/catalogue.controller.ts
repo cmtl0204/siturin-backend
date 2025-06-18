@@ -13,7 +13,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ResponseHttpInterface } from '@shared/interfaces';
+import { ResponseHttpInterface } from '../../../utils/interfaces';
 import { CataloguesService } from '@modules/common/catalogue/catalogue.service';
 import {
   CreateCatalogueDto,
@@ -21,7 +21,7 @@ import {
   UpdateCatalogueDto,
 } from '@modules/common/catalogue/dto';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
-import { CatalogueTypeEnum } from '@shared/enums';
+import { CatalogueTypeEnum } from '../../../utils/enums';
 import { PublicRoute } from '@auth/decorators';
 
 @ApiTags('Catalogues')

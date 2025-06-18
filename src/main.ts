@@ -5,8 +5,8 @@ import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { join } from 'path';
 import * as process from 'process';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { AllExceptionsFilter } from '@shared/exceptions';
-import { ResponseHttpInterceptor } from '@shared/interceptors';
+import { AllExceptionsFilter } from './utils/exceptions';
+import { ResponseHttpInterceptor } from './utils/interceptors';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);

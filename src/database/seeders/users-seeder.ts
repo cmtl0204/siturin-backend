@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { faker } from '@faker-js/faker';
-import { CatalogueTypeEnum } from '@shared/enums';
+import { CatalogueTypeEnum } from '../../utils/enums';
 import { RoleEntity } from '@auth/entities';
 import { RoleEnum } from '@auth/enums';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
@@ -47,14 +47,14 @@ export class UsersSeeder {
       birthdate: faker.date.birthdate(),
       cellPhone: '0987654321',
       identification: '1234567890001',
-      email: 'cesar.tamayo@turismo.gob.ec',
+      email: 'admin@email.com',
       lastname: 'Perez',
       name: 'Admin',
       password: 'admin',
       passwordChanged: false,
       personalEmail: faker.internet.email(),
       roles: roles,
-      username: 'cesar.tamayo@turismo.gob.ec',
+      username: 'admin@email.com',
     });
 
     for (const user of users) {

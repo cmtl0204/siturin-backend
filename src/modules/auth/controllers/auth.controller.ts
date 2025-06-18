@@ -23,11 +23,11 @@ import {
   UpdateProfileDto,
   UpdateUserInformationDto,
 } from '@auth/dto';
-import { ResponseHttpInterface } from '@shared/interfaces';
+import { ResponseHttpInterface } from '../../../utils/interfaces';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { join } from 'path';
-import { getFileName, imageFilter } from '@shared/helpers';
+import { getFileName, imageFilter } from '../../../utils/helpers';
 import { AuthService } from '@auth/services/auth.service';
 
 @Auth()

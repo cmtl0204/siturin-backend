@@ -1,6 +1,6 @@
 import { ObjectLiteral, Repository } from 'typeorm';
-import { PaginationDto } from '@shared/dto';
-import { ServiceResponseHttpInterface } from '@shared/interfaces';
+import { PaginationDto } from '../dto';
+import { ServiceResponseHttpInterface } from '../interfaces';
 
 export class PaginateFilterService<T extends ObjectLiteral> {
   constructor(private readonly repository: Repository<T>) {}

@@ -1,5 +1,5 @@
 import { DataSource } from 'typeorm';
-import { ConfigEnum, CoreRepositoryEnum } from '@shared/enums';
+import { ConfigEnum, CoreRepositoryEnum } from '../../utils/enums';
 import {
   ActivityEntity,
   AdventureTourismModalityEntity,

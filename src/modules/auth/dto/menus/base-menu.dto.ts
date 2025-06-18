@@ -9,7 +9,7 @@ import {
   isBooleanValidationOptions,
   isNotEmptyValidationOptions,
   isStringValidationOptions,
-} from '@shared/dto-validation';
+} from '../../../../utils/dto-validation';
 import { MenuTypeEnum } from '@auth/enums';
 import { MenuEntity } from '@auth/entities';
 

@@ -12,7 +12,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ResponseHttpInterface } from '@shared/interfaces';
+import { ResponseHttpInterface } from '../../../utils/interfaces';
 import {
   CreateCatalogueDto,
   FilterCatalogueDto,

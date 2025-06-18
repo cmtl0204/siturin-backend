@@ -6,7 +6,7 @@ import {
   CatalogueMaritalStatusEnum,
   CatalogueStateEnum,
   CatalogueTypeEnum,
-} from '@shared/enums';
+} from '../../utils/enums';
 
 @Injectable()
 export class CataloguesSeeder {

@@ -1,5 +1,5 @@
 import { DataSource } from 'typeorm';
-import { ConfigEnum, CommonRepositoryEnum } from '@shared/enums';
+import { ConfigEnum, CommonRepositoryEnum } from '../../../utils/enums';
 import { FileEntity } from './file.entity';
 
 export const fileProviders = [

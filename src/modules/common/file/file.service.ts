@@ -1,12 +1,12 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Equal, FindOptionsWhere, ILike, Repository } from 'typeorm';
 import { FileEntity } from './file.entity';
-import { CommonRepositoryEnum, MessageEnum } from '@shared/enums';
+import { CommonRepositoryEnum, MessageEnum } from '../../../utils/enums';
 import * as path from 'path';
 import { join } from 'path';
 import * as fs from 'fs';
-import { PaginationDto } from '@shared/dto';
-import { ServiceResponseHttpInterface } from '@shared/interfaces';
+import { PaginationDto } from '../../../utils/dto';
+import { ServiceResponseHttpInterface } from '../../../utils/interfaces';
 import { FilterFileDto } from './dto';
 
 @Injectable()

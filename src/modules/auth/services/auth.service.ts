@@ -16,7 +16,7 @@ import {
   CoreRepositoryEnum,
   MailSubjectEnum,
   MailTemplateEnum,
-} from '@shared/enums';
+} from '../../../utils/enums';
 import {
   PasswordChangeDto,
   SignInDto,
@@ -24,7 +24,7 @@ import {
   UpdateProfileDto,
   UpdateUserInformationDto,
 } from '@auth/dto';
-import { ServiceResponseHttpInterface } from '@shared/interfaces';
+import { ServiceResponseHttpInterface } from '../../../utils/interfaces';
 import { MailService } from '@modules/common/mail/mail.service';
 import { config } from '@config';
 import { ConfigType } from '@nestjs/config';

@@ -2,8 +2,8 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { Repository, FindOptionsWhere, ILike, IsNull } from 'typeorm';
 import { MenuEntity, RoleEntity, UserEntity } from '@auth/entities';
-import { ServiceResponseHttpInterface } from '@shared/interfaces';
-import { AuthRepositoryEnum } from '@shared/enums';
+import { ServiceResponseHttpInterface } from '../../../utils/interfaces';
+import { AuthRepositoryEnum } from '../../../utils/enums';
 import {
   CreateMenuDto,
   FilterMenuDto,
@@ -11,7 +11,7 @@ import {
   UpdateMenuDto,
 } from '@auth/dto';
 import { tr } from 'date-fns/locale';
-import { PaginationDto } from '@shared/dto';
+import { PaginationDto } from '../../../utils/dto';
 
 @Injectable()
 export class MenusService {

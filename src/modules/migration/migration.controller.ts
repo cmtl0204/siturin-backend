@@ -1,6 +1,6 @@
 import { Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { ResponseHttpInterface } from '@shared/interfaces';
+import { ResponseHttpInterface } from '../../utils/interfaces';
 import { MigrationService } from '@modules/migration/migration.service';
 import { PublicRoute } from '@auth/decorators';
 

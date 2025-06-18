@@ -2,7 +2,7 @@ import { IsString, IsNotEmpty } from 'class-validator';
 import {
   isNotEmptyValidationOptions,
   isStringValidationOptions,
-} from '@shared/dto-validation';
+} from '../../../../utils/dto-validation';
 import { UserEntity } from '@auth/entities';
 
 export class AuditDto {

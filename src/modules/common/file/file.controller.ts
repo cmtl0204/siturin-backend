@@ -15,8 +15,8 @@ import {
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { FileService } from './file.service';
-import { fileFilter, getFileName } from '@shared/helpers';
-import { ResponseHttpInterface } from '@shared/interfaces';
+import { fileFilter, getFileName } from '../../../utils/helpers';
+import { ResponseHttpInterface } from '../../../utils/interfaces';
 import { join } from 'path';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { FilterFileDto } from './dto';

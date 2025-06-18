@@ -5,14 +5,14 @@ import {
   UpdateCatalogueDto,
 } from '@modules/common/catalogue/dto';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
-import { CacheEnum, CommonRepositoryEnum } from '@shared/enums';
+import { CacheEnum, CommonRepositoryEnum } from '../../../utils/enums';
 import { ReadUserDto } from '@auth/dto';
 import { UserEntity } from '@auth/entities';
 import { plainToInstance } from 'class-transformer';
-import { ServiceResponseHttpInterface } from '@shared/interfaces';
+import { ServiceResponseHttpInterface } from '../../../utils/interfaces';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { PaginationDto } from '@shared/dto';
+import { PaginationDto } from '../../../utils/dto';
 import { DpaEntity } from '@modules/common/dpa/dpa.entity';
 import { CreateDpaDto, UpdateDpaDto } from '@modules/common/dpa/dto';
 

@@ -2,9 +2,9 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { Repository, FindOptionsWhere, ILike } from 'typeorm';
 import { MenuEntity, RoleEntity } from '@auth/entities';
-import { PaginationDto } from '@shared/dto';
-import { ServiceResponseHttpInterface } from '@shared/interfaces';
-import { AuthRepositoryEnum } from '@shared/enums';
+import { PaginationDto } from '../../../utils/dto';
+import { ServiceResponseHttpInterface } from '../../../utils/interfaces';
+import { AuthRepositoryEnum } from '../../../utils/enums';
 import {
   CreateRoleDto,
   FilterRoleDto,

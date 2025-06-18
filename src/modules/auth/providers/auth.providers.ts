@@ -6,7 +6,7 @@ import {
   RoleEntity,
   UserEntity,
 } from '@auth/entities';
-import { ConfigEnum, AuthRepositoryEnum } from '@shared/enums';
+import { ConfigEnum, AuthRepositoryEnum } from '../../../utils/enums';
 
 export const authProviders = [
   {

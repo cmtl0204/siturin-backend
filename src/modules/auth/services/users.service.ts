@@ -9,9 +9,9 @@ import {
 } from '@auth/dto';
 import { MAX_ATTEMPTS } from '@auth/constants';
 import { UserEntity } from '@auth/entities';
-import { PaginationDto } from '@shared/dto';
-import { ServiceResponseHttpInterface } from '@shared/interfaces';
-import { AuthRepositoryEnum } from '@shared/enums';
+import { PaginationDto } from '../../../utils/dto';
+import { ServiceResponseHttpInterface } from '../../../utils/interfaces';
+import { AuthRepositoryEnum } from '../../../utils/enums';
 import { RoleEnum } from '@auth/enums';
 
 @Injectable()

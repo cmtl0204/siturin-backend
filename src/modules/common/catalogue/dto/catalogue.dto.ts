@@ -5,14 +5,14 @@ import {
   IsString,
   MinLength,
 } from 'class-validator';
-import { CatalogueStateEnum, CatalogueTypeEnum } from '@shared/enums';
+import { CatalogueStateEnum, CatalogueTypeEnum } from '../../../../utils/enums';
 import {
   isEnumValidationOptions,
   isNotEmptyValidationOptions,
   isNumberValidationOptions,
   isStringValidationOptions,
   minLengthValidationOptions,
-} from '@shared/dto-validation';
+} from '../../../../utils/dto-validation';
 
 export class CatalogueDto {
   @IsNotEmpty(isNotEmptyValidationOptions())

@@ -1,5 +1,5 @@
 import { DataSource } from 'typeorm';
-import { CommonRepositoryEnum, ConfigEnum } from '@shared/enums';
+import { CommonRepositoryEnum, ConfigEnum } from '../../../utils/enums';
 import { DpaEntity } from './dpa.entity';
 
 export const dpaProvider = {

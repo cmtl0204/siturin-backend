@@ -1,5 +1,5 @@
 import { IsNotEmpty } from 'class-validator';
-import { PaginationDto } from '@shared/dto';
-import { isNotEmptyValidationOptions } from '@shared/dto-validation';
+import { PaginationDto } from '../../../../../utils/dto';
+import { isNotEmptyValidationOptions } from '../../../../../utils/dto-validation';
 
 export class FilterFileDto extends PaginationDto {}

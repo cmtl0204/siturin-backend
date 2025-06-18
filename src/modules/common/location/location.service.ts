@@ -10,8 +10,8 @@ import {
   CacheEnum,
   CatalogueTypeEnum,
   CommonRepositoryEnum,
-} from '@shared/enums';
-import { ServiceResponseHttpInterface } from '@shared/interfaces';
+} from '../../../utils/enums';
+import { ServiceResponseHttpInterface } from '../../../utils/interfaces';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 

@@ -9,7 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Repository } from 'typeorm';
 import { UserEntity } from '@auth/entities';
 import { PayloadTokenInterface } from 'src/modules/auth/interfaces';
-import { AuthRepositoryEnum } from '@shared/enums';
+import { AuthRepositoryEnum } from '../../../utils/enums';
 
 @Injectable()
 export class VerifyUserMiddleware implements NestMiddleware {

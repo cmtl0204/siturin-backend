@@ -84,7 +84,7 @@ export class ClassificationEntity {
   @Column({
     name: 'max_rooms',
     type: 'integer',
-    nullable:true,
+    nullable: true,
     comment: '',
   })
   maxRooms: number;
@@ -92,7 +92,7 @@ export class ClassificationEntity {
   @Column({
     name: 'max_places',
     type: 'integer',
-    nullable:true,
+    nullable: true,
     comment: '',
   })
   maxPlaces: number;
@@ -100,7 +100,7 @@ export class ClassificationEntity {
   @Column({
     name: 'min_rooms',
     type: 'integer',
-    nullable:true,
+    nullable: true,
     comment: '',
   })
   minRooms: number;
@@ -108,7 +108,7 @@ export class ClassificationEntity {
   @Column({
     name: 'min_places',
     type: 'integer',
-    nullable:true,
+    nullable: true,
     comment: '',
   })
   minPlaces: number;

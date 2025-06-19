@@ -65,7 +65,7 @@ export class KitchenTypeEntity {
   @Column({
     name: 'code',
     type: 'varchar',
-    nullable:true,
+    nullable: true,
     comment: 'Codigo',
   })
   code: string;
@@ -73,7 +73,7 @@ export class KitchenTypeEntity {
   @Column({
     name: 'name',
     type: 'varchar',
-    nullable:true,
+    nullable: true,
     comment: 'Nombre',
   })
   name: string;

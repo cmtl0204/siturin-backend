@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { AuditLog } from './audit.entity';
 import { getCurrentUser } from './audit-context';
-import isEqual from 'lodash.isequal';
+import { isDeepStrictEqual } from 'node:util';
 
 @EventSubscriber()
 export class AuditSubscriber implements EntitySubscriberInterface {
@@ -105,7 +105,10 @@ export class AuditSubscriber implements EntitySubscriberInterface {
     if (!oldData || !newData) return { newChanges, oldChanges };
 
     for (const key of Object.keys(newData)) {
-      if (!isEqual(oldData[key], newData[key]) && key !== 'updatedAt') {
+      if (
+        !isDeepStrictEqual(oldData[key], newData[key]) &&
+        key !== 'updatedAt'
+      ) {
         newChanges[key] = newData[key];
         oldChanges[key] = oldData[key];
       }

@@ -4,7 +4,8 @@ import {
   DeleteDateColumn,
   Entity,
   JoinColumn,
-  ManyToOne, OneToOne,
+  ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';

@@ -1,43 +1,32 @@
 import { Global, Module } from '@nestjs/common';
-import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { FileController } from '@modules/common/file/file.controller';
 import { FolderPathsService } from '@modules/common/mail/folder-paths.service';
-import { MailerModule } from '@nestjs-modules/mailer';
+import { MailService } from './mail.service';
 import { config } from '@config';
 import { ConfigType } from '@nestjs/config';
-import { join } from 'path';
-import { MailService } from './mail.service';
 
 @Global()
 @Module({
-  imports: [
-    MailerModule.forRootAsync({
+  imports: [],
+  controllers: [FileController],
+  providers: [
+    MailService,
+    FolderPathsService,
+    {
+      provide: 'MAIL_CONFIG',
       inject: [config.KEY],
       useFactory: (configService: ConfigType<typeof config>) => ({
-        transport: {
-          host: configService.mail.host,
-          port: configService.mail.port,
-          secure: false,
-          auth: {
-            user: configService.mail.user,
-            pass: configService.mail.pass,
-          },
+        host: configService.mail.host,
+        port: configService.mail.port,
+        secure: false,
+        auth: {
+          user: configService.mail.user,
+          pass: configService.mail.pass,
         },
-        defaults: {
-          from: configService.mail.from,
-        },
-        template: {
-          dir: join(process.cwd(), 'src/modules/common/mail/templates'),
-          adapter: new HandlebarsAdapter(),
-          options: {
-            static: true,
-          },
-        },
+        from: configService.mail.from,
       }),
-    }),
+    },
   ],
-  controllers: [FileController],
-  providers: [MailService, FolderPathsService],
   exports: [MailService, FolderPathsService],
 })
 export class MailModule {}

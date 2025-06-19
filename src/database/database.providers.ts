@@ -52,6 +52,7 @@ export const databaseProviders = [
         database: 'siturin_old_1',
         // dropSchema: true,
       });
+
       return dataSource.initialize();
     },
   },

@@ -22,9 +22,7 @@ export class TouristGuideService {
     this.paginateFilterService = new PaginateFilterService(this.repository);
   }
 
-  async create(
-    payload: CreateTouristGuideDto,
-  ): Promise<TouristGuideEntity> {
+  async create(payload: CreateTouristGuideDto): Promise<TouristGuideEntity> {
     const entity = this.repository.create(payload);
 
     return await this.repository.save(entity);

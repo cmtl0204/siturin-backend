@@ -1,119 +1,98 @@
+// src/modules/common/mail/mail.service.ts
 import { Inject, Injectable } from '@nestjs/common';
-import { MailerService } from '@nestjs-modules/mailer';
+import * as nodemailer from 'nodemailer';
 import { ConfigType } from '@nestjs/config';
 import { config } from '@config';
 import { MailDataInterface } from './interfaces/mail-data.interface';
 import { join } from 'path';
 import { FolderPathsService } from './folder-paths.service';
+import * as fs from 'fs';
+import * as handlebars from 'handlebars';
 
 @Injectable()
 export class MailService {
+  private transporter: nodemailer.Transporter;
+
   constructor(
-    private readonly mailerService: MailerService,
     @Inject(config.KEY) private configService: ConfigType<typeof config>,
     private readonly folderPathsService: FolderPathsService,
-  ) {}
+  ) {
+    this.transporter = nodemailer.createTransport({
+      host: this.configService.mail.host,
+      port: this.configService.mail.port,
+      secure: false,
+      auth: {
+        user: this.configService.mail.user,
+        pass: this.configService.mail.pass,
+      },
+    });
+  }
 
   async sendMail(mailData: MailDataInterface) {
-    const mailAttachments: {
-      content?: Buffer;
-      filename: string;
-      contentDisposition?: string;
-      cid?: string;
-    }[] = [];
+    const mailAttachments: any[] = [];
 
-    if (mailData?.attachments) {
-      mailData.attachments.forEach((attachment) => {
-        let data!: {
-          content?: Buffer;
-          filename: string;
-          contentDisposition: string;
-          path?: string;
-        };
+    // Archivos adjuntos
+    const handleAttachment = (attachment: any) => {
+      if (attachment?.file) {
+        mailAttachments.push({
+          content: attachment.file,
+          filename: attachment.filename,
+          contentDisposition: 'attachment',
+        });
+      } else if (attachment?.path) {
+        mailAttachments.push({
+          path: join(this.folderPathsService.mailTemporaryFiles, attachment.path),
+          filename: attachment.filename,
+          contentDisposition: 'attachment',
+        });
+      }
+    };
 
-        if (attachment.file) {
-          data = {
-            content: attachment.file,
-            filename: attachment.filename,
-            contentDisposition: 'attachment',
-          };
+    mailData.attachments?.forEach(handleAttachment);
+    if (mailData.attachment) handleAttachment(mailData.attachment);
 
-          mailAttachments.push(data);
-        }
+    // Imagenes embebidas
+    mailAttachments.push(
+      {
+        filename: 'header.png',
+        path: join(this.folderPathsService.mailImages, 'header.png'),
+        cid: 'header',
+      },
+      {
+        filename: 'footer.png',
+        path: join(this.folderPathsService.mailImages, 'footer.png'),
+        cid: 'footer',
+      },
+    );
 
-        if (attachment.path) {
-          data = {
-            path: join(
-              this.folderPathsService.mailTemporaryFiles,
-              attachment.path,
-            ),
-            filename: attachment.filename,
-            contentDisposition: 'attachment',
-          };
-
-          mailAttachments.push(data);
-        }
+    // Cargar y compilar plantilla (Handlebars)
+    let html = '';
+    try {
+      const templatePath = join(
+        this.folderPathsService.mailTemplates,
+        `${mailData.template}.hbs`,
+      );
+      const source = fs.readFileSync(templatePath, 'utf8');
+      const compiledTemplate = handlebars.compile(source);
+      html = compiledTemplate({
+        system: 'environments.appName',
+        data: mailData.data,
       });
+    } catch (err) {
+      console.error('Error cargando plantilla:', err);
+      return { error: true, message: 'No se pudo procesar la plantilla' };
     }
 
-    if (mailData?.attachment) {
-      let data!: {
-        content?: Buffer;
-        filename: string;
-        contentDisposition: string;
-        path?: string;
-      };
-
-      if (mailData.attachment.file) {
-        data = {
-          content: mailData.attachment.file,
-          filename: mailData.attachment.filename,
-          contentDisposition: 'attachment',
-        };
-
-        mailAttachments.push(data);
-      }
-
-      if (mailData.attachment.path) {
-        data = {
-          path: join(
-            this.folderPathsService.mailTemporaryFiles,
-            mailData.attachment.path,
-          ),
-          filename: mailData.attachment.filename,
-          contentDisposition: 'attachment',
-        };
-        mailAttachments.push(data);
-      }
-    }
-
-    const header = {
-      filename: 'header.png',
-      path: join(this.folderPathsService.mailImages, 'header.png'),
-      cid: 'header',
-    };
-
-    const footer = {
-      filename: 'footer.png',
-      path: join(this.folderPathsService.mailImages, 'footer.png'),
-      cid: 'footer',
-    };
-
-    mailAttachments.push(header);
-    mailAttachments.push(footer);
-
-    const sendMailOptions = {
+    const sendOptions: nodemailer.SendMailOptions = {
       to: mailData.to,
-      from: `${this.configService.mail.fromName} ${this.configService.mail.from}`,
+      from: `"${this.configService.mail.fromName}" <${this.configService.mail.from}>`,
       subject: mailData.subject,
-      template: mailData.template,
-      context: { system: 'environments.appName', data: mailData.data },
+      html,
       attachments: mailAttachments,
     };
 
     try {
-      const response = await this.mailerService.sendMail(sendMailOptions);
-
+      const response = await this.transporter.sendMail(sendOptions);
       return {
         accepted: response.accepted,
         rejected: response.rejected,

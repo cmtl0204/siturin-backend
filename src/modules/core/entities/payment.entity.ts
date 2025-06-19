@@ -95,5 +95,4 @@ export class PaymentEntity {
     comment: 'Codigo de la tabla migrada',
   })
   idTemp: number;
-
 }

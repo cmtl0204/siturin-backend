@@ -129,7 +129,7 @@ export class UserEntity {
   })
   sexId: string;
 
-  /** Columns **/
+  /** Fields **/
   @Column({
     name: 'activated_at',
     type: 'timestamp',

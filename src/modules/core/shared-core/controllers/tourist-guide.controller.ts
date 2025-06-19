@@ -14,18 +14,20 @@ import {
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Auth } from '@auth/decorators';
 import { ResponseHttpInterface } from '@utils/interfaces';
-import { CreateCadastreDto } from '@modules/core/dac/dto/cadastre';
 import { PaginationDto } from '@utils/dto';
 import { TouristGuideService } from '@modules/core/shared-core/services/tourist-guide.service';
-import { CreateTouristGuideDto, UpdateTouristGuideDto } from '@modules/core/shared-core/dto/tourist-guide';
+import {
+  CreateTouristGuideDto,
+  UpdateTouristGuideDto,
+} from '@modules/core/shared-core/dto/tourist-guide';
 
-@ApiTags('DAC Cadastre')
+@ApiTags('Tourist Guide')
 @Auth()
 @Controller('core/shared/tourist-guides')
 export class TouristGuideController {
   constructor(private service: TouristGuideService) {}
 
-  @ApiOperation({ summary: 'List all Cadastres' })
+  @ApiOperation({ summary: 'List all' })
   @Get()
   @HttpCode(HttpStatus.OK)
   async findAll(

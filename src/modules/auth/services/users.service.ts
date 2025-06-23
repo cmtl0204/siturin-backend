@@ -1,12 +1,7 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { FindOptionsWhere, ILike, LessThan, Repository } from 'typeorm';
-import {
-  CreateUserDto,
-  FilterUserDto,
-  ReadUserDto,
-  UpdateUserDto,
-} from '@auth/dto';
+import { CreateUserDto, FilterUserDto, ReadUserDto, UpdateUserDto } from '@auth/dto';
 import { MAX_ATTEMPTS } from '@auth/constants';
 import { UserEntity } from '@auth/entities';
 import { PaginationDto } from '../../../utils/dto';
@@ -177,9 +172,7 @@ export class UsersService {
     };
   }
 
-  private async filterByBirthdate(
-    birthdate: Date,
-  ): Promise<ServiceResponseHttpInterface> {
+  private async filterByBirthdate(birthdate: Date): Promise<ServiceResponseHttpInterface> {
     const where: FindOptionsWhere<UserEntity> = {};
 
     if (birthdate) {

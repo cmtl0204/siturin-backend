@@ -62,10 +62,7 @@ export class DpaController {
 
   @Put(':id')
   @HttpCode(HttpStatus.CREATED)
-  async update(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Body() payload: UpdateCatalogueDto,
-  ) {
+  async update(@Param('id', ParseUUIDPipe) id: string, @Body() payload: UpdateCatalogueDto) {
     const data = await this.service.update(id, payload);
 
     return {

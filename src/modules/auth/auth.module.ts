@@ -3,11 +3,7 @@ import { ConfigType } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { config } from '@config';
-import {
-  AuthController,
-  RolesController,
-  UsersController,
-} from '@auth/controllers';
+import { AuthController, RolesController, UsersController } from '@auth/controllers';
 import { authProviders } from '@auth/providers';
 import { DatabaseModule } from '@database/database.module';
 import { MenusController } from './controllers/menus.controller';
@@ -42,12 +38,7 @@ import { HttpModule } from '@nestjs/axios';
       },
     }),
   ],
-  controllers: [
-    AuthController,
-    MenusController,
-    RolesController,
-    UsersController,
-  ],
+  controllers: [AuthController, MenusController, RolesController, UsersController],
   providers: [
     {
       provide: APP_GUARD,
@@ -61,14 +52,7 @@ import { HttpModule } from '@nestjs/axios';
     MenusService,
     JwtStrategy,
   ],
-  exports: [
-    ...authProviders,
-    UsersService,
-    RolesService,
-    MenusService,
-    JwtModule,
-    PassportModule,
-  ],
+  exports: [...authProviders, UsersService, RolesService, MenusService, JwtModule, PassportModule],
 })
 export class AuthModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

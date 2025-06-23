@@ -29,8 +29,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     let status = 500;
 
     if (exception instanceof HttpException) {
-      const { message, error } =
-        exception.getResponse() as ErrorResponseHttpModel;
+      const { message, error } = exception.getResponse() as ErrorResponseHttpModel;
       status = exception.getStatus();
 
       errorResponseHttpModel.error = 'Server Error';
@@ -48,8 +47,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
       if (exception instanceof UnauthorizedException) {
         errorResponseHttpModel.error = error || 'Credenciales no válidas';
-        errorResponseHttpModel.message =
-          message ?? 'You do not have authorization.';
+        errorResponseHttpModel.message = message ?? 'You do not have authorization.';
       }
 
       if (exception instanceof NotFoundException) {
@@ -67,8 +65,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
           startedAt: '2023-08-25',
           endedAt: '2023-08-31',
         };
-        errorResponseHttpModel.error =
-          'El sistema se encuentra en mantenimiento';
+        errorResponseHttpModel.error = 'El sistema se encuentra en mantenimiento';
         errorResponseHttpModel.message = 'Lamentamos las molestias causadas';
       }
 
@@ -79,8 +76,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       status = 400;
       errorResponseHttpModel.statusCode = exception.driverError.code || 400;
       errorResponseHttpModel.error = exception.name || 'QueryFailedError';
-      errorResponseHttpModel.message =
-        exception.driverError.detail || 'Query Error';
+      errorResponseHttpModel.message = exception.driverError.detail || 'Query Error';
     }
 
     if (exception instanceof ExceptionsHandler) {

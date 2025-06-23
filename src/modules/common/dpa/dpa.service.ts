@@ -1,9 +1,6 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { FindOptionsWhere, ILike, IsNull, Repository } from 'typeorm';
-import {
-  FilterCatalogueDto,
-  UpdateCatalogueDto,
-} from '@modules/common/catalogue/dto';
+import { FilterCatalogueDto, UpdateCatalogueDto } from '@modules/common/catalogue/dto';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
 import { CacheEnum, CommonRepositoryEnum } from '../../../utils/enums';
 import { ReadUserDto } from '@auth/dto';
@@ -32,9 +29,7 @@ export class DpaService {
     return await this.repository.save(entity);
   }
 
-  async findAll(
-    params?: FilterCatalogueDto,
-  ): Promise<ServiceResponseHttpInterface> {
+  async findAll(params?: FilterCatalogueDto): Promise<ServiceResponseHttpInterface> {
     //All
     const data = await this.repository.findAndCount();
 

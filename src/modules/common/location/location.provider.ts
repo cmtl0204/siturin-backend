@@ -4,7 +4,6 @@ import { ProvinceEntity } from './province.entity';
 
 export const locationProvider = {
   provide: CommonRepositoryEnum.PROVINCE_REPOSITORY,
-  useFactory: (dataSource: DataSource) =>
-    dataSource.getRepository(ProvinceEntity),
+  useFactory: (dataSource: DataSource) => dataSource.getRepository(ProvinceEntity),
   inject: [ConfigEnum.PG_DATA_SOURCE],
 };

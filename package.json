@@ -39,7 +39,6 @@
     "cls-hooked": "^4.2.2",
     "date-fns": "^4.1.0",
     "exceljs": "^4.4.0",
-    "handlebars": "^4.7.8",
     "joi": "^17.13.3",
     "nodemailer": "^7.0.3",
     "passport": "^0.7.0",

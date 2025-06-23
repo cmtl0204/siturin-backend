@@ -54,9 +54,7 @@ export class AuthController {
   @PublicRoute()
   @Post('sign-up-external')
   @HttpCode(HttpStatus.CREATED)
-  async signUpExternal(
-    @Body() payload: SignUpExternalDto,
-  ): Promise<ResponseHttpInterface> {
+  async signUpExternal(@Body() payload: SignUpExternalDto): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.authService.signUpExternal(payload);
 
     return {
@@ -98,9 +96,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Find User Information' })
   @Get('user-information')
   @HttpCode(HttpStatus.OK)
-  async findUserInformation(
-    @User() user: UserEntity,
-  ): Promise<ResponseHttpInterface> {
+  async findUserInformation(@User() user: UserEntity): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.authService.findUserInformation(user.id);
 
     return {
@@ -117,10 +113,7 @@ export class AuthController {
     @User() user: UserEntity,
     @Body() payload: UpdateProfileDto,
   ): Promise<ResponseHttpInterface> {
-    const serviceResponse = await this.authService.updateProfile(
-      user.id,
-      payload,
-    );
+    const serviceResponse = await this.authService.updateProfile(user.id, payload);
 
     return {
       data: serviceResponse.data,
@@ -136,10 +129,7 @@ export class AuthController {
     @User('id', ParseUUIDPipe) id: string,
     @Body() payload: UpdateUserInformationDto,
   ): Promise<ResponseHttpInterface> {
-    const serviceResponse = await this.authService.updateUserInformation(
-      id,
-      payload,
-    );
+    const serviceResponse = await this.authService.updateUserInformation(id, payload);
 
     return {
       data: serviceResponse,
@@ -168,8 +158,7 @@ export class AuthController {
   async requestTransactionalCode(
     @Param('username') username: string,
   ): Promise<ResponseHttpInterface> {
-    const serviceResponse =
-      await this.authService.requestTransactionalCode(username);
+    const serviceResponse = await this.authService.requestTransactionalCode(username);
 
     return {
       data: serviceResponse.data,
@@ -238,8 +227,7 @@ export class AuthController {
   async verifyIdentification(
     @Param('identification') identification: string,
   ): Promise<ResponseHttpInterface> {
-    const serviceResponse =
-      await this.authService.verifyIdentification(identification);
+    const serviceResponse = await this.authService.verifyIdentification(identification);
 
     return {
       data: serviceResponse.data,
@@ -251,9 +239,7 @@ export class AuthController {
   @PublicRoute()
   @Get('verify-ruc-pending-payment/:ruc')
   @HttpCode(HttpStatus.OK)
-  async verifyRucPendingPayment(
-    @Param('ruc') ruc: string,
-  ): Promise<ResponseHttpInterface> {
+  async verifyRucPendingPayment(@Param('ruc') ruc: string): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.authService.verifyRucPendingPayment(ruc);
 
     return {

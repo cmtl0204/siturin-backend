@@ -6,11 +6,7 @@ import {
   UpdateCatalogueDto,
 } from '@modules/common/catalogue/dto';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
-import {
-  CacheEnum,
-  CatalogueTypeEnum,
-  CommonRepositoryEnum,
-} from '../../../utils/enums';
+import { CacheEnum, CatalogueTypeEnum, CommonRepositoryEnum } from '../../../utils/enums';
 import { ServiceResponseHttpInterface } from '../../../utils/interfaces';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
@@ -39,9 +35,7 @@ export class LocationService {
     return data;
   }
 
-  async findAll(
-    params?: FilterCatalogueDto,
-  ): Promise<ServiceResponseHttpInterface> {
+  async findAll(params?: FilterCatalogueDto): Promise<ServiceResponseHttpInterface> {
     //All
     const data = await this.repository.findAndCount();
 
@@ -111,15 +105,9 @@ export class LocationService {
   }
 
   async findCache(): Promise<CatalogueEntity[]> {
-    let catalogues = (await this.cacheManager.get(
-      CacheEnum.CATALOGUES,
-    )) as CatalogueEntity[];
+    let catalogues = (await this.cacheManager.get(CacheEnum.CATALOGUES)) as CatalogueEntity[];
 
-    if (
-      catalogues === null ||
-      catalogues === undefined ||
-      catalogues.length === 0
-    ) {
+    if (catalogues === null || catalogues === undefined || catalogues.length === 0) {
       catalogues = await this.repository.find({
         relations: { children: true },
         where: { parent: IsNull() },

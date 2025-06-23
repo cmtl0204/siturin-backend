@@ -7,20 +7,13 @@ export const getFileName = (req, file, callback) => {
 };
 export const imageFilter = (req, file, callback) => {
   if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
-    return callback(
-      new Error('Solo jpg|jpeg|png estos tipos están permitidos!'),
-      false,
-    );
+    return callback(new Error('Solo jpg|jpeg|png estos tipos están permitidos!'), false);
   }
   callback(null, true);
 };
 
 export const fileFilter = (req, file, callback) => {
-  if (
-    !file.originalname.match(
-      /\.(pdf|doc|docx|ppt|pptx|pptm|xlsx|xls|jpg|jpeg|png)$/,
-    )
-  ) {
+  if (!file.originalname.match(/\.(pdf|doc|docx|ppt|pptx|pptm|xlsx|xls|jpg|jpeg|png)$/)) {
     return callback(
       new Error(
         'Solo pdf|doc|docx|ppt|pptx|pptm|xlsx|xls|jpg|jpeg|png estos tipos están permitidos!',
@@ -33,10 +26,7 @@ export const fileFilter = (req, file, callback) => {
 
 export const excelFileFilter = (req, file, callback) => {
   if (!file.originalname.match(/\.(xlsx|xls)$/)) {
-    return callback(
-      new Error('Solo xlsx|xls estos tipos están permitidos!'),
-      false,
-    );
+    return callback(new Error('Solo xlsx|xls estos tipos están permitidos!'), false);
   }
   callback(null, true);
 };

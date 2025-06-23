@@ -3,10 +3,7 @@ import { Repository } from 'typeorm';
 import { CoreRepositoryEnum } from '../../../../utils/enums';
 import { ServiceResponseHttpInterface } from '../../../../utils/interfaces';
 import { CadastreEntity } from '@modules/core/entities';
-import {
-  CreateCadastreDto,
-  UpdateCadastreDto,
-} from '@modules/core/dac/dto/cadastre';
+import { CreateCadastreDto, UpdateCadastreDto } from '@modules/core/dac/dto/cadastre';
 import { PaginationDto } from '../../../../utils/dto';
 import { PaginateFilterService } from '../../../../utils/pagination/paginate-filter.service';
 
@@ -21,19 +18,14 @@ export class CadastreService {
     this.paginateFilterService = new PaginateFilterService(this.repository);
   }
 
-  async create(
-    payload: CreateCadastreDto,
-  ): Promise<ServiceResponseHttpInterface> {
+  async create(payload: CreateCadastreDto): Promise<ServiceResponseHttpInterface> {
     const entity = this.repository.create(payload);
 
     return { data: await this.repository.save(entity) };
   }
 
   async findAll(params: PaginationDto): Promise<ServiceResponseHttpInterface> {
-    return this.paginateFilterService.execute(params, [
-      'registerNumber',
-      'systemOrigin',
-    ]);
+    return this.paginateFilterService.execute(params, ['registerNumber', 'systemOrigin']);
   }
 
   async findOne(id: string): Promise<ServiceResponseHttpInterface> {
@@ -48,10 +40,7 @@ export class CadastreService {
     return { data: entity };
   }
 
-  async update(
-    id: string,
-    payload: UpdateCadastreDto,
-  ): Promise<ServiceResponseHttpInterface> {
+  async update(id: string, payload: UpdateCadastreDto): Promise<ServiceResponseHttpInterface> {
     const entity = await this.repository.findOneBy({ id });
 
     if (!entity) {

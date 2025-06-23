@@ -54,9 +54,7 @@ export class MenusSeeder {
     if (Array.isArray(menusAll)) {
       const role = await this.rolesService.findByCode(RoleEnum.ADMIN);
 
-      role.menus = menusAll.filter(
-        (menu) => menu?.code === RoleEnum.ADMIN,
-      ) as MenuEntity[];
+      role.menus = menusAll.filter((menu) => menu?.code === RoleEnum.ADMIN) as MenuEntity[];
       await this.rolesService.createMenus(role);
     }
   }

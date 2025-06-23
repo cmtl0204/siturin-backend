@@ -58,9 +58,7 @@ export class UsersController {
   @Auth(RoleEnum.ADMIN)
   @Get()
   @HttpCode(HttpStatus.OK)
-  async findAll(
-    @Query() params: FilterUserDto,
-  ): Promise<ResponseHttpInterface> {
+  async findAll(@Query() params: FilterUserDto): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.usersService.findAll(params);
 
     return {
@@ -75,9 +73,7 @@ export class UsersController {
   @Auth()
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  async findOne(
-    @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<ResponseHttpInterface> {
+  async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.usersService.findOne(id);
 
     return {
@@ -108,9 +104,7 @@ export class UsersController {
   @Auth()
   @Put(':id/reactivate')
   @HttpCode(HttpStatus.CREATED)
-  async reactivate(
-    @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<ResponseHttpInterface> {
+  async reactivate(@Param('id', ParseUUIDPipe) id: string): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.usersService.reactivate(id);
 
     return {
@@ -124,9 +118,7 @@ export class UsersController {
   @Auth()
   @Delete(':id')
   @HttpCode(HttpStatus.CREATED)
-  async remove(
-    @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<ResponseHttpInterface> {
+  async remove(@Param('id', ParseUUIDPipe) id: string): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.usersService.remove(id);
 
     return {
@@ -140,9 +132,7 @@ export class UsersController {
   @Auth()
   @Patch('remove-all')
   @HttpCode(HttpStatus.CREATED)
-  async removeAll(
-    @Body() payload: UserEntity[],
-  ): Promise<ResponseHttpInterface> {
+  async removeAll(@Body() payload: UserEntity[]): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.usersService.removeAll(payload);
 
     return {
@@ -156,9 +146,7 @@ export class UsersController {
   @Auth()
   @Put(':id/suspend')
   @HttpCode(HttpStatus.CREATED)
-  async suspend(
-    @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<ResponseHttpInterface> {
+  async suspend(@Param('id', ParseUUIDPipe) id: string): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.usersService.suspend(id);
 
     return {

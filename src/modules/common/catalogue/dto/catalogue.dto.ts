@@ -1,10 +1,4 @@
-import {
-  IsEnum,
-  IsNotEmpty,
-  IsNumber,
-  IsString,
-  MinLength,
-} from 'class-validator';
+import { IsEnum, IsNotEmpty, IsNumber, IsString, MinLength } from 'class-validator';
 import { CatalogueStateEnum, CatalogueTypeEnum } from '../../../../utils/enums';
 import {
   isEnumValidationOptions,

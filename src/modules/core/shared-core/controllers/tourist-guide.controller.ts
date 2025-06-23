@@ -3,8 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpCode,
-  HttpStatus,
   Param,
   ParseUUIDPipe,
   Post,
@@ -12,12 +10,13 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Auth } from '@auth/decorators';
+import { Auth, PublicRoute } from '@auth/decorators';
 import { ResponseHttpInterface } from '@utils/interfaces';
 import { PaginationDto } from '@utils/dto';
 import { TouristGuideService } from '@modules/core/shared-core/services/tourist-guide.service';
 import {
   CreateTouristGuideDto,
+  FindTouristGuideDto,
   UpdateTouristGuideDto,
 } from '@modules/core/shared-core/dto/tourist-guide';
 
@@ -27,12 +26,10 @@ import {
 export class TouristGuideController {
   constructor(private service: TouristGuideService) {}
 
-  @ApiOperation({ summary: 'List all' })
+  @PublicRoute()
+  @ApiOperation({ summary: 'Find All' })
   @Get()
-  @HttpCode(HttpStatus.OK)
-  async findAll(
-    @Query() params: PaginationDto,
-  ): Promise<ResponseHttpInterface> {
+  async findAll(@Query() params: PaginationDto): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.service.findAll(params);
 
     return {
@@ -43,27 +40,24 @@ export class TouristGuideController {
     };
   }
 
-  @ApiOperation({ summary: 'Delete Cadastre' })
+  @ApiOperation({ summary: 'Find One' })
   @Get(':id')
-  @HttpCode(HttpStatus.OK)
   async findOne(
     @Param('id', ParseUUIDPipe) id: string,
+    @Query() options: FindTouristGuideDto,
   ): Promise<ResponseHttpInterface> {
-    const serviceResponse = await this.service.findOne(id);
+    const serviceResponse = await this.service.findOne(id, options);
 
     return {
-      data: serviceResponse.data,
+      data: serviceResponse,
       message: `Registro Consultado`,
       title: `Consultado`,
     };
   }
 
-  @ApiOperation({ summary: 'Create Cadastre' })
+  @ApiOperation({ summary: 'Create' })
   @Post()
-  @HttpCode(HttpStatus.OK)
-  async create(
-    @Body() payload: CreateTouristGuideDto,
-  ): Promise<ResponseHttpInterface> {
+  async create(@Body() payload: CreateTouristGuideDto): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.service.create(payload);
 
     return {
@@ -73,9 +67,8 @@ export class TouristGuideController {
     };
   }
 
-  @ApiOperation({ summary: 'Update Cadastre' })
+  @ApiOperation({ summary: 'Update' })
   @Put(':id')
-  @HttpCode(HttpStatus.OK)
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() payload: UpdateTouristGuideDto,
@@ -89,12 +82,9 @@ export class TouristGuideController {
     };
   }
 
-  @ApiOperation({ summary: 'Delete Cadastre' })
+  @ApiOperation({ summary: 'Delete' })
   @Delete(':id')
-  @HttpCode(HttpStatus.OK)
-  async delete(
-    @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<ResponseHttpInterface> {
+  async delete(@Param('id', ParseUUIDPipe) id: string): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.service.delete(id);
 
     return {

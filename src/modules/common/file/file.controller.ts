@@ -109,10 +109,7 @@ export class FileController {
     @Param('modelId', ParseUUIDPipe) modelId: string,
     @Query() params: FilterFileDto,
   ): Promise<ResponseHttpInterface> {
-    const serviceResponse = await this.filesService.findByModel(
-      modelId,
-      params,
-    );
+    const serviceResponse = await this.filesService.findByModel(modelId, params);
 
     return {
       data: serviceResponse.data,
@@ -124,9 +121,7 @@ export class FileController {
 
   @ApiOperation({ summary: 'Delete' })
   @Delete('/:id')
-  async remove(
-    @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<ResponseHttpInterface> {
+  async remove(@Param('id', ParseUUIDPipe) id: string): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.filesService.remove(id);
 
     return {

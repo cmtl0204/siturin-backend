@@ -102,8 +102,7 @@ export class UserEntity {
     type: 'uuid',
     name: 'marital_status_id',
     nullable: true,
-    comment:
-      'Soltero, Casado, Viudo, Divorciado, Union Libre, Separado no legal',
+    comment: 'Soltero, Casado, Viudo, Divorciado, Union Libre, Separado no legal',
   })
   maritalStatusId: string;
 
@@ -231,8 +230,7 @@ export class UserEntity {
     name: 'max_attempts',
     type: 'int',
     default: 3,
-    comment:
-      'Intentos máximos para errar la contraseña, si llega a cero el usuario se bloquea',
+    comment: 'Intentos máximos para errar la contraseña, si llega a cero el usuario se bloquea',
   })
   maxAttempts: number;
 

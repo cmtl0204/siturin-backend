@@ -20,11 +20,7 @@ export class AuditSubscriber implements EntitySubscriberInterface {
   }
 
   private async log<T>(
-    event:
-      | InsertEvent<T>
-      | UpdateEvent<T>
-      | SoftRemoveEvent<T>
-      | RemoveEvent<T>,
+    event: InsertEvent<T> | UpdateEvent<T> | SoftRemoveEvent<T> | RemoveEvent<T>,
     action: string,
     data: {
       oldData?: Partial<T>;
@@ -61,10 +57,7 @@ export class AuditSubscriber implements EntitySubscriberInterface {
   }
 
   async afterUpdate(event: UpdateEvent<any>) {
-    const { newChanges, oldChanges } = this.getChangedFields(
-      event.databaseEntity,
-      event.entity,
-    );
+    const { newChanges, oldChanges } = this.getChangedFields(event.databaseEntity, event.entity);
 
     if (Object.keys(newChanges).length === 0) {
       // No hay cambios reales, no guardamos auditoría
@@ -105,10 +98,7 @@ export class AuditSubscriber implements EntitySubscriberInterface {
     if (!oldData || !newData) return { newChanges, oldChanges };
 
     for (const key of Object.keys(newData)) {
-      if (
-        !isDeepStrictEqual(oldData[key], newData[key]) &&
-        key !== 'updatedAt'
-      ) {
+      if (!isDeepStrictEqual(oldData[key], newData[key]) && key !== 'updatedAt') {
         newChanges[key] = newData[key];
         oldChanges[key] = oldData[key];
       }

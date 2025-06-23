@@ -4,12 +4,7 @@ import { Repository, FindOptionsWhere, ILike, IsNull } from 'typeorm';
 import { MenuEntity, RoleEntity, UserEntity } from '@auth/entities';
 import { ServiceResponseHttpInterface } from '../../../utils/interfaces';
 import { AuthRepositoryEnum } from '../../../utils/enums';
-import {
-  CreateMenuDto,
-  FilterMenuDto,
-  ReadMenuDto,
-  UpdateMenuDto,
-} from '@auth/dto';
+import { CreateMenuDto, FilterMenuDto, ReadMenuDto, UpdateMenuDto } from '@auth/dto';
 import { tr } from 'date-fns/locale';
 import { PaginationDto } from '../../../utils/dto';
 
@@ -94,10 +89,7 @@ export class MenusService {
     return { data: plainToInstance(ReadMenuDto, menu) };
   }
 
-  async update(
-    id: string,
-    payload: UpdateMenuDto,
-  ): Promise<ServiceResponseHttpInterface> {
+  async update(id: string, payload: UpdateMenuDto): Promise<ServiceResponseHttpInterface> {
     const menu = await this.repository.preload({ id, ...payload });
 
     if (!menu) {
@@ -121,16 +113,12 @@ export class MenusService {
     return { data: plainToInstance(ReadMenuDto, menuDeleted) };
   }
 
-  async removeAll(
-    payload: MenuEntity[],
-  ): Promise<ServiceResponseHttpInterface> {
+  async removeAll(payload: MenuEntity[]): Promise<ServiceResponseHttpInterface> {
     const menusDeleted = await this.repository.softRemove(payload);
     return { data: menusDeleted };
   }
 
-  private async paginateAndFilter(
-    params: FilterMenuDto,
-  ): Promise<ServiceResponseHttpInterface> {
+  private async paginateAndFilter(params: FilterMenuDto): Promise<ServiceResponseHttpInterface> {
     let where: FindOptionsWhere<MenuEntity> | FindOptionsWhere<MenuEntity>[];
     where = {};
     let { page, search } = params;

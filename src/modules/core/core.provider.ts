@@ -54,8 +54,7 @@ import { ServiceTypeEntity } from '@modules/core/entities/service-type.entity';
 export const coreProviders = [
   {
     provide: CoreRepositoryEnum.ACTIVITY_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(ActivityEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(ActivityEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
@@ -66,50 +65,42 @@ export const coreProviders = [
   },
   {
     provide: CoreRepositoryEnum.ASSIGNMENT_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(AssignmentEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(AssignmentEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: CoreRepositoryEnum.BREACH_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(BreachCauseEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(BreachCauseEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: CoreRepositoryEnum.CADASTRE_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(CadastreEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(CadastreEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: CoreRepositoryEnum.CADASTRE_STATE_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(CadastreStateEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(CadastreStateEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: CoreRepositoryEnum.CATEGORY_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(CategoryEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(CategoryEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: CoreRepositoryEnum.CATEGORY_CONFIGURATION_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(CategoryConfigurationEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(CategoryConfigurationEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: CoreRepositoryEnum.CLASSIFICATION_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(ClassificationEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(ClassificationEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: CoreRepositoryEnum.COMPLEMENTARY_SERVICE_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(ComplementaryServiceEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(ComplementaryServiceEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
@@ -120,20 +111,17 @@ export const coreProviders = [
   },
   {
     provide: CoreRepositoryEnum.CTC_ACTIVITY_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(CtcActivityEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(CtcActivityEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: CoreRepositoryEnum.ESTABLISHMENT_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(EstablishmentEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(EstablishmentEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: CoreRepositoryEnum.ESTABLISHMENT_ADDRESS_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(EstablishmentAddressEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(EstablishmentAddressEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
@@ -144,158 +132,132 @@ export const coreProviders = [
   },
   {
     provide: CoreRepositoryEnum.EXTERNAL_USER_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(ExternalUserEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(ExternalUserEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: CoreRepositoryEnum.INACTIVATION_CAUSE_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(InactivationCauseEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(InactivationCauseEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: CoreRepositoryEnum.INSPECTION_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(InspectionEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(InspectionEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: CoreRepositoryEnum.INTERNAL_DPA_USER_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(InternalDpaUserEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(InternalDpaUserEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: CoreRepositoryEnum.INTERNAL_USER_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(InternalUserEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(InternalUserEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: CoreRepositoryEnum.INTERNAL_ZONAL_USER_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(InternalZonalUserEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(InternalZonalUserEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: CoreRepositoryEnum.JURIDICAL_PERSON_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(JuridicalPersonEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(JuridicalPersonEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: CoreRepositoryEnum.KITCHEN_TYPE_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(KitchenTypeEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(KitchenTypeEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: CoreRepositoryEnum.LAND_TRANSPORT_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(LandTransportEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(LandTransportEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: CoreRepositoryEnum.MODEL_CATALOGUE_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(ModelCatalogueEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(ModelCatalogueEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: CoreRepositoryEnum.PAYMENT_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(PaymentEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(PaymentEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: CoreRepositoryEnum.PROCESS_ACCOMMODATION_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(ProcessAccommodationEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(ProcessAccommodationEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: CoreRepositoryEnum.PROCESS_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(ProcessEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(ProcessEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: CoreRepositoryEnum.PROCESS_AGENCY_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(ProcessAgencyEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(ProcessAgencyEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: CoreRepositoryEnum.PROCESS_CTC_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(ProcessCtcEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(ProcessCtcEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: CoreRepositoryEnum.PROCESS_EVENT_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(ProcessEventEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(ProcessEventEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: CoreRepositoryEnum.PROCESS_FOOD_DRINK_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(ProcessFoodDrinkEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(ProcessFoodDrinkEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: CoreRepositoryEnum.PROCESS_PARK_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(ProcessParkEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(ProcessParkEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: CoreRepositoryEnum.PROCESS_TRANSPORT_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(ProcessTransportEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(ProcessTransportEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: CoreRepositoryEnum.OBSERVATION_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(ObservationEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(ObservationEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: CoreRepositoryEnum.REGULATION_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(RegulationEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(RegulationEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: CoreRepositoryEnum.REGULATORY_PROCESS_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(RegulatoryProcessEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(RegulatoryProcessEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: CoreRepositoryEnum.ROOM_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(RoomEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(RoomEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: CoreRepositoryEnum.ROOM_CAPACITY_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(RoomCapacityEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(RoomCapacityEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: CoreRepositoryEnum.ROOM_RATE_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(RoomRateEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(RoomRateEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: CoreRepositoryEnum.ROOM_TYPE_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(RoomTypeEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(RoomTypeEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
@@ -305,38 +267,32 @@ export const coreProviders = [
   },
   {
     provide: CoreRepositoryEnum.SALES_REPRESENTATIVE_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(SalesRepresentativeEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(SalesRepresentativeEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: CoreRepositoryEnum.SERVICE_TYPE_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(ServiceTypeEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(ServiceTypeEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: CoreRepositoryEnum.TOURIST_GUIDE_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(TouristGuideEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(TouristGuideEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: CoreRepositoryEnum.TOURIST_LICENSE_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(TouristLicenseEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(TouristLicenseEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: CoreRepositoryEnum.TOURIST_TRANSPORT_COMPANY_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(TouristTransportCompanyEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(TouristTransportCompanyEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: CoreRepositoryEnum.ZONE_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(ZoneEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(ZoneEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
 ];

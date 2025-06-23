@@ -9,8 +9,7 @@ export const databaseProviders = [
     provide: ConfigEnum.PG_DATA_SOURCE,
     inject: [config.KEY],
     useFactory: async (configService: ConfigType<typeof config>) => {
-      const { username, host, database, password, port } =
-        configService.database;
+      const { username, host, database, password, port } = configService.database;
       const dataSource = new DataSource({
         type: 'postgres',
         host,
@@ -41,8 +40,7 @@ export const databaseProviders = [
     provide: ConfigEnum.PG_DATA_SOURCE_SITURIN_OLD,
     inject: [config.KEY],
     useFactory: async (configService: ConfigType<typeof config>) => {
-      const { username, host, database, password, port } =
-        configService.database;
+      const { username, host, database, password, port } = configService.database;
       const dataSource = new DataSource({
         type: 'postgres',
         host,

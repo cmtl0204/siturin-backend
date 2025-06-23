@@ -1,8 +1,5 @@
 import { IsBoolean, IsOptional, IsString } from 'class-validator';
-import {
-  isBooleanValidationOptions,
-  isStringValidationOptions,
-} from '@utils/dto-validation';
+import { isBooleanValidationOptions, isStringValidationOptions } from '@utils/dto-validation';
 import { ProcessEntity, TouristLicenseEntity } from '@modules/core/entities';
 
 export class BaseTouristGuideDto {

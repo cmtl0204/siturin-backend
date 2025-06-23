@@ -69,9 +69,7 @@ export class MenusController {
   @ApiOperation({ summary: 'Menus for sidebar' })
   @Get('roles/:roleId')
   @HttpCode(HttpStatus.OK)
-  async getMenusByRole(
-    @Param('roleId') roleId: string,
-  ): Promise<ResponseHttpInterface> {
+  async getMenusByRole(@Param('roleId') roleId: string): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.menusService.getMenusByRole(roleId);
 
     return {
@@ -84,9 +82,7 @@ export class MenusController {
   @ApiOperation({ summary: 'Find All' })
   @Get()
   @HttpCode(HttpStatus.OK)
-  async findAll(
-    @Query() params: FilterMenuDto,
-  ): Promise<ResponseHttpInterface> {
+  async findAll(@Query() params: FilterMenuDto): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.menusService.findAll(params);
 
     return {
@@ -101,9 +97,7 @@ export class MenusController {
   @Auth()
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  async findOne(
-    @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<ResponseHttpInterface> {
+  async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.menusService.findOne(id);
 
     return {
@@ -134,9 +128,7 @@ export class MenusController {
   @Auth()
   @Delete(':id')
   @HttpCode(HttpStatus.CREATED)
-  async remove(
-    @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<ResponseHttpInterface> {
+  async remove(@Param('id', ParseUUIDPipe) id: string): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.menusService.remove(id);
 
     return {
@@ -150,9 +142,7 @@ export class MenusController {
   @Auth()
   @Patch('remove-all')
   @HttpCode(HttpStatus.CREATED)
-  async removeAll(
-    @Body() payload: MenuEntity[],
-  ): Promise<ResponseHttpInterface> {
+  async removeAll(@Body() payload: MenuEntity[]): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.menusService.removeAll(payload);
 
     return {

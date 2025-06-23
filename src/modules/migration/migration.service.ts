@@ -341,9 +341,7 @@ export class MigrationService {
     const users = await this.userRepository.find();
 
     for (const item of data) {
-      const exists = externalUsers.find(
-        (register) => register.idTemp == item.id,
-      );
+      const exists = externalUsers.find((register) => register.idTemp == item.id);
 
       if (!exists) {
         const user = users.find((user) => user.idTemp == item.user_id);
@@ -372,9 +370,7 @@ export class MigrationService {
     const users = await this.userRepository.find();
 
     for (const item of data) {
-      const exists = internalUsers.find(
-        (register) => register.idTemp == item.id,
-      );
+      const exists = internalUsers.find((register) => register.idTemp == item.id);
 
       if (!exists) {
         const user = users.find((user) => user.idTemp == item.user_id);
@@ -404,9 +400,7 @@ export class MigrationService {
     const dpas = await this.dpaRepository.find();
 
     for (const item of data) {
-      const exists = internalDPAUsers.find(
-        (register) => register.idTemp == item.id,
-      );
+      const exists = internalDPAUsers.find((register) => register.idTemp == item.id);
 
       if (!exists) {
         const internalUser = internalUsers.find(
@@ -440,9 +434,7 @@ export class MigrationService {
     const zones = await this.zoneRepository.find();
 
     for (const item of data) {
-      const exists = internalZonalUsers.find(
-        (register) => register.idTemp == item.id,
-      );
+      const exists = internalZonalUsers.find((register) => register.idTemp == item.id);
 
       if (!exists) {
         const internalUser = internalUsers.find(
@@ -489,9 +481,7 @@ export class MigrationService {
         entity.name = item.nombre;
         entity.sort = item.orden;
 
-        const geographicArea = catalogues.find(
-          (x) => x.idTemp == item.zona_geografica_id,
-        );
+        const geographicArea = catalogues.find((x) => x.idTemp == item.zona_geografica_id);
 
         if (geographicArea) entity.geographicAreaId = geographicArea.id;
 
@@ -509,9 +499,7 @@ export class MigrationService {
     const activities = await this.activityRepository.find();
 
     for (const item of data) {
-      const exists = classifications.find(
-        (register) => register.idTemp == item.id,
-      );
+      const exists = classifications.find((register) => register.idTemp == item.id);
 
       if (!exists) {
         const entity = this.classificationRepository.create();
@@ -573,9 +561,7 @@ export class MigrationService {
         entity.sort = item.orden;
         entity.hasRegulation = item.tiene_normativa || false;
 
-        const classification = classifications.find(
-          (x) => x.idTemp == item.clasificacion_id,
-        );
+        const classification = classifications.find((x) => x.idTemp == item.clasificacion_id);
 
         if (classification) entity.classificationId = classification.id;
 
@@ -601,8 +587,7 @@ export class MigrationService {
         entity.deletedAt = item.deleted_at;
         entity.idTemp = item.id;
         entity.mainEconomicActivity = item.actividad_economica_principal;
-        entity.legalRepresentativeIdentification =
-          item.representante_legal_identificacion;
+        entity.legalRepresentativeIdentification = item.representante_legal_identificacion;
         entity.legalRepresentativeNames = item.representante_legal_nombres;
         entity.tradeName = item.nombre_comercial;
         entity.number = item.numero;
@@ -611,21 +596,15 @@ export class MigrationService {
         entity.lastUpdatedAt = item.fecha_actualizacion;
         entity.activitiesStartedAt = item.fecha_inicio_actividades;
 
-        const state = catalogues.find(
-          (x) => x.idTemp == item.estado_contribuyente_id,
-        );
+        const state = catalogues.find((x) => x.idTemp == item.estado_contribuyente_id);
 
         if (state) entity.stateId = state.id;
 
-        const type = catalogues.find(
-          (x) => x.idTemp == item.tipo_contribuyente_id,
-        );
+        const type = catalogues.find((x) => x.idTemp == item.tipo_contribuyente_id);
 
         if (type) entity.typeId = type.id;
 
-        const legalEntity = catalogues.find(
-          (x) => x.idTemp == item.personeria_juridica_id,
-        );
+        const legalEntity = catalogues.find((x) => x.idTemp == item.personeria_juridica_id);
 
         if (legalEntity) entity.legalEntityId = legalEntity.id;
 
@@ -643,9 +622,7 @@ export class MigrationService {
     const catalogues = await this.catalogueRepository.find();
 
     for (const item of data) {
-      const exists = establishments.find(
-        (register) => register.idTemp == item.id,
-      );
+      const exists = establishments.find((register) => register.idTemp == item.id);
 
       if (!exists) {
         const entity = this.establishmentRepository.create();
@@ -675,15 +652,12 @@ export class MigrationService {
 
   async migrateCategoryConfigurations() {
     const data = await this.getData('siturin.configuracion_categorias');
-    const categoryConfigurations =
-      await this.categoryConfigurationRepository.find();
+    const categoryConfigurations = await this.categoryConfigurationRepository.find();
     const classifications = await this.classificationRepository.find();
     const categories = await this.categoryRepository.find();
 
     for (const item of data) {
-      const exists = categoryConfigurations.find(
-        (register) => register.idTemp == item.id,
-      );
+      const exists = categoryConfigurations.find((register) => register.idTemp == item.id);
 
       if (!exists) {
         const entity = this.categoryConfigurationRepository.create();
@@ -696,9 +670,7 @@ export class MigrationService {
         entity.max = item.orden;
         entity.sort = item.orden;
 
-        const classification = classifications.find(
-          (x) => x.idTemp == item.clasificacion_id,
-        );
+        const classification = classifications.find((x) => x.idTemp == item.clasificacion_id);
         if (classification) entity.classificationId = classification.id;
 
         const category = categories.find((x) => x.idTemp == item.categoria_id);
@@ -768,9 +740,7 @@ export class MigrationService {
         entity.isPlace = item.es_plaza;
         entity.name = item.nombre;
 
-        const geographicArea = catalogues.find(
-          (x) => x.idTemp == item.zona_geografica_id,
-        );
+        const geographicArea = catalogues.find((x) => x.idTemp == item.zona_geografica_id);
 
         if (geographicArea) {
           entity.geographicAreaId = geographicArea.id;
@@ -804,35 +774,27 @@ export class MigrationService {
         entity.idTemp = item.id;
 
         const activity = activities.find((x) => x.idTemp == item.actividad_id);
-        const classification = classifications.find(
-          (x) => x.idTemp == item.clasificacion_id,
-        );
+        const classification = classifications.find((x) => x.idTemp == item.clasificacion_id);
         const category = categories.find((x) => x.idTemp == item.categoria_id);
         const state = catalogues.find((x) => x.idTemp == item.estado_id);
         const type = catalogues.find((x) => x.idTemp == item.tipo_id);
         const causeInactivationType = catalogues.find(
           (x) => x.idTemp == item.tipo_causa_inactivacion_id,
         );
-        const establishment = establishments.find(
-          (x) => x.idTemp == item.establecimiento_id,
-        );
-        const legalEntity = catalogues.find(
-          (x) => x.idTemp == item.personeria_juridica_id,
-        );
+        const establishment = establishments.find((x) => x.idTemp == item.establecimiento_id);
+        const legalEntity = catalogues.find((x) => x.idTemp == item.personeria_juridica_id);
 
         if (activity) entity.activityId = activity.id;
         if (classification) entity.classificationId = classification.id;
         if (category) entity.categoryId = category.id;
         if (state) entity.stateId = state.id;
         if (type) entity.typeId = type.id;
-        if (causeInactivationType)
-          entity.causeInactivationTypeId = causeInactivationType.id;
+        if (causeInactivationType) entity.causeInactivationTypeId = causeInactivationType.id;
         if (establishment) entity.establishmentId = establishment.id;
         if (legalEntity) entity.legalEntityId = legalEntity.id;
 
         entity.registeredAt = item.fecha;
-        entity.hasTouristActivityDocument =
-          item.tiene_documento_actividad_turistica || false;
+        entity.hasTouristActivityDocument = item.tiene_documento_actividad_turistica || false;
         entity.hasPersonDesignation = item.tiene_nombramiento_vigente || false;
         entity.totalMen = item.total_hombres || 0;
         entity.totalWomen = item.total_mujeres || 0;
@@ -864,9 +826,7 @@ export class MigrationService {
       const province = dpa.find((x) => x.idTemp == item.provincia_id);
       const canton = dpa.find((x) => x.idTemp == item.canton_id);
       const parish = dpa.find((x) => x.idTemp == item.parroquia_id);
-      const establishment = establishments.find(
-        (x) => x.idTemp == item.establecimiento_id,
-      );
+      const establishment = establishments.find((x) => x.idTemp == item.establecimiento_id);
       const process = processes.find((x) => x.idTemp == item.id);
 
       entity.createdAt = item.created_at || new Date();
@@ -892,12 +852,8 @@ export class MigrationService {
         }
 
         entity.referenceStreet = item.ubicacion.calleReferencia;
-        entity.latitude = isNaN(item.ubicacion.latitud)
-          ? item.ubicacion.latitud
-          : 0;
-        entity.longitude = isNaN(item.ubicacion.longitud)
-          ? item.ubicacion.longitud
-          : 0;
+        entity.latitude = isNaN(item.ubicacion.latitud) ? item.ubicacion.latitud : 0;
+        entity.longitude = isNaN(item.ubicacion.longitud) ? item.ubicacion.longitud : 0;
 
         await this.establishmentAddressRepository.save(entity);
       }
@@ -915,9 +871,7 @@ export class MigrationService {
     for (const item of data) {
       const entity = this.establishmentContactPersonRepository.create();
 
-      const establishment = establishments.find(
-        (x) => x.idTemp == item.establecimiento_id,
-      );
+      const establishment = establishments.find((x) => x.idTemp == item.establecimiento_id);
       const process = processes.find((x) => x.idTemp == item.id);
 
       entity.createdAt = item.created_at || new Date();
@@ -977,22 +931,18 @@ export class MigrationService {
         entity.idTemp = item.id;
 
         entity.establishmentName = item.nombre_establecimiento;
-        entity.hasFranchiseGrantCertificate =
-          item.tiene_certificado_concesion_franquicia;
+        entity.hasFranchiseGrantCertificate = item.tiene_certificado_concesion_franquicia;
         entity.score = item.puntaje;
         entity.totalTables = item.total_mesas;
         entity.totalCapacities = item.total_capacidades;
 
         const process = processes.find((x) => x.idTemp == item.tramite_id);
 
-        const establishmentType = catalogues.find(
-          (x) => x.idTemp == item.tipo_establecimiento_id,
-        );
+        const establishmentType = catalogues.find((x) => x.idTemp == item.tipo_establecimiento_id);
 
         if (process) entity.processId = process.id;
 
-        if (establishmentType)
-          entity.establishmentTypeId = establishmentType.id;
+        if (establishmentType) entity.establishmentTypeId = establishmentType.id;
 
         await this.processFoodDrinkRepository.save(entity);
 
@@ -1115,8 +1065,7 @@ export class MigrationService {
         entity.totalRooms = item.total_habitaciones;
         entity.totalTables = item.total_mesas;
         entity.totalPlaces = item.total_plazas;
-        entity.hasPropertyRegistrationCertificate =
-          item.tiene_certificado_registro_propiedad;
+        entity.hasPropertyRegistrationCertificate = item.tiene_certificado_registro_propiedad;
         entity.hasTechnicalReport = item.tiene_informe_tecnico;
         entity.hasStatute = item.tiene_estatuo;
 
@@ -1132,9 +1081,7 @@ export class MigrationService {
   }
 
   async migrateProcessAgencies() {
-    const data = await this.getData(
-      'siturin.tramite_operaciones_intermediaciones',
-    );
+    const data = await this.getData('siturin.tramite_operaciones_intermediaciones');
 
     const table = await this.processAgencyRepository.find();
     const processes = await this.processRepository.find();
@@ -1159,8 +1106,7 @@ export class MigrationService {
         );
 
         if (process) entity.processId = process.id;
-        if (permanentPhysicalSpace)
-          entity.permanentPhysicalSpaceId = permanentPhysicalSpace.id;
+        if (permanentPhysicalSpace) entity.permanentPhysicalSpaceId = permanentPhysicalSpace.id;
 
         await this.processAgencyRepository.save(entity);
       }
@@ -1225,12 +1171,8 @@ export class MigrationService {
         entity.totalSeats = item.total_asientos;
 
         const process = processes.find((x) => x.idTemp == item.tramite_id);
-        const localType = catalogues.find(
-          (x) => x.idTemp == item.tipo_local_id,
-        );
-        const airlineType = catalogues.find(
-          (x) => x.idTemp == item.tipo_aerolinea_id,
-        );
+        const localType = catalogues.find((x) => x.idTemp == item.tipo_local_id);
+        const airlineType = catalogues.find((x) => x.idTemp == item.tipo_aerolinea_id);
 
         if (process) entity.processId = process.id;
         if (localType) entity.localTypeId = localType.id;
@@ -1268,9 +1210,7 @@ export class MigrationService {
 
         const process = processes.find((x) => x.idTemp == item.tramite_id);
         const dpa = dpas.find((x) => x.idTemp == item.dpa_id);
-        const internalUser = internalUsers.find(
-          (x) => x.idTemp == item.usuario_interno_id,
-        );
+        const internalUser = internalUsers.find((x) => x.idTemp == item.usuario_interno_id);
         const zone = zones.find((x) => x.idTemp == item.zonal_id);
 
         if (process) entity.processId = process.id;
@@ -1443,9 +1383,7 @@ export class MigrationService {
         entity.idTemp = item.id;
 
         const category = categories.find((x) => x.idTemp == item.categoria_id);
-        const roomType = roomTypes.find(
-          (x) => x.idTemp == item.tipo_habitacion_id,
-        );
+        const roomType = roomTypes.find((x) => x.idTemp == item.tipo_habitacion_id);
 
         if (category) entity.categoryId = category.id;
         if (roomType) entity.roomTypeId = roomType.id;
@@ -1482,9 +1420,7 @@ export class MigrationService {
         entity.requestAt = item.habitaciones;
 
         const process = processes.find((x) => x.idTemp == item.tramite_id);
-        const internalUser = internalUsers.find(
-          (x) => x.idTemp == item.usuario_interno_id,
-        );
+        const internalUser = internalUsers.find((x) => x.idTemp == item.usuario_interno_id);
         const state = catalogues.find((x) => x.idTemp == item.estado_fecha_id);
 
         if (process) entity.processId = process.id;
@@ -1529,9 +1465,7 @@ export class MigrationService {
         entity.expirationAt = item.fecha_caducidad;
         entity.issueAt = item.fecha_emision;
 
-        const touristGuide = touristGuides.find(
-          (x) => x.idTemp == item.guia_turismo_id,
-        );
+        const touristGuide = touristGuides.find((x) => x.idTemp == item.guia_turismo_id);
 
         if (touristGuide) entity.touristGuideId = touristGuide.id;
 

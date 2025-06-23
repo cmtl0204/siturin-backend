@@ -4,7 +4,6 @@ import { CatalogueEntity } from './catalogue.entity';
 
 export const catalogueProvider = {
   provide: CommonRepositoryEnum.CATALOGUE_REPOSITORY,
-  useFactory: (dataSource: DataSource) =>
-    dataSource.getRepository(CatalogueEntity),
+  useFactory: (dataSource: DataSource) => dataSource.getRepository(CatalogueEntity),
   inject: [ConfigEnum.PG_DATA_SOURCE],
 };

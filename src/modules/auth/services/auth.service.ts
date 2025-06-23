@@ -71,16 +71,10 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new NotFoundException(
-        'Usuario no encontrado para cambio de contraseña',
-      );
+      throw new NotFoundException('Usuario no encontrado para cambio de contraseña');
     }
 
-    const isMatchPassword = await this.checkPassword(
-      payload.passwordOld,
-      user,
-      false,
-    );
+    const isMatchPassword = await this.checkPassword(payload.passwordOld, user, false);
 
     if (!isMatchPassword) {
       throw new BadRequestException('La contraseña anterior no coincide.');
@@ -180,9 +174,7 @@ export class AuthService {
     return response.data.data;
   }
 
-  async signUpExternal(
-    payload: SignUpExternalDto,
-  ): Promise<ServiceResponseHttpInterface> {
+  async signUpExternal(payload: SignUpExternalDto): Promise<ServiceResponseHttpInterface> {
     const user = this.repository.create();
 
     user.identification = payload.identification;
@@ -246,9 +238,7 @@ export class AuthService {
     const user = await this.userService.findOne(id);
 
     if (!user) {
-      throw new NotFoundException(
-        'Usuario no encontrado para actualizar información',
-      );
+      throw new NotFoundException('Usuario no encontrado para actualizar información');
     }
 
     this.repository.merge(user, payload);
@@ -264,9 +254,7 @@ export class AuthService {
     const user = await this.repository.findOneBy({ id });
 
     if (!user) {
-      throw new NotFoundException(
-        'Usuario no encontrado para actualizar el perfil',
-      );
+      throw new NotFoundException('Usuario no encontrado para actualizar el perfil');
     }
 
     const profileUpdated = await this.repository.update(id, payload);
@@ -280,9 +268,7 @@ export class AuthService {
     return { data: { accessToken, user } };
   }
 
-  async requestTransactionalCode(
-    username: string,
-  ): Promise<ServiceResponseHttpInterface> {
+  async requestTransactionalCode(username: string): Promise<ServiceResponseHttpInterface> {
     const user = await this.repository.findOne({
       where: { username },
     });
@@ -400,10 +386,7 @@ export class AuthService {
     return { data: true };
   }
 
-  async uploadAvatar(
-    file: Express.Multer.File,
-    id: string,
-  ): Promise<ServiceResponseHttpInterface> {
+  async uploadAvatar(file: Express.Multer.File, id: string): Promise<ServiceResponseHttpInterface> {
     const entity = await this.repository.findOne({
       select: {
         id: true,
@@ -458,17 +441,13 @@ export class AuthService {
     return false;
   }
 
-  async verifyIdentification(
-    identification: string,
-  ): Promise<ServiceResponseHttpInterface> {
+  async verifyIdentification(identification: string): Promise<ServiceResponseHttpInterface> {
     const user = await this.repository.findOneBy({ identification });
 
     return { data: user };
   }
 
-  async verifyRucPendingPayment(
-    rucNumber: string,
-  ): Promise<ServiceResponseHttpInterface> {
+  async verifyRucPendingPayment(rucNumber: string): Promise<ServiceResponseHttpInterface> {
     const ruc = await this.rucRepository.findOne({
       relations: { payment: true },
       where: { number: rucNumber },

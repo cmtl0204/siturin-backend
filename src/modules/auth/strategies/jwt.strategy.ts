@@ -24,13 +24,10 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
 
     if (!user) throw new UnauthorizedException('El Usuario no existe.');
 
-    if (user.suspendedAt)
-      throw new UnauthorizedException('El usuario está suspendido.');
+    if (user.suspendedAt) throw new UnauthorizedException('El usuario está suspendido.');
 
     if (user.maxAttempts === 0)
-      throw new UnauthorizedException(
-        'Ha excedido el número máximo de intentos permitidos',
-      );
+      throw new UnauthorizedException('Ha excedido el número máximo de intentos permitidos');
 
     return user;
   }

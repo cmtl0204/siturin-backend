@@ -68,10 +68,7 @@ export class MailService {
     // Cargar y compilar plantilla (Handlebars)
     let html = '';
     try {
-      const templatePath = join(
-        this.folderPathsService.mailTemplates,
-        `${mailData.template}.hbs`,
-      );
+      const templatePath = join(this.folderPathsService.mailTemplates, `${mailData.template}.hbs`);
       const source = fs.readFileSync(templatePath, 'utf8');
       const compiledTemplate = handlebars.compile(source);
       html = compiledTemplate({

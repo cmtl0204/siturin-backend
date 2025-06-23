@@ -5,8 +5,7 @@ import { FileEntity } from './file.entity';
 export const fileProviders = [
   {
     provide: CommonRepositoryEnum.FILE_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(FileEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(FileEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
 ];

@@ -33,11 +33,7 @@ export class DatabaseSeeder {
       });
 
       for (let j = 1; j <= 12; j++) {
-        const path = join(
-          process.cwd(),
-          'storage/private/uploads',
-          i.toString(),
-        );
+        const path = join(process.cwd(), 'storage/private/uploads', i.toString());
         fs.mkdir(path, (err) => {
           if (err) {
             // console.log(err);

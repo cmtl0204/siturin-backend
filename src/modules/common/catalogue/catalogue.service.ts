@@ -1,23 +1,15 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { FindOptionsWhere, ILike, IsNull, Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import {
   CreateCatalogueDto,
   FilterCatalogueDto,
   UpdateCatalogueDto,
 } from '@modules/common/catalogue/dto';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
-import {
-  CacheEnum,
-  CatalogueTypeEnum,
-  CommonRepositoryEnum,
-} from '../../../utils/enums';
-import { ReadUserDto } from '@auth/dto';
-import { UserEntity } from '@auth/entities';
-import { plainToInstance } from 'class-transformer';
-import { ServiceResponseHttpInterface } from '../../../utils/interfaces';
+import { CacheEnum, CatalogueTypeEnum, CommonRepositoryEnum } from '@utils/enums';
+import { ServiceResponseHttpInterface } from '@utils/interfaces';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { PaginationDto } from '../../../utils/dto';
 
 @Injectable()
 export class CataloguesService {
@@ -29,27 +21,21 @@ export class CataloguesService {
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
   ) {}
 
-  async create(
-    payload: CreateCatalogueDto,
-  ): Promise<ServiceResponseHttpInterface> {
+  async create(payload: CreateCatalogueDto): Promise<ServiceResponseHttpInterface> {
     const newCatalogue = this.repository.create(payload);
 
     return { data: await this.repository.save(newCatalogue) };
   }
 
-  async catalogue(
-    type: CatalogueTypeEnum,
-  ): Promise<ServiceResponseHttpInterface> {
+  async catalogue(type: CatalogueTypeEnum): Promise<CatalogueEntity[]> {
     const data = await this.repository.find({
       where: { type },
     });
 
-    return { data };
+    return data;
   }
 
-  async findAll(
-    params?: FilterCatalogueDto,
-  ): Promise<ServiceResponseHttpInterface> {
+  async findAll(params?: FilterCatalogueDto): Promise<ServiceResponseHttpInterface> {
     //All
     const data = await this.repository.findAndCount();
 
@@ -92,10 +78,7 @@ export class CataloguesService {
     return { data: catalogue };
   }
 
-  async update(
-    id: string,
-    payload: UpdateCatalogueDto,
-  ): Promise<ServiceResponseHttpInterface> {
+  async update(id: string, payload: UpdateCatalogueDto): Promise<ServiceResponseHttpInterface> {
     const catalogue = await this.repository.findOneBy({ id });
 
     if (!catalogue) {
@@ -119,26 +102,18 @@ export class CataloguesService {
     return { data: await this.repository.softRemove(catalogue) };
   }
 
-  async findCache(): Promise<ServiceResponseHttpInterface> {
-    let catalogues = (await this.cacheManager.get(
-      CacheEnum.CATALOGUES,
-    )) as CatalogueEntity[];
+  async findCache(): Promise<CatalogueEntity[]> {
+    let catalogues = (await this.cacheManager.get(CacheEnum.CATALOGUES)) as CatalogueEntity[];
 
-    if (
-      catalogues === null ||
-      catalogues === undefined ||
-      catalogues.length === 0
-    ) {
+    if (catalogues === null || catalogues === undefined || catalogues.length === 0) {
       catalogues = await this.repository.find({
-        relations: { children: true },
-        where: { parent: IsNull() },
         order: { type: 'asc', sort: 'asc', name: 'asc' },
       });
 
       await this.cacheManager.set(CacheEnum.CATALOGUES, catalogues);
     }
 
-    return { data: catalogues };
+    return catalogues;
   }
 
   async loadCache(): Promise<ServiceResponseHttpInterface> {

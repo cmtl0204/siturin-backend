@@ -91,8 +91,7 @@ export class MigrationController {
   @Post('internal-dpa-users')
   @HttpCode(HttpStatus.CREATED)
   async migrateInternalDPAUsers(): Promise<ResponseHttpInterface> {
-    const responseService =
-      await this.migrationService.migrateInternalDPAUsers();
+    const responseService = await this.migrationService.migrateInternalDPAUsers();
 
     return {
       data: responseService.data,
@@ -105,8 +104,7 @@ export class MigrationController {
   @Post('internal-zonal-users')
   @HttpCode(HttpStatus.CREATED)
   async migrateInternalZonalUsers(): Promise<ResponseHttpInterface> {
-    const responseService =
-      await this.migrationService.migrateInternalZonalUsers();
+    const responseService = await this.migrationService.migrateInternalZonalUsers();
 
     return {
       data: responseService.data,
@@ -132,8 +130,7 @@ export class MigrationController {
   @Post('classifications')
   @HttpCode(HttpStatus.CREATED)
   async migrateClassifications(): Promise<ResponseHttpInterface> {
-    const responseService =
-      await this.migrationService.migrateClassifications();
+    const responseService = await this.migrationService.migrateClassifications();
 
     return {
       data: responseService.data,
@@ -185,8 +182,7 @@ export class MigrationController {
   @Post('category-configurations')
   @HttpCode(HttpStatus.CREATED)
   async migrateCategoryConfigurations(): Promise<ResponseHttpInterface> {
-    const responseService =
-      await this.migrationService.migrateCategoryConfigurations();
+    const responseService = await this.migrationService.migrateCategoryConfigurations();
 
     return {
       data: responseService.data,
@@ -238,8 +234,7 @@ export class MigrationController {
   @Post('process-addresses')
   @HttpCode(HttpStatus.CREATED)
   async migrateProcessesAddresses(): Promise<ResponseHttpInterface> {
-    const responseService =
-      await this.migrationService.migrateProcessAddresses();
+    const responseService = await this.migrationService.migrateProcessAddresses();
 
     return {
       data: responseService.data,
@@ -252,8 +247,7 @@ export class MigrationController {
   @Post('process-contact-persons')
   @HttpCode(HttpStatus.CREATED)
   async migrateProcessContactPerson(): Promise<ResponseHttpInterface> {
-    const responseService =
-      await this.migrationService.migrateProcessContactPersons();
+    const responseService = await this.migrationService.migrateProcessContactPersons();
 
     return {
       data: responseService.data,
@@ -266,8 +260,7 @@ export class MigrationController {
   @Post('process-food-drinks')
   @HttpCode(HttpStatus.CREATED)
   async migrateProcessFoodDrinks(): Promise<ResponseHttpInterface> {
-    const responseService =
-      await this.migrationService.migrateProcessFoodDrinks();
+    const responseService = await this.migrationService.migrateProcessFoodDrinks();
 
     return {
       data: responseService.data,
@@ -280,8 +273,7 @@ export class MigrationController {
   @Post('process-accommodation')
   @HttpCode(HttpStatus.CREATED)
   async migrateProcessAccommodation(): Promise<ResponseHttpInterface> {
-    const responseService =
-      await this.migrationService.migrateProcessAccommodation();
+    const responseService = await this.migrationService.migrateProcessAccommodation();
 
     return {
       data: responseService.data,
@@ -320,8 +312,7 @@ export class MigrationController {
   @Post('process-agencies')
   @HttpCode(HttpStatus.CREATED)
   async migrateProcessAgencies(): Promise<ResponseHttpInterface> {
-    const responseService =
-      await this.migrationService.migrateProcessAgencies();
+    const responseService = await this.migrationService.migrateProcessAgencies();
 
     return {
       data: responseService.data,
@@ -347,8 +338,7 @@ export class MigrationController {
   @Post('process-transports')
   @HttpCode(HttpStatus.CREATED)
   async migrateProcessTransports(): Promise<ResponseHttpInterface> {
-    const responseService =
-      await this.migrationService.migrateProcessTransports();
+    const responseService = await this.migrationService.migrateProcessTransports();
 
     return {
       data: responseService.data,
@@ -452,8 +442,7 @@ export class MigrationController {
   @Post('tourist-licenses')
   @HttpCode(HttpStatus.CREATED)
   async migrateTouristLicenses(): Promise<ResponseHttpInterface> {
-    const responseService =
-      await this.migrationService.migrateTouristLicenses();
+    const responseService = await this.migrationService.migrateTouristLicenses();
 
     return {
       data: responseService.data,
@@ -466,8 +455,7 @@ export class MigrationController {
   @Post('adventure-tourism-modalities')
   @HttpCode(HttpStatus.CREATED)
   async migrateAdventureTourismModalities(): Promise<ResponseHttpInterface> {
-    const responseService =
-      await this.migrationService.migrateAdventureTourismModalities();
+    const responseService = await this.migrationService.migrateAdventureTourismModalities();
 
     return {
       data: responseService.data,
@@ -480,8 +468,7 @@ export class MigrationController {
   @Post('sales-representatives')
   @HttpCode(HttpStatus.CREATED)
   async migrateSalesRepresentatives(): Promise<ResponseHttpInterface> {
-    const responseService =
-      await this.migrationService.migrateSalesRepresentatives();
+    const responseService = await this.migrationService.migrateSalesRepresentatives();
 
     return {
       data: responseService.data,

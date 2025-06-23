@@ -5,12 +5,7 @@ import { MenuEntity, RoleEntity } from '@auth/entities';
 import { PaginationDto } from '../../../utils/dto';
 import { ServiceResponseHttpInterface } from '../../../utils/interfaces';
 import { AuthRepositoryEnum } from '../../../utils/enums';
-import {
-  CreateRoleDto,
-  FilterRoleDto,
-  ReadRoleDto,
-  UpdateRoleDto,
-} from '@auth/dto';
+import { CreateRoleDto, FilterRoleDto, ReadRoleDto, UpdateRoleDto } from '@auth/dto';
 
 @Injectable()
 export class RolesService {
@@ -81,10 +76,7 @@ export class RolesService {
     return role;
   }
 
-  async update(
-    id: string,
-    payload: UpdateRoleDto,
-  ): Promise<ServiceResponseHttpInterface> {
+  async update(id: string, payload: UpdateRoleDto): Promise<ServiceResponseHttpInterface> {
     const role = await this.repository.preload({ id, ...payload });
 
     if (!role) {
@@ -108,16 +100,12 @@ export class RolesService {
     return { data: plainToInstance(ReadRoleDto, roleDeleted) };
   }
 
-  async removeAll(
-    payload: RoleEntity[],
-  ): Promise<ServiceResponseHttpInterface> {
+  async removeAll(payload: RoleEntity[]): Promise<ServiceResponseHttpInterface> {
     const rolesDeleted = await this.repository.softRemove(payload);
     return { data: rolesDeleted };
   }
 
-  private async paginateAndFilter(
-    params: FilterRoleDto,
-  ): Promise<ServiceResponseHttpInterface> {
+  private async paginateAndFilter(params: FilterRoleDto): Promise<ServiceResponseHttpInterface> {
     let where: FindOptionsWhere<RoleEntity> | FindOptionsWhere<RoleEntity>[];
     where = {};
     let { page, search } = params;

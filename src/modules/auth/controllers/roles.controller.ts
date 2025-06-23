@@ -55,9 +55,7 @@ export class RolesController {
   @ApiOperation({ summary: 'Find All' })
   @Get()
   @HttpCode(HttpStatus.OK)
-  async findAll(
-    @Query() params: FilterRoleDto,
-  ): Promise<ResponseHttpInterface> {
+  async findAll(@Query() params: FilterRoleDto): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.rolesService.findAll(params);
 
     return {
@@ -71,9 +69,7 @@ export class RolesController {
   @ApiOperation({ summary: 'Find One' })
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  async findOne(
-    @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<ResponseHttpInterface> {
+  async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.rolesService.findOne(id);
 
     return {
@@ -102,9 +98,7 @@ export class RolesController {
   @ApiOperation({ summary: 'Remove One' })
   @Delete(':id')
   @HttpCode(HttpStatus.CREATED)
-  async remove(
-    @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<ResponseHttpInterface> {
+  async remove(@Param('id', ParseUUIDPipe) id: string): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.rolesService.remove(id);
 
     return {
@@ -117,9 +111,7 @@ export class RolesController {
   @ApiOperation({ summary: 'Remove All' })
   @Patch('remove-all')
   @HttpCode(HttpStatus.CREATED)
-  async removeAll(
-    @Body() payload: RoleEntity[],
-  ): Promise<ResponseHttpInterface> {
+  async removeAll(@Body() payload: RoleEntity[]): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.rolesService.removeAll(payload);
 
     return {

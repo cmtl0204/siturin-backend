@@ -27,9 +27,7 @@ export class CadastreController {
   @ApiOperation({ summary: 'List all Cadastres' })
   @Get()
   @HttpCode(HttpStatus.OK)
-  async findAll(
-    @Query() params: PaginationDto,
-  ): Promise<ResponseHttpInterface> {
+  async findAll(@Query() params: PaginationDto): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.service.findAll(params);
 
     return {
@@ -43,9 +41,7 @@ export class CadastreController {
   @ApiOperation({ summary: 'Delete Cadastre' })
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  async findOne(
-    @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<ResponseHttpInterface> {
+  async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.service.findOne(id);
 
     return {
@@ -58,9 +54,7 @@ export class CadastreController {
   @ApiOperation({ summary: 'Create Cadastre' })
   @Post()
   @HttpCode(HttpStatus.OK)
-  async create(
-    @Body() payload: CreateCadastreDto,
-  ): Promise<ResponseHttpInterface> {
+  async create(@Body() payload: CreateCadastreDto): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.service.create(payload);
 
     return {
@@ -89,9 +83,7 @@ export class CadastreController {
   @ApiOperation({ summary: 'Delete Cadastre' })
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
-  async remove(
-    @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<ResponseHttpInterface> {
+  async remove(@Param('id', ParseUUIDPipe) id: string): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.service.remove(id);
 
     return {

@@ -11,32 +11,27 @@ import { ConfigEnum, AuthRepositoryEnum } from '../../../utils/enums';
 export const authProviders = [
   {
     provide: AuthRepositoryEnum.MENU_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(MenuEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(MenuEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: AuthRepositoryEnum.PERMISSION_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(PermissionEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(PermissionEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: AuthRepositoryEnum.ROLE_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(RoleEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(RoleEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: AuthRepositoryEnum.USER_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(UserEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(UserEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
     provide: AuthRepositoryEnum.TRANSACTIONAL_CODE_REPOSITORY,
-    useFactory: (dataSource: DataSource) =>
-      dataSource.getRepository(TransactionalCodeEntity),
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(TransactionalCodeEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
 ];

@@ -13,13 +13,8 @@ export interface Response<T> {
 }
 
 @Injectable()
-export class ResponseHttpInterceptor<T>
-  implements NestInterceptor<T, Response<T>>
-{
-  intercept(
-    context: ExecutionContext,
-    next: CallHandler,
-  ): Observable<Response<T>> {
+export class ResponseHttpInterceptor<T> implements NestInterceptor<T, Response<T>> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<Response<T>> {
     if (false) {
       throw new ServiceUnavailableException();
     }

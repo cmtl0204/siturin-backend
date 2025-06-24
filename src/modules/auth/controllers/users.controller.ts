@@ -7,152 +7,94 @@ import {
   HttpStatus,
   Param,
   ParseUUIDPipe,
-  Patch,
   Post,
   Put,
   Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { CreateUserDto, FilterUserDto, UpdateUserDto } from '@auth/dto';
-import { UserEntity } from '@auth/entities';
-import { ResponseHttpInterface } from '@utils/interfaces';
 import { Auth, PublicRoute } from '@auth/decorators';
-import { RoleEnum } from '@auth/enums';
+import { ResponseHttpInterface } from '@utils/interfaces';
+import { FilterUserDto } from '@auth/dto';
 import { UsersService } from '../services/users.service';
+import { CreateUserDto, UpdateUserDto } from '@auth/dto';
 
-@Auth()
 @ApiTags('Users')
+@Auth()
 @Controller('users')
 export class UsersController {
-  constructor(private usersService: UsersService) {}
+  constructor(private readonly service: UsersService) {}
 
-  @ApiOperation({ summary: 'Create One' })
-  @PublicRoute()
+  @ApiOperation({ summary: 'List all Users' })
+  @Get()
+  async findAll(
+    @Query() params: FilterUserDto,
+  ): Promise<ResponseHttpInterface> {
+    const serviceResponse = await this.service.findAll(params);
+
+    return {
+      data: serviceResponse.data,
+      pagination: serviceResponse.pagination,
+      message: 'Usuarios consultados',
+      title: 'Consultados',
+    };
+  }
+
+  @ApiOperation({ summary: 'Get one User' })
+  @Get(':id')
+  async findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<ResponseHttpInterface> {
+    const serviceResponse = await this.service.findOne(id);
+
+    return {
+      data: serviceResponse,
+      message: 'Usuario consultado',
+      title: 'Consultado',
+    };
+  }
+
+  @ApiOperation({ summary: 'Create User' })
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() payload: CreateUserDto): Promise<ResponseHttpInterface> {
-    const serviceResponse = await this.usersService.create(payload);
+  @PublicRoute() //borrar esta linea
+  async create(
+    @Body() payload: CreateUserDto,
+  ): Promise<ResponseHttpInterface> {
+    const serviceResponse = await this.service.create(payload);
 
     return {
       data: serviceResponse,
-      message: 'User created',
-      title: 'Created',
+      message: 'Usuario creado',
+      title: 'Creado',
     };
   }
 
-  @ApiOperation({ summary: 'Catalogue' })
-  @Get('catalogue')
-  @HttpCode(HttpStatus.OK)
-  async catalogue(): Promise<ResponseHttpInterface> {
-    const serviceResponse = await this.usersService.catalogue();
-
-    return {
-      data: serviceResponse.data,
-      pagination: serviceResponse.pagination,
-      message: `catalogue`,
-      title: `Catalogue`,
-    };
-  }
-
-  @ApiOperation({ summary: 'Find All' })
-  @Auth(RoleEnum.ADMIN)
-  @Get()
-  @HttpCode(HttpStatus.OK)
-  async findAll(@Query() params: FilterUserDto): Promise<ResponseHttpInterface> {
-    const serviceResponse = await this.usersService.findAll(params);
-
-    return {
-      data: serviceResponse.data,
-      pagination: serviceResponse.pagination,
-      message: `index`,
-      title: 'Success',
-    };
-  }
-
-  @ApiOperation({ summary: 'Find One' })
-  @Auth()
-  @Get(':id')
-  @HttpCode(HttpStatus.OK)
-  async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<ResponseHttpInterface> {
-    const serviceResponse = await this.usersService.findOne(id);
-
-    return {
-      data: serviceResponse,
-      message: `show ${id}`,
-      title: `Success`,
-    };
-  }
-
-  @ApiOperation({ summary: 'Update One' })
-  @Auth()
+  @ApiOperation({ summary: 'Update User' })
   @Put(':id')
-  @HttpCode(HttpStatus.CREATED)
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() payload: UpdateUserDto,
   ): Promise<ResponseHttpInterface> {
-    const serviceResponse = await this.usersService.update(id, payload);
+    const serviceResponse = await this.service.update(id, payload);
 
     return {
       data: serviceResponse,
-      message: `Usuario actualizado`,
-      title: `Actualizado`,
+      message: 'Usuario actualizado',
+      title: 'Actualizado',
     };
   }
 
-  @ApiOperation({ summary: 'Reactivate' })
-  @Auth()
-  @Put(':id/reactivate')
-  @HttpCode(HttpStatus.CREATED)
-  async reactivate(@Param('id', ParseUUIDPipe) id: string): Promise<ResponseHttpInterface> {
-    const serviceResponse = await this.usersService.reactivate(id);
-
-    return {
-      data: serviceResponse,
-      message: `Usuario reactivado`,
-      title: `Reactivado`,
-    };
-  }
-
-  @ApiOperation({ summary: 'Remove One' })
-  @Auth()
+  @ApiOperation({ summary: 'Delete User' })
   @Delete(':id')
-  @HttpCode(HttpStatus.CREATED)
-  async remove(@Param('id', ParseUUIDPipe) id: string): Promise<ResponseHttpInterface> {
-    const serviceResponse = await this.usersService.remove(id);
+  async delete(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<ResponseHttpInterface> {
+    const serviceResponse = await this.service.remove(id);
 
     return {
       data: serviceResponse,
-      message: `Usuario eliminado`,
-      title: `Eliminado`,
-    };
-  }
-
-  @ApiOperation({ summary: 'Remove All' })
-  @Auth()
-  @Patch('remove-all')
-  @HttpCode(HttpStatus.CREATED)
-  async removeAll(@Body() payload: UserEntity[]): Promise<ResponseHttpInterface> {
-    const serviceResponse = await this.usersService.removeAll(payload);
-
-    return {
-      data: serviceResponse,
-      message: `Users deleted`,
-      title: `Deleted`,
-    };
-  }
-
-  @ApiOperation({ summary: 'Suspend One' })
-  @Auth()
-  @Put(':id/suspend')
-  @HttpCode(HttpStatus.CREATED)
-  async suspend(@Param('id', ParseUUIDPipe) id: string): Promise<ResponseHttpInterface> {
-    const serviceResponse = await this.usersService.suspend(id);
-
-    return {
-      data: serviceResponse,
-      message: `Usuario suspendido`,
-      title: `Suspendido`,
+      message: 'Usuario eliminado',
+      title: 'Eliminado',
     };
   }
 }

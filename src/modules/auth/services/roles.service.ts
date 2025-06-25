@@ -1,7 +1,8 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { Repository, FindOptionsWhere, ILike } from 'typeorm';
-import { MenuEntity, RoleEntity } from '@auth/entities';
+
+import { RoleEntity } from '@auth/entities';
 import { PaginationDto } from '../../../utils/dto';
 import { ServiceResponseHttpInterface } from '../../../utils/interfaces';
 import { AuthRepositoryEnum } from '../../../utils/enums';
@@ -11,14 +12,16 @@ import { CreateRoleDto, FilterRoleDto, ReadRoleDto, UpdateRoleDto } from '@auth/
 export class RolesService {
   constructor(
     @Inject(AuthRepositoryEnum.ROLE_REPOSITORY)
-    private repository: Repository<RoleEntity>,
+    private readonly repository: Repository<RoleEntity>,
   ) {}
 
   async create(payload: CreateRoleDto): Promise<ServiceResponseHttpInterface> {
-    const newRole = this.repository.create(payload);
-    const roleCreated = await this.repository.save(newRole);
+    const role = this.repository.create(payload);
+    const savedRole = await this.repository.save(role);
 
-    return { data: plainToInstance(ReadRoleDto, roleCreated) };
+    return {
+      data: plainToInstance(ReadRoleDto, savedRole),
+    };
   }
 
   async createMenus(role: RoleEntity): Promise<RoleEntity> {
@@ -26,33 +29,26 @@ export class RolesService {
   }
 
   async catalogue(): Promise<ServiceResponseHttpInterface> {
-    const response = await this.repository.findAndCount({ take: 1000 });
+    const [roles, count] = await this.repository.findAndCount({ take: 1000 });
 
     return {
-      data: response[0],
-      pagination: { totalItems: response[1], limit: 10 },
+      data: roles,
+      pagination: { totalItems: count, limit: 10 },
     };
   }
 
   async findAll(params?: FilterRoleDto): Promise<ServiceResponseHttpInterface> {
-    //Pagination & Filter by Search
-    if (params && params?.limit > 0 && params?.page >= 0) {
-      return await this.paginateAndFilter(params);
+    if (params?.limit && params.page >= 0) {
+      return this.paginateAndFilter(params);
     }
 
-    //Other filters
-    // if (params.birthdate) {
-    //   return this.filterByBirthdate(params.birthdate);
-    // }
-
-    //All
-    const response = await this.repository.findAndCount({
+    const [roles, count] = await this.repository.findAndCount({
       order: { updatedAt: 'DESC' },
     });
 
     return {
-      data: plainToInstance(ReadRoleDto, response[0]),
-      pagination: { totalItems: response[1], limit: 10 },
+      data: plainToInstance(ReadRoleDto, roles),
+      pagination: { totalItems: count, limit: 10 },
     };
   }
 
@@ -60,7 +56,7 @@ export class RolesService {
     const role = await this.repository.findOneBy({ id });
 
     if (!role) {
-      throw new NotFoundException('Role not found, findOne');
+      throw new NotFoundException(`Rol con ID ${id} no encontrado.`);
     }
 
     return { data: plainToInstance(ReadRoleDto, role) };
@@ -70,7 +66,7 @@ export class RolesService {
     const role = await this.repository.findOneBy({ code });
 
     if (!role) {
-      throw new NotFoundException('Role not found, findByCode');
+      throw new NotFoundException(`Rol con código ${code} no encontrado.`);
     }
 
     return role;
@@ -80,57 +76,54 @@ export class RolesService {
     const role = await this.repository.preload({ id, ...payload });
 
     if (!role) {
-      throw new NotFoundException('Role not found, update');
+      throw new NotFoundException(`No se pudo actualizar: Rol con ID ${id} no encontrado.`);
     }
 
-    const roleUpdated = await this.repository.save(role);
+    const updatedRole = await this.repository.save(role);
 
-    return { data: plainToInstance(ReadRoleDto, roleUpdated) };
+    return {
+      data: plainToInstance(ReadRoleDto, updatedRole),
+    };
   }
 
   async remove(id: string): Promise<ServiceResponseHttpInterface> {
     const role = await this.repository.findOneBy({ id });
 
     if (!role) {
-      throw new NotFoundException('Role not found, remove');
+      throw new NotFoundException(`No se pudo eliminar: Rol con ID ${id} no encontrado.`);
     }
 
-    const roleDeleted = await this.repository.softRemove(role);
+    const deletedRole = await this.repository.softRemove(role);
 
-    return { data: plainToInstance(ReadRoleDto, roleDeleted) };
+    return {
+      data: plainToInstance(ReadRoleDto, deletedRole),
+    };
   }
 
   async removeAll(payload: RoleEntity[]): Promise<ServiceResponseHttpInterface> {
-    const rolesDeleted = await this.repository.softRemove(payload);
-    return { data: rolesDeleted };
+    const deletedRoles = await this.repository.softRemove(payload);
+    return { data: deletedRoles };
   }
 
   private async paginateAndFilter(params: FilterRoleDto): Promise<ServiceResponseHttpInterface> {
-    let where: FindOptionsWhere<RoleEntity> | FindOptionsWhere<RoleEntity>[];
-    where = {};
-    let { page, search } = params;
-    const { limit } = params;
+    const { page, limit, search } = params;
+    let where: FindOptionsWhere<RoleEntity>[] = [];
 
-    if (search) {
-      search = search.trim();
-      page = 0;
-      where = [];
-      where.push({ code: ILike(`%${search}%`) });
-      where.push({ name: ILike(`%${search}%`) });
+    if (search?.trim()) {
+      const term = `%${search.trim()}%`;
+      where = [{ code: ILike(term) }, { name: ILike(term) }];
     }
 
-    const response = await this.repository.findAndCount({
-      where,
+    const [roles, count] = await this.repository.findAndCount({
+      where: where.length ? where : undefined,
       take: limit,
       skip: PaginationDto.getOffset(limit, page),
-      order: {
-        updatedAt: 'DESC',
-      },
+      order: { updatedAt: 'DESC' },
     });
 
     return {
-      data: plainToInstance(ReadRoleDto, response[0]),
-      pagination: { limit, totalItems: response[1] },
+      data: plainToInstance(ReadRoleDto, roles),
+      pagination: { limit, totalItems: count },
     };
   }
 }

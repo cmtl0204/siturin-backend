@@ -13,111 +13,100 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Auth } from '@auth/decorators';
 import { CreateRoleDto, FilterRoleDto, UpdateRoleDto } from '@auth/dto';
 import { RoleEntity } from '@auth/entities';
+import { Auth, PublicRoute } from '@auth/decorators';
 import { ResponseHttpInterface } from '../../../utils/interfaces';
 import { RolesService } from '@auth/services/roles.service';
 
-@ApiTags('Roles')
+//@PublicRoute() //para todos los metodos
 @Auth()
+@ApiTags('Roles')
 @Controller('roles')
 export class RolesController {
-  constructor(private rolesService: RolesService) {}
+  constructor(private readonly rolesService: RolesService) {}
 
-  @ApiOperation({ summary: 'Create One' })
+  @PublicRoute() //borrar esta parte
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Crear un nuevo rol' })
   async create(@Body() payload: CreateRoleDto): Promise<ResponseHttpInterface> {
-    const serviceResponse = await this.rolesService.create(payload);
-
+    const { data } = await this.rolesService.create(payload);
     return {
-      data: serviceResponse.data,
-      message: 'Role created',
-      title: 'Created',
+      data,
+      message: 'Rol creado correctamente.',
+      title: 'Creación exitosa',
     };
   }
 
-  @ApiOperation({ summary: 'Catalogue' })
   @Get('catalogue')
-  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Catálogo de roles' })
   async catalogue(): Promise<ResponseHttpInterface> {
-    const serviceResponse = await this.rolesService.catalogue();
-
+    const { data, pagination } = await this.rolesService.catalogue();
     return {
-      data: serviceResponse.data,
-      pagination: serviceResponse.pagination,
-      message: `catalogue`,
-      title: `Catalogue`,
+      data,
+      pagination,
+      message: 'Catálogo obtenido correctamente.',
+      title: 'Catálogo de roles',
     };
   }
 
-  @ApiOperation({ summary: 'Find All' })
   @Get()
-  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Listar todos los roles' })
   async findAll(@Query() params: FilterRoleDto): Promise<ResponseHttpInterface> {
-    const serviceResponse = await this.rolesService.findAll(params);
-
+    const { data, pagination } = await this.rolesService.findAll(params);
     return {
-      data: serviceResponse.data,
-      pagination: serviceResponse.pagination,
-      message: `index`,
-      title: 'Success',
+      data,
+      pagination,
+      message: 'Listado obtenido correctamente.',
+      title: 'Consulta exitosa',
     };
   }
 
-  @ApiOperation({ summary: 'Find One' })
   @Get(':id')
-  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Obtener un rol por ID' })
   async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<ResponseHttpInterface> {
-    const serviceResponse = await this.rolesService.findOne(id);
-
+    const { data } = await this.rolesService.findOne(id);
     return {
-      data: serviceResponse.data,
-      message: `show ${id}`,
-      title: `Success`,
+      data,
+      message: `Rol con ID ${id} obtenido correctamente.`,
+      title: 'Consulta exitosa',
     };
   }
 
-  @ApiOperation({ summary: 'Update One' })
   @Put(':id')
-  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Actualizar un rol por ID' })
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() payload: UpdateRoleDto,
   ): Promise<ResponseHttpInterface> {
-    const serviceResponse = await this.rolesService.update(id, payload);
-
+    const { data } = await this.rolesService.update(id, payload);
     return {
-      data: serviceResponse.data,
-      message: `Role updated ${id}`,
-      title: `Updated`,
+      data,
+      message: `Rol con ID ${id} actualizado correctamente.`,
+      title: 'Actualización exitosa',
     };
   }
 
-  @ApiOperation({ summary: 'Remove One' })
   @Delete(':id')
-  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Eliminar un rol por ID' })
   async remove(@Param('id', ParseUUIDPipe) id: string): Promise<ResponseHttpInterface> {
-    const serviceResponse = await this.rolesService.remove(id);
-
+    const { data } = await this.rolesService.remove(id);
     return {
-      data: serviceResponse.data,
-      message: `Role deleted ${id}`,
-      title: `Deleted`,
+      data,
+      message: `Rol con ID ${id} eliminado correctamente.`,
+      title: 'Eliminación exitosa',
     };
   }
 
-  @ApiOperation({ summary: 'Remove All' })
   @Patch('remove-all')
-  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Eliminar múltiples roles' })
   async removeAll(@Body() payload: RoleEntity[]): Promise<ResponseHttpInterface> {
-    const serviceResponse = await this.rolesService.removeAll(payload);
-
+    const { data } = await this.rolesService.removeAll(payload);
     return {
-      data: serviceResponse.data,
-      message: `Roles deleted`,
-      title: `Deleted`,
+      data,
+      message: 'Roles eliminados correctamente.',
+      title: 'Eliminación múltiple exitosa',
     };
   }
 }

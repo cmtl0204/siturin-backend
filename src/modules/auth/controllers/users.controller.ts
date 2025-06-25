@@ -42,7 +42,6 @@ export class UsersController {
 
   @ApiOperation({ summary: 'Catalogue' })
   @Get('catalogue')
-  @HttpCode(HttpStatus.OK)
   async catalogue(): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.usersService.catalogue();
 
@@ -57,7 +56,6 @@ export class UsersController {
   @ApiOperation({ summary: 'Find All' })
   @Auth(RoleEnum.ADMIN)
   @Get()
-  @HttpCode(HttpStatus.OK)
   async findAll(@Query() params: FilterUserDto): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.usersService.findAll(params);
 
@@ -72,7 +70,6 @@ export class UsersController {
   @ApiOperation({ summary: 'Find One' })
   @Auth()
   @Get(':id')
-  @HttpCode(HttpStatus.OK)
   async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.usersService.findOne(id);
 
@@ -86,7 +83,6 @@ export class UsersController {
   @ApiOperation({ summary: 'Update One' })
   @Auth()
   @Put(':id')
-  @HttpCode(HttpStatus.CREATED)
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() payload: UpdateUserDto,
@@ -103,7 +99,6 @@ export class UsersController {
   @ApiOperation({ summary: 'Reactivate' })
   @Auth()
   @Put(':id/reactivate')
-  @HttpCode(HttpStatus.CREATED)
   async reactivate(@Param('id', ParseUUIDPipe) id: string): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.usersService.reactivate(id);
 
@@ -117,7 +112,6 @@ export class UsersController {
   @ApiOperation({ summary: 'Remove One' })
   @Auth()
   @Delete(':id')
-  @HttpCode(HttpStatus.CREATED)
   async remove(@Param('id', ParseUUIDPipe) id: string): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.usersService.remove(id);
 
@@ -131,7 +125,6 @@ export class UsersController {
   @ApiOperation({ summary: 'Remove All' })
   @Auth()
   @Patch('remove-all')
-  @HttpCode(HttpStatus.CREATED)
   async removeAll(@Body() payload: UserEntity[]): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.usersService.removeAll(payload);
 
@@ -145,7 +138,6 @@ export class UsersController {
   @ApiOperation({ summary: 'Suspend One' })
   @Auth()
   @Put(':id/suspend')
-  @HttpCode(HttpStatus.CREATED)
   async suspend(@Param('id', ParseUUIDPipe) id: string): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.usersService.suspend(id);
 

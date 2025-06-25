@@ -47,7 +47,7 @@ export const databaseProviders = [
         port,
         username,
         password,
-        database: 'siturin_old_1',
+        database: 'practica',
         // dropSchema: true,
       });
 

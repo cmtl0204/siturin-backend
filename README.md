@@ -123,6 +123,7 @@ $ npm i --save passport-jwt
 $ npm i --save passport-local
 $ npm i --save pdfmake
 $ npm i --save pg
+$ npm i --save qrcode
 $ npm i --save typeorm
 
 $ npm i -D @types/bcrypt

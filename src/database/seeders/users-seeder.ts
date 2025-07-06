@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { faker } from '@faker-js/faker';
-import { CatalogueTypeEnum } from '../../utils/enums';
+import { CatalogueTypeEnum } from '@utils/enums';
 import { RoleEntity } from '@auth/entities';
-import { RoleEnum } from '@auth/enums';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
 import { CataloguesService } from '@modules/common/catalogue/catalogue.service';
 import { UsersService } from '@auth/services/users.service';

@@ -48,7 +48,7 @@ export class AuthService {
     @Inject(config.KEY) private configService: ConfigType<typeof config>,
     private readonly userService: UsersService,
     private jwtService: JwtService,
-    private readonly nodemailerService: MailService,
+    private readonly mailService: MailService,
     private readonly httpService: HttpService,
   ) {}
 
@@ -292,7 +292,7 @@ export class AuthService {
       },
     };
 
-    await this.nodemailerService.sendMail(mailData);
+    await this.mailService.sendMail(mailData);
 
     const payload = { username: user.username, token, type: 'password_reset' };
 

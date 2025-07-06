@@ -9,7 +9,6 @@ import {
   Patch,
   Post,
   Put,
-  Query,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -23,11 +22,11 @@ import {
   UpdateProfileDto,
   UpdateUserInformationDto,
 } from '@auth/dto';
-import { ResponseHttpInterface } from '../../../utils/interfaces';
+import { ResponseHttpInterface } from '@utils/interfaces';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { join } from 'path';
-import { getFileName, imageFilter } from '../../../utils/helpers';
+import { getFileName, imageFilter } from '@utils/helpers';
 import { AuthService } from '@auth/services/auth.service';
 
 @Auth()
@@ -201,7 +200,7 @@ export class AuthController {
   @UseInterceptors(
     FileInterceptor('avatar', {
       storage: diskStorage({
-        destination: join(process.cwd(), 'assets/avatars'),
+        destination: join(process.cwd(), 'public/assets/avatars'),
         filename: getFileName,
       }),
       fileFilter: imageFilter,

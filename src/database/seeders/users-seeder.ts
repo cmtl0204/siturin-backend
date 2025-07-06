@@ -46,14 +46,14 @@ export class UsersSeeder {
       birthdate: faker.date.birthdate(),
       cellPhone: '0987654321',
       identification: '1234567890001',
-      email: 'admin@mail.com',
+      email: 'admin@admin.com',
       lastname: 'Perez',
       name: 'Admin',
       password: 'admin',
       passwordChanged: false,
       personalEmail: faker.internet.email(),
       roles: roles,
-      username: 'admin@mail.com',
+      username: 'admin@admin.com',
     });
 
     for (const user of users) {

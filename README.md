@@ -100,24 +100,38 @@ Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
 
 ## Libraries
 ```bash
-$ npm install --save @nestjs/swagger
-$ npm install --save typeorm pg
-$ npm i --save class-validator class-transformer
-$ npm i @nestjs-modules/mailer
-$ npm i @nestjs/config
-$ npm i date-fns
-$ npm install --save @nestjs/passport passport passport-local
-$ npm install --save-dev @types/passport-local
-$ npm install --save @nestjs/jwt
-$ npm i @faker-js/faker
-$ npm i exceljs
-$ npm i -D @types/multer
-$ npm i bcrypt
+$ npm i --save @faker-js/faker
+$ npm i --save @nestjs/axios
+$ npm i --save @nestjs/cache-manager
+$ npm i --save @nestjs/config
+$ npm i --save @nestjs/jwt
+$ npm i --save @nestjs/passport
+$ npm i --save @nestjs/swagger
+$ npm i --save axios
+$ npm i --save bcrypt
+$ npm i --save cache-manager
+$ npm i --save class-transformer
+$ npm i --save class-validator
+$ npm i --save cls-hooked
+$ npm i --save date-fns
+$ npm i --save exceljs
+$ npm i --save joi
+$ npm i --save nodemailer
+$ npm i --save nodemailer-express-handlebars
+$ npm i --save passport
+$ npm i --save passport-jwt
+$ npm i --save passport-local
+$ npm i --save pdfmake
+$ npm i --save pg
+$ npm i --save typeorm
+
 $ npm i -D @types/bcrypt
-$ npm i passport-jwt @types/passport-jwt
-$ npm install @nestjs/cache-manager cache-manager
-$ npm i --save @nestjs/axios axios
-$ npm i joi
-$ mau deploy
+$ npm i -D @types/cls-hooked
+$ npm i -D @types/exceljs
+$ npm i -D @types/multer
+$ npm i -D @types/nodemailer-express-handlebars
+$ npm i -D @types/passport-local
+$ npm i -D @types/passport-jwt
+$ npm i -D @types/pdfmake
 ```
 

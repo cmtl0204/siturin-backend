@@ -1,13 +1,13 @@
-// src/modules/common/mail/mail.service.ts
 import { Inject, Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
+import hbs from 'nodemailer-express-handlebars';
 import { ConfigType } from '@nestjs/config';
 import { config } from '@config';
 import { MailDataInterface } from './interfaces/mail-data.interface';
 import { join } from 'path';
-import { FolderPathsService } from './folder-paths.service';
-import * as fs from 'fs';
-import * as handlebars from 'handlebars';
+import { FolderPathsService } from '../folder-paths.service';
+import { SentMessageInfo } from 'nodemailer';
+import { Attachment } from 'nodemailer/lib/mailer';
 
 @Injectable()
 export class MailService {
@@ -20,76 +20,112 @@ export class MailService {
     this.transporter = nodemailer.createTransport({
       host: this.configService.mail.host,
       port: this.configService.mail.port,
-      secure: false,
+      secure: this.configService.mail.secure == 'true',
       auth: {
         user: this.configService.mail.user,
         pass: this.configService.mail.pass,
       },
     });
+    let pathTemplates = join(__dirname, 'templates');
+
+    if (this.configService.env !== 'production') {
+      pathTemplates = folderPathsService.mailTemplates;
+    }
+
+    this.transporter.use(
+      'compile',
+      hbs({
+        viewEngine: {
+          extname: '.hbs',
+          layoutsDir: `${folderPathsService.mailTemplates}/layouts`,
+          partialsDir: `${folderPathsService.mailTemplates}/partials`,
+          defaultLayout: 'main',
+        },
+        viewPath: pathTemplates,
+        extName: '.hbs',
+      }),
+    );
   }
 
   async sendMail(mailData: MailDataInterface) {
-    const mailAttachments: any[] = [];
+    const mailAttachments: Attachment[] = [];
 
-    // Archivos adjuntos
-    const handleAttachment = (attachment: any) => {
-      if (attachment?.file) {
-        mailAttachments.push({
-          content: attachment.file,
-          filename: attachment.filename,
-          contentDisposition: 'attachment',
-        });
-      } else if (attachment?.path) {
-        mailAttachments.push({
-          path: join(this.folderPathsService.mailTemporaryFiles, attachment.path),
-          filename: attachment.filename,
-          contentDisposition: 'attachment',
-        });
-      }
-    };
+    if (mailData?.attachments) {
+      mailData.attachments.forEach((attachment) => {
+        let data!: Attachment;
 
-    mailData.attachments?.forEach(handleAttachment);
-    if (mailData.attachment) handleAttachment(mailData.attachment);
+        if (attachment.file) {
+          data = {
+            content: attachment.file,
+            filename: attachment.filename,
+            contentDisposition: 'attachment',
+          };
 
-    // Imagenes embebidas
-    mailAttachments.push(
-      {
-        filename: 'header.png',
-        path: join(this.folderPathsService.mailImages, 'header.png'),
-        cid: 'header',
-      },
-      {
-        filename: 'footer.png',
-        path: join(this.folderPathsService.mailImages, 'footer.png'),
-        cid: 'footer',
-      },
-    );
+          mailAttachments.push(data);
+        }
 
-    // Cargar y compilar plantilla (Handlebars)
-    let html = '';
-    try {
-      const templatePath = join(this.folderPathsService.mailTemplates, `${mailData.template}.hbs`);
-      const source = fs.readFileSync(templatePath, 'utf8');
-      const compiledTemplate = handlebars.compile(source);
-      html = compiledTemplate({
-        system: 'environments.appName',
-        data: mailData.data,
+        if (attachment.path) {
+          data = {
+            path: join(this.folderPathsService.mailTemporaryFiles, attachment.path),
+            filename: attachment.filename,
+            contentDisposition: 'attachment',
+          };
+
+          mailAttachments.push(data);
+        }
       });
-    } catch (err) {
-      console.error('Error cargando plantilla:', err);
-      return { error: true, message: 'No se pudo procesar la plantilla' };
     }
 
-    const sendOptions: nodemailer.SendMailOptions = {
+    if (mailData?.attachment) {
+      let data!: Attachment;
+
+      if (mailData.attachment.file) {
+        data = {
+          content: mailData.attachment.file,
+          filename: mailData.attachment.filename,
+          contentDisposition: 'attachment',
+        };
+
+        mailAttachments.push(data);
+      }
+
+      if (mailData.attachment.path) {
+        data = {
+          path: join(this.folderPathsService.mailTemporaryFiles, mailData.attachment.path),
+          filename: mailData.attachment.filename,
+          contentDisposition: 'attachment',
+        };
+        mailAttachments.push(data);
+      }
+    }
+
+    const header = {
+      filename: 'header.png',
+      path: join(this.folderPathsService.mailImages, 'header.png'),
+      cid: 'header',
+    };
+
+    const footer = {
+      filename: 'footer.png',
+      path: join(this.folderPathsService.mailImages, 'footer.png'),
+      cid: 'footer',
+    };
+
+    mailAttachments.push(header);
+    mailAttachments.push(footer);
+
+    const sendMailOptions = {
       to: mailData.to,
-      from: `"${this.configService.mail.fromName}" <${this.configService.mail.from}>`,
+      from: `${this.configService.mail.fromName} ${this.configService.mail.from}`,
       subject: mailData.subject,
-      html,
+      template: mailData.template,
+      context: { system: 'environments.appName', data: mailData.data },
       attachments: mailAttachments,
     };
 
     try {
-      const response = await this.transporter.sendMail(sendOptions);
+      const response: SentMessageInfo = await this.transporter.sendMail(sendMailOptions);
+
       return {
         accepted: response.accepted,
         rejected: response.rejected,

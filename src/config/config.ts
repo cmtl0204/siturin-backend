@@ -13,6 +13,7 @@ export const config = registerAs('config', () => {
     mail: {
       host: process.env.MAIL_HOST,
       port: parseInt(process.env.MAIL_PORT!, 10),
+      secure: process.env.MAIL_SECURE,
       user: process.env.MAIL_USERNAME,
       pass: process.env.MAIL_PASSWORD,
       from: process.env.MAIL_FROM_ADDRESS,

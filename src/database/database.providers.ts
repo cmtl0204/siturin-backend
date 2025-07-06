@@ -20,7 +20,7 @@ export const databaseProviders = [
         entities: [__dirname + '/../**/*.entity{.ts,.js}'],
         migrations: ['src/database/migrations/*.ts'],
         migrationsTableName: 'migrations',
-        dropSchema: true,
+        // dropSchema: true,
         synchronize: false,
         subscribers: [AuditSubscriber],
       });
@@ -40,7 +40,7 @@ export const databaseProviders = [
     provide: ConfigEnum.PG_DATA_SOURCE_SITURIN_OLD,
     inject: [config.KEY],
     useFactory: async (configService: ConfigType<typeof config>) => {
-      const { username, host, database, password, port } = configService.database;
+      const { username, host, password, port } = configService.database;
       const dataSource = new DataSource({
         type: 'postgres',
         host,

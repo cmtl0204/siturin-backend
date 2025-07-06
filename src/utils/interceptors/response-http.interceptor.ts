@@ -19,6 +19,14 @@ export class ResponseHttpInterceptor<T> implements NestInterceptor<T, Response<T
       throw new ServiceUnavailableException();
     }
 
+    const response = context.switchToHttp().getResponse();
+
+    const contentType = response.getHeader('Content-Type');
+
+    if (contentType && contentType.includes('application/pdf')) {
+      return next.handle();
+    }
+
     return next.handle().pipe(
       map((response) => {
         return {
@@ -26,7 +34,7 @@ export class ResponseHttpInterceptor<T> implements NestInterceptor<T, Response<T
           pagination: response.pagination,
           message: response.message,
           title: response.title,
-          version: '3.0.1',
+          version: '3.0.2',
         };
       }),
     );

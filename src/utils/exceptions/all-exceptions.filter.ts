@@ -1,19 +1,20 @@
 import {
-  ExceptionFilter,
-  Catch,
   ArgumentsHost,
+  BadRequestException,
+  Catch,
+  ExceptionFilter,
+  ForbiddenException,
   HttpException,
   NotFoundException,
-  UnauthorizedException,
-  ForbiddenException,
-  UnprocessableEntityException,
-  BadRequestException,
   ServiceUnavailableException,
+  UnauthorizedException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { QueryFailedError } from 'typeorm';
 import { ErrorResponseHttpModel } from '../interfaces';
 import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
+import { ThrottlerException } from '@nestjs/throttler';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -21,13 +22,15 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
+
     const errorResponseHttpModel: ErrorResponseHttpModel = {
       error: 'Server Error',
       message: 'Server Error',
       statusCode: 500,
     };
-    let status = 500;
 
+    let status = 500;
+    console.error(exception instanceof ThrottlerException);
     if (exception instanceof HttpException) {
       const { message, error } = exception.getResponse() as ErrorResponseHttpModel;
       status = exception.getStatus();
@@ -58,6 +61,13 @@ export class AllExceptionsFilter implements ExceptionFilter {
       if (exception instanceof ForbiddenException) {
         errorResponseHttpModel.error = error || 'Forbidden';
         errorResponseHttpModel.message = message;
+      }
+
+      if (exception instanceof ThrottlerException) {
+        errorResponseHttpModel.data = null;
+        errorResponseHttpModel.error = 'Demasiadas solicitudes';
+        errorResponseHttpModel.message =
+          'Has superado el límite de solicitudes permitidas. Por favor, espera un momento antes de intentarlo nuevamente.';
       }
 
       if (exception instanceof ServiceUnavailableException) {

@@ -1,4 +1,4 @@
-import { Controller, Inject, Post } from '@nestjs/common';
+import { Controller, Get, Inject, Post } from '@nestjs/common';
 import { ResponseHttpInterface } from './utils/interfaces';
 import { DatabaseSeeder } from '@database/seeders';
 import { PublicRoute } from '@auth/decorators';
@@ -31,6 +31,16 @@ export class AppController {
       data: true,
       message: 'Se encuentra en ambiente de producción',
       title: 'No es posible procesar su solicitud',
+    };
+  }
+
+  @PublicRoute()
+  @Get('greet')
+  greet() {
+    return {
+      data: 'Hello World',
+      message: 'Hello World',
+      title: 'Hello World',
     };
   }
 }

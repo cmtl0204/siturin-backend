@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import { AppController } from './app.controller';
@@ -13,6 +14,7 @@ import { AuditModule } from '@modules/audit/audit.module';
 import { ReportsModule } from '@modules/reports/reports.module';
 import { ImportsModule } from '@modules/imports/imports.module';
 import { CoreModule } from '@modules/core/core.module';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -38,6 +40,14 @@ import { CoreModule } from '@modules/core/core.module';
         MAIL_SECURE: Joi.boolean().required(),
       }),
     }),
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 60000,
+          limit: 1,
+        },
+      ],
+    }),
     MulterModule.register({ dest: './uploads' }),
     HttpModule,
     AuditModule,
@@ -49,6 +59,12 @@ import { CoreModule } from '@modules/core/core.module';
     MigrationModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+    AppService,
+  ],
 })
 export class AppModule {}

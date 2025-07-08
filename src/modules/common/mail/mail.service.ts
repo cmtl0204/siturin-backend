@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
-import hbs from 'nodemailer-express-handlebars';
 import { ConfigType } from '@nestjs/config';
 import { config } from '@config';
 import { MailDataInterface } from './interfaces/mail-data.interface';
@@ -26,19 +25,24 @@ export class MailService {
         pass: this.configService.mail.pass,
       },
     });
+  }
+
+  async configTemplates() {
     let pathTemplates = join(__dirname, 'templates');
 
     if (this.configService.env !== 'production') {
-      pathTemplates = folderPathsService.mailTemplates;
+      pathTemplates = this.folderPathsService.mailTemplates;
     }
+
+    const hbs = (await import('nodemailer-express-handlebars')).default;
 
     this.transporter.use(
       'compile',
       hbs({
         viewEngine: {
           extname: '.hbs',
-          layoutsDir: `${folderPathsService.mailTemplates}/layouts`,
-          partialsDir: `${folderPathsService.mailTemplates}/partials`,
+          layoutsDir: `${this.folderPathsService.mailTemplates}/layouts`,
+          partialsDir: `${this.folderPathsService.mailTemplates}/partials`,
           defaultLayout: 'main',
         },
         viewPath: pathTemplates,

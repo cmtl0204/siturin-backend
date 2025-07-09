@@ -489,4 +489,17 @@ export class MigrationController {
       title: 'land-transports',
     };
   }
+
+  @PublicRoute()
+  @Post('model-catalogues')
+  @HttpCode(HttpStatus.CREATED)
+  async migrateModelCatalogues(): Promise<ResponseHttpInterface> {
+    const responseService = await this.migrationService.migrateModelCatalogues();
+
+    return {
+      data: responseService.data,
+      message: 'created',
+      title: 'model-catalogues',
+    };
+  }
 }

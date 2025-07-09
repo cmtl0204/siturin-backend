@@ -5,7 +5,7 @@ import {
   CommonRepositoryEnum,
   ConfigEnum,
   CoreRepositoryEnum,
-} from '../../utils/enums';
+} from '@utils/enums';
 import {
   ActivityEntity,
   AdventureTourismModalityEntity,
@@ -26,7 +26,7 @@ import {
   InternalDpaUserEntity,
   InternalUserEntity,
   InternalZonalUserEntity,
-  LandTransportEntity,
+  LandTransportEntity, ModelCatalogueEntity,
   PaymentEntity,
   ProcessAccommodationEntity,
   ProcessAgencyEntity,
@@ -149,6 +149,8 @@ export class MigrationService {
     private readonly complementaryServiceRegulationRepository: Repository<ComplementaryServiceRegulationEntity>,
     @Inject(CoreRepositoryEnum.SALES_REPRESENTATIVE_REPOSITORY)
     private readonly salesRepresentativeRepository: Repository<SalesRepresentativeEntity>,
+    @Inject(CoreRepositoryEnum.MODEL_CATALOGUE_REPOSITORY)
+    private readonly modelCatalogueRepository: Repository<ModelCatalogueEntity>,
   ) {}
 
   async getData(table: string): Promise<any> {
@@ -1572,6 +1574,37 @@ export class MigrationService {
         if (type) entity.typeId = type.id;
 
         await this.landTransportRepository.save(entity);
+      }
+    }
+
+    return { data: null };
+  }
+
+  async migrateModelCatalogues() {
+    const data = await this.getData('siturin.catalogo_modelo');
+
+    const table = await this.modelCatalogueRepository.find();
+    const classifications = await this.classificationRepository.find();
+    const catalogues = await this.catalogueRepository.find();
+
+    for (const item of data) {
+      const exists = table.find((register) => register.idTemp == item.id);
+
+      if (!exists) {
+        const entity = this.modelCatalogueRepository.create();
+
+        entity.createdAt = item.created_at || new Date();
+        entity.updatedAt = item.updated_at || new Date();
+        entity.deletedAt = item.deleted_at;
+        entity.idTemp = item.id;
+
+        const model = classifications.find((x) => x.idTemp == item.modelo_id);
+        const catalogue = catalogues.find((x) => x.idTemp == item.catalogo_id);
+
+        if (model) entity.modelId = model.id;
+        if (catalogue) entity.catalogueId = catalogue.id;
+
+        await this.modelCatalogueRepository.save(entity);
       }
     }
 

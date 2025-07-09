@@ -2,10 +2,11 @@ import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
-  Entity,
+  Entity, JoinColumn, ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
 
 @Entity('model_catalogues', { schema: 'core' })
 export class ModelCatalogueEntity {
@@ -47,8 +48,25 @@ export class ModelCatalogueEntity {
   /** Inverse Relationship **/
 
   /** Foreign Keys **/
+  @ManyToOne(() => CatalogueEntity, { nullable: true })
+  @JoinColumn({ name: 'catalogue_id' })
+  catalogue: CatalogueEntity;
+  @Column({
+    type: 'uuid',
+    name: 'catalogue_id',
+    nullable: true,
+    comment: '',
+  })
+  catalogueId: string;
 
   /** Columns **/
+  @Column({
+    name: 'model_id',
+    type: 'uuid',
+    comment: '',
+  })
+  modelId: string;
+
   @Column({
     name: 'id_temp',
     type: 'bigint',

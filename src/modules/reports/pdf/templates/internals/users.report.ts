@@ -226,6 +226,7 @@ export const usersReport = (data: any): TDocumentDefinitions => {
               { text: 'Fecha Primera Inspección', style: 'tableHeader' },
               { text: 'Fecha Segunda Inspección', style: 'tableHeader' },
             ],
+            [{}, { text: 'hola', colSpan: 2 }, {}],
             [
               {
                 text: data.nombreTecnicoZonal || 'Cesar Mauricio Tamayo Lopez',

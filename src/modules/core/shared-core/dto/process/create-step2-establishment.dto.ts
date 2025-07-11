@@ -1,10 +1,11 @@
-import { IsNumber, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 import { isNumberValidationOptions, isStringValidationOptions } from '@utils/dto-validation';
 
 export class CreateStep2EstablishmentDto {
   @IsString(isStringValidationOptions())
   readonly id: string;
 
+  @IsOptional()
   @IsString(isStringValidationOptions())
   readonly webPage: string;
 

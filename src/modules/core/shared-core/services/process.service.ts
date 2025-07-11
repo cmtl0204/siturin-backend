@@ -1,5 +1,5 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, EntityManager, Repository } from 'typeorm';
 import { ConfigEnum, CoreRepositoryEnum } from '@utils/enums';
 import { ServiceResponseHttpInterface } from '@utils/interfaces';
 import { EstablishmentEntity, ProcessEntity } from '@modules/core/entities';
@@ -10,7 +10,11 @@ import {
   CreateProcessAgencyDto,
   UpdateProcessAgencyDto,
 } from '@modules/core/roles/external/dto/process-agency';
-import { CreateStep1Dto, CreateStep2Dto } from '@modules/core/shared-core/dto/process';
+import {
+  CreateStep1Dto,
+  CreateStep2Dto,
+  CreateStep2EstablishmentDto,
+} from '@modules/core/shared-core/dto/process';
 
 @Injectable()
 export class ProcessService {
@@ -93,7 +97,6 @@ export class ProcessService {
   async createStep2(payload: CreateStep2Dto): Promise<ProcessEntity> {
     return await this.dataSource.transaction(async (manager) => {
       const processRepository = manager.getRepository(ProcessEntity);
-      const establishmentRepository = manager.getRepository(EstablishmentEntity);
 
       const process = await processRepository.findOneBy({ id: payload?.processId });
 
@@ -103,19 +106,25 @@ export class ProcessService {
 
       process.createdAt = new Date();
 
-      const establishment = await establishmentRepository.findOneBy({
-        id: payload.establishment.id,
-      });
-
-      if (!establishment) {
-        throw new NotFoundException('Establecimiento no encontrado');
-      }
-
-      establishment.webPage = payload.establishment.webPage;
-
-      await establishmentRepository.save(establishment);
+      await this.saveEstablishment(payload, manager);
 
       return await processRepository.save(process);
     });
+  }
+
+  private async saveEstablishment(payload: CreateStep2Dto, manager: EntityManager) {
+    const establishmentRepository = manager.getRepository(EstablishmentEntity);
+
+    const establishment = await establishmentRepository.findOneBy({
+      id: payload.establishment.id,
+    });
+
+    if (!establishment) {
+      throw new NotFoundException('Establecimiento no encontrado');
+    }
+
+    establishment.webPage = payload.establishment.webPage;
+
+    return establishmentRepository.save(establishment);
   }
 }

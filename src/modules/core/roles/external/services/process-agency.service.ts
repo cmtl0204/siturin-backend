@@ -16,7 +16,7 @@ export class ProcessAgencyService {
   private paginateFilterService: PaginateFilterService<ProcessAgencyEntity>;
 
   constructor(
-    @Inject(CoreRepositoryEnum.PROCESS_AGENCY_REPOSITORY)
+    @Inject(CoreRepositoryEnum.PROCESS_REPOSITORY)
     private readonly repository: Repository<ProcessAgencyEntity>,
   ) {
     this.paginateFilterService = new PaginateFilterService(this.repository);

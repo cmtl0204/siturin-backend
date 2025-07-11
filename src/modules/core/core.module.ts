@@ -6,7 +6,7 @@ import { ExternalModule } from '@modules/core/roles/external/external.module';
 
 @Global()
 @Module({
-  imports: [SharedCoreModule, DacModule,ExternalModule],
+  imports: [SharedCoreModule, DacModule, ExternalModule],
   providers: [...coreProviders],
 })
 export class CoreModule {}

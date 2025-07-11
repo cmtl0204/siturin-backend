@@ -94,7 +94,7 @@ export class ProcessAgencyController {
     };
   }
 
-  @ApiOperation({ summary: 'Create' })
+  @ApiOperation({ summary: 'Create Step 1' })
   @Post()
   async createStep1(@Body() payload: CreateProcessAgencyDto): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.service.create(payload);

@@ -146,6 +146,7 @@ export class ProcessEntity {
   @Column({
     name: 'registered_at',
     type: 'timestamp',
+    nullable: true,
     comment: 'Fecha de la solicitud del registro',
   })
   registeredAt: Date;
@@ -241,6 +242,7 @@ export class ProcessEntity {
   @Column({
     name: 'id_temp',
     type: 'bigint',
+    nullable: true,
     comment: 'Codigo de la tabla migrada',
   })
   idTemp: number;

@@ -170,7 +170,7 @@ export class AuthService {
     const url = `${this.configService.urlLDAP}/${payload.username.split('@')[0]}/${payload.password}`;
 
     const response = await lastValueFrom(this.httpService.get(url));
-    console.log(response.data);
+
     return response.data.data;
   }
 

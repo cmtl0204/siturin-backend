@@ -1,4 +1,10 @@
-import { ForbiddenException, Inject, Injectable, NestMiddleware } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Inject,
+  Injectable,
+  NestMiddleware,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { Repository } from 'typeorm';
@@ -24,6 +30,13 @@ export class VerifyUserMiddleware implements NestMiddleware {
         where: { id: jwtDecode.id },
         select: { id: true, suspendedAt: true },
       });
+
+      if (!user) {
+        throw new UnauthorizedException({
+          error: 'Por favor vuelva a iniciar sesión',
+          message: 'Inicie Sesión',
+        });
+      }
 
       if (user?.suspendedAt) {
         throw new ForbiddenException({

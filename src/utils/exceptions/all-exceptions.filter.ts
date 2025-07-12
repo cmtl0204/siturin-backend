@@ -30,7 +30,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     };
 
     let status = 500;
-    console.error(exception instanceof ThrottlerException);
+
     if (exception instanceof HttpException) {
       const { message, error } = exception.getResponse() as ErrorResponseHttpModel;
       status = exception.getStatus();

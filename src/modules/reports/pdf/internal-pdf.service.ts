@@ -14,7 +14,7 @@ export class InternalPdfService {
   ) {}
 
   async generateUsersReport() {
-    const data: any = await this.internalPdfSql.findUsers();
+    const data: any = await this.internalPdfSql.findRegulationResults('1234567890001');
 
     console.log(data);
     try {

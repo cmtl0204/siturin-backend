@@ -59,7 +59,7 @@ export class CadastreEntity {
   cadastreState: CadastreEntity;
 
   /** Foreign Keys **/
-  @ManyToOne(() => ProcessEntity, { nullable: true })
+  @OneToOne(() => ProcessEntity, { nullable: true })
   @JoinColumn({ name: 'process_id' })
   process: ProcessEntity;
   @Column({
@@ -78,13 +78,6 @@ export class CadastreEntity {
     comment: 'Codigo de la tabla migrada',
   })
   idProcess: string;
-
-  @Column({
-    name: 'id_temp',
-    type: 'bigint',
-    comment: 'PK de la tabla migrada',
-  })
-  idTemp: number;
 
   @Column({
     name: 'observation',
@@ -114,6 +107,14 @@ export class CadastreEntity {
     comment: 'Sitema de origin, SIIT, SITURIN V1',
   })
   systemOrigin: string;
+
+  @Column({
+    name: 'id_temp',
+    type: 'bigint',
+    nullable: true,
+    comment: 'PK de la tabla migrada',
+  })
+  idTemp: number;
 
   @BeforeInsert()
   @BeforeUpdate()

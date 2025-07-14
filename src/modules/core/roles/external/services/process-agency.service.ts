@@ -1,8 +1,18 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
-import { ConfigEnum, CoreRepositoryEnum } from '@utils/enums';
+import {
+  CatalogueActivitiesCodeEnum,
+  CatalogueTypeEnum,
+  ConfigEnum,
+  CoreRepositoryEnum,
+} from '@utils/enums';
 import { ServiceResponseHttpInterface } from '@utils/interfaces';
-import { ProcessAgencyEntity, ProcessEntity } from '@modules/core/entities';
+import {
+  CadastreEntity,
+  InspectionEntity,
+  ProcessAgencyEntity,
+  ProcessEntity,
+} from '@modules/core/entities';
 import { PaginationDto } from '@utils/dto';
 import { PaginateFilterService } from '@utils/pagination/paginate-filter.service';
 import { FindTouristGuideDto } from '@modules/core/shared-core/dto/tourist-guide/find-tourist-guide.dto';
@@ -133,7 +143,62 @@ export class ProcessAgencyService {
 
       await processAgencyRepository.save(processAgency);
 
+      await this.createCadastre(payload, user);
+
       return await processRepository.save(process);
+    });
+  }
+
+  async createCadastre(payload: CreateProcessAgencyDto, user: UserEntity): Promise<CadastreEntity> {
+    return await this.dataSource.transaction(async (manager) => {
+      const cadastreRepository = manager.getRepository(CadastreEntity);
+      const processRepository = manager.getRepository(ProcessEntity);
+      const catalogueRepository = manager.getRepository(CatalogueEntity);
+
+      const process = await processRepository.findOne({
+        where: { id: payload.processId },
+        relations: { activity: true, establishment: { ruc: true }, establishmentAddress: true },
+      });
+
+      if (!process) {
+        throw new NotFoundException('Trámite no encontrado');
+      }
+
+      const establishmentNumber = process?.establishment.number.padStart(3, '0');
+
+      const cadastreLast = await cadastreRepository
+        .createQueryBuilder('cadastres')
+        .innerJoin('cadastres.process', 'processes')
+        .innerJoin('processes.activity', 'activities')
+        .where('activities.code IN (:...activityCodes)', {
+          activityCodes: [
+            CatalogueActivitiesCodeEnum.agency_continent,
+            CatalogueActivitiesCodeEnum.agency_galapagos,
+          ],
+        })
+        .orderBy('processes.id', 'ASC')
+        .addOrderBy('SUBSTRING(cadastres.register_number, 20)', 'DESC')
+        .getOne();
+
+      let sequential = '1';
+
+      if (cadastreLast) {
+        sequential = (parseInt(cadastreLast.registerNumber.substring(20)) + 1).toString();
+      }
+
+      sequential = `4${sequential.padStart(6, '0')}`;
+      let cadastre = await cadastreRepository.findOneBy({ processId: process.id });
+
+      if (!cadastre) {
+        cadastre = cadastreRepository.create();
+      }
+
+      cadastre.processId = process.id;
+      cadastre.registerNumber = `${process?.establishment.ruc.number}.${establishmentNumber}.${sequential}`;
+      cadastre.registeredAt = new Date();
+      cadastre.systemOrigin = 'SITURIN V3';
+
+      return await cadastreRepository.save(cadastre);
     });
   }
 }

@@ -103,6 +103,11 @@ export enum CatalogueProcessesTypeEnum {
   recategorization = 'recategorization',
 }
 
+export enum CatalogueActivitiesCodeEnum {
+  agency_continent = 'agency_continent',
+  agency_galapagos = 'agency_galapagos',
+}
+
 export enum CatalogueSchoolPeriodStateEnum {
   OPEN = 'open',
   CLOSE = 'close',

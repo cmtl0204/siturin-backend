@@ -9,6 +9,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { CatalogueInspectionsStateEnum, CatalogueProcessesTypeEnum } from '@utils/enums';
 
 @Entity('catalogues', { schema: 'common' })
 export class CatalogueEntity {

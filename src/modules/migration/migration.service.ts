@@ -1218,7 +1218,7 @@ export class MigrationService {
         if (process) entity.processId = process.id;
         if (dpa) entity.dpaId = dpa.id;
         if (internalUser) entity.internalUserId = internalUser.id;
-        if (zone) entity.zoneId = zone.id;
+        // if (zone) entity.zoneId = zone.id;
 
         await this.assignmentRepository.save(entity);
 
@@ -1417,16 +1417,13 @@ export class MigrationService {
         entity.idTemp = item.id;
 
         entity.isCurrent = item.camas;
-        entity.attendedAt = item.plazas;
         entity.inspectionAt = item.habitaciones;
-        entity.requestAt = item.habitaciones;
 
         const process = processes.find((x) => x.idTemp == item.tramite_id);
         const internalUser = internalUsers.find((x) => x.idTemp == item.usuario_interno_id);
         const state = catalogues.find((x) => x.idTemp == item.estado_fecha_id);
 
         if (process) entity.processId = process.id;
-        if (internalUser) entity.internalUserId = internalUser.id;
         if (state) entity.stateId = state.id;
 
         await this.inspectionRepository.save(entity);

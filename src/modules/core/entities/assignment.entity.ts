@@ -67,7 +67,7 @@ export class AssignmentEntity {
 
   @ManyToOne(() => InternalUserEntity, { nullable: true })
   @JoinColumn({ name: 'internal_user_id' })
-  internalUser: UserEntity;
+  internalUser: InternalUserEntity;
   @Column({
     type: 'uuid',
     name: 'internal_user_id',
@@ -86,17 +86,6 @@ export class AssignmentEntity {
     comment: '',
   })
   dpaId: string;
-
-  @ManyToOne(() => ZoneEntity, { nullable: true })
-  @JoinColumn({ name: 'zone_id' })
-  zone: ZoneEntity;
-  @Column({
-    type: 'uuid',
-    name: 'zone_id',
-    nullable: true,
-    comment: '',
-  })
-  zoneId: string;
 
   /** Columns **/
   @Column({
@@ -118,6 +107,7 @@ export class AssignmentEntity {
   @Column({
     name: 'id_temp',
     type: 'bigint',
+    nullable: true,
     comment: 'Codigo de la tabla migrada',
   })
   idTemp: number;

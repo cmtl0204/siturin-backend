@@ -10,6 +10,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { UserEntity } from '@auth/entities';
+import { PaymentEntity } from '@modules/core/entities/payment.entity';
+import { InternalDpaUserEntity } from '@modules/core/entities/internal-dpa-user.entity';
 
 @Entity('internal_users', { schema: 'core' })
 export class InternalUserEntity {
@@ -49,6 +51,8 @@ export class InternalUserEntity {
   enabled: boolean;
 
   /** Inverse Relationship **/
+  @OneToOne(() => InternalDpaUserEntity, (entity) => entity.internalUser)
+  internalDpaUser: InternalDpaUserEntity;
 
   /** Foreign Keys **/
   @OneToOne(() => UserEntity, { nullable: true })

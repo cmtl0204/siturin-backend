@@ -6,7 +6,7 @@ import {
   CreateStep2EstablishmentDto,
 } from '@modules/core/shared-core/dto/process';
 
-export class CreateStep2Dto {
+export class CreateAssignmentDto {
   @IsUUID()
   readonly processId: string;
 

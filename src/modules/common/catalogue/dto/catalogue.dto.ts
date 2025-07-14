@@ -1,12 +1,12 @@
 import { IsEnum, IsNotEmpty, IsNumber, IsString, MinLength } from 'class-validator';
-import { CatalogueStateEnum, CatalogueTypeEnum } from '../../../../utils/enums';
+import { CatalogueStateEnum, CatalogueTypeEnum } from '@utils/enums';
 import {
   isEnumValidationOptions,
   isNotEmptyValidationOptions,
   isNumberValidationOptions,
   isStringValidationOptions,
   minLengthValidationOptions,
-} from '../../../../utils/dto-validation';
+} from '@utils/dto-validation';
 
 export class CatalogueDto {
   @IsNotEmpty(isNotEmptyValidationOptions())
@@ -26,6 +26,6 @@ export class CatalogueDto {
   @IsEnum(CatalogueStateEnum, isEnumValidationOptions())
   readonly state: CatalogueStateEnum;
 
-  @IsString(isStringValidationOptions())
+  @IsEnum(isStringValidationOptions())
   readonly type: CatalogueTypeEnum;
 }

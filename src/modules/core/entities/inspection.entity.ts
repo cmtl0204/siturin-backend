@@ -63,27 +63,27 @@ export class InspectionEntity {
   })
   processId: string;
 
-  @ManyToOne(() => InternalUserEntity, { nullable: true })
-  @JoinColumn({ name: 'internal_user_id' })
-  internalUser: UserEntity;
-  @Column({
-    type: 'uuid',
-    name: 'internal_user_id',
-    nullable: true,
-    comment: '',
-  })
-  internalUserId: string;
-
   @ManyToOne(() => CatalogueEntity, { nullable: true })
-  @JoinColumn({ name: 'blood_type_id' })
+  @JoinColumn({ name: 'state_id' })
   state: CatalogueEntity;
   @Column({
     type: 'uuid',
-    name: 'blood_type_id',
+    name: 'state_id',
     nullable: true,
-    comment: 'A+, A-, B+, B-, AB+ AB-, O+, O-',
+    comment: '',
   })
   stateId: string;
+
+  @ManyToOne(() => UserEntity, { nullable: true })
+  @JoinColumn({ name: 'user_id' })
+  user: UserEntity;
+  @Column({
+    type: 'uuid',
+    name: 'user_id',
+    nullable: true,
+    comment: 'User',
+  })
+  userId: string;
 
   /** Columns **/
   @Column({
@@ -95,14 +95,6 @@ export class InspectionEntity {
   isCurrent: boolean;
 
   @Column({
-    name: 'attended_at',
-    type: 'timestamp',
-    nullable: true,
-    comment: '',
-  })
-  attendedAt: Date;
-
-  @Column({
     name: 'inspection_at',
     type: 'timestamp',
     nullable: true,
@@ -111,16 +103,17 @@ export class InspectionEntity {
   inspectionAt: Date;
 
   @Column({
-    name: 'request_at',
-    type: 'timestamp',
+    type: 'text',
+    name: 'observation',
     nullable: true,
     comment: '',
   })
-  requestAt: Date;
+  observation: string;
 
   @Column({
     name: 'id_temp',
     type: 'bigint',
+    nullable: true,
     comment: 'Codigo de la tabla migrada',
   })
   idTemp: number;

@@ -9,6 +9,6 @@ import { ProcessService } from '@modules/core/shared-core/services/process.servi
   imports: [],
   controllers,
   providers: [...coreProviders, TouristGuideService, ProcessService],
-  exports: [],
+  exports: [ProcessService],
 })
 export class SharedCoreModule {}

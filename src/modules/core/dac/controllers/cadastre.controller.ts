@@ -13,10 +13,10 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Auth } from '@auth/decorators';
-import { ResponseHttpInterface } from '../../../../utils/interfaces';
+import { ResponseHttpInterface } from '@utils/interfaces';
 import { CadastreService } from '@modules/core/dac/services/cadastre.service';
-import { CreateCadastreDto } from '@modules/core/dac/dto/cadastre';
-import { PaginationDto } from '../../../../utils/dto';
+import { PaginationDto } from '@utils/dto';
+import { CreateCadastreDto } from '@modules/core/shared-core/dto/cadastre';
 
 @ApiTags('DAC Cadastre')
 @Auth()

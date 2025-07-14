@@ -4,7 +4,7 @@ import {
   DeleteDateColumn,
   Entity,
   JoinColumn,
-  ManyToOne,
+  ManyToOne, OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -13,6 +13,8 @@ import { ClassificationEntity } from '@modules/core/entities/classification.enti
 import { CategoryEntity } from '@modules/core/entities/category.entity';
 import { EstablishmentEntity } from '@modules/core/entities/establishment.entity';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
+import { PaymentEntity } from '@modules/core/entities/payment.entity';
+import { EstablishmentAddressEntity } from '@modules/core/entities/establishment-address.entity';
 
 @Entity('processes', { schema: 'core' })
 export class ProcessEntity {
@@ -52,6 +54,8 @@ export class ProcessEntity {
   enabled: boolean;
 
   /** Inverse Relationship **/
+  @OneToOne(() => EstablishmentAddressEntity, (entity) => entity.process)
+  establishmentAddress: EstablishmentAddressEntity;
 
   /** Foreign Keys **/
   @ManyToOne(() => ActivityEntity, { nullable: true })
@@ -158,6 +162,22 @@ export class ProcessEntity {
     comment: 'Fecha de atencion de la solicitud del registro',
   })
   attendedAt: Date;
+
+  @Column({
+    name: 'started_at',
+    type: 'timestamp',
+    nullable: true,
+    comment: 'Fecha de inicio de la solicitud',
+  })
+  startedAt: Date;
+
+  @Column({
+    name: 'ended_at',
+    type: 'timestamp',
+    nullable: true,
+    comment: 'Fecha de finalizacion de la solicitud',
+  })
+  endedAt: Date;
 
   @Column({
     name: 'has_tourist_activity_document',

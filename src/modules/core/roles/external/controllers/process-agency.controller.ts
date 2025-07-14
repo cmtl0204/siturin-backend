@@ -10,7 +10,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Auth, PublicRoute } from '@auth/decorators';
+import { Auth, PublicRoute, User } from '@auth/decorators';
 import { ResponseHttpInterface } from '@utils/interfaces';
 import { PaginationDto } from '@utils/dto';
 import {
@@ -19,10 +19,11 @@ import {
   UpdateProcessAgencyDto,
 } from '@modules/core/roles/external/dto/process-agency';
 import { ProcessAgencyService } from '@modules/core/roles/external/services/process-agency.service';
+import { UserEntity } from '@auth/entities';
 
 @ApiTags('Process Agency')
 @Auth()
-@Controller('core/shared/process-agencies')
+@Controller('core/external/process-agencies')
 export class ProcessAgencyController {
   constructor(private service: ProcessAgencyService) {}
 
@@ -94,10 +95,13 @@ export class ProcessAgencyController {
     };
   }
 
-  @ApiOperation({ summary: 'Create Step 1' })
-  @Post()
-  async createStep1(@Body() payload: CreateProcessAgencyDto): Promise<ResponseHttpInterface> {
-    const serviceResponse = await this.service.create(payload);
+  @ApiOperation({ summary: 'Registration Process' })
+  @Post('registrations')
+  async createProcess(
+    @Body() payload: CreateProcessAgencyDto,
+    @User() user: UserEntity,
+  ): Promise<ResponseHttpInterface> {
+    const serviceResponse = await this.service.registration(payload, user);
 
     return {
       data: serviceResponse,

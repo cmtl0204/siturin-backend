@@ -1,5 +1,6 @@
 export enum CatalogueTypeEnum {
   inspections_state = 'inspections_state',
+  cadastres_state = 'cadastres_state',
   ANCESTRAL_LANGUAGE_NAME = 'ANCESTRAL_LANGUAGE_NAME',
   BLOOD_TYPE = 'BLOOD_TYPE',
   CAREER_MODALITY = 'CAREER_MODALITY',
@@ -106,6 +107,10 @@ export enum CatalogueProcessesTypeEnum {
 export enum CatalogueActivitiesCodeEnum {
   agency_continent = 'agency_continent',
   agency_galapagos = 'agency_galapagos',
+}
+
+export enum CatalogueCadastresStateEnum {
+  pending_1 = 'pending_1',
 }
 
 export enum CatalogueSchoolPeriodStateEnum {

@@ -2,6 +2,7 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import {
   CatalogueActivitiesCodeEnum,
+  CatalogueCadastresStateEnum,
   CatalogueTypeEnum,
   ConfigEnum,
   CoreRepositoryEnum,
@@ -9,7 +10,7 @@ import {
 import { ServiceResponseHttpInterface } from '@utils/interfaces';
 import {
   CadastreEntity,
-  InspectionEntity,
+  CadastreStateEntity,
   ProcessAgencyEntity,
   ProcessEntity,
 } from '@modules/core/entities';
@@ -149,15 +150,23 @@ export class ProcessAgencyService {
     });
   }
 
-  async createCadastre(payload: CreateProcessAgencyDto, user: UserEntity): Promise<CadastreEntity> {
+  async createCadastre(payload: CreateProcessAgencyDto): Promise<CadastreEntity> {
     return await this.dataSource.transaction(async (manager) => {
       const cadastreRepository = manager.getRepository(CadastreEntity);
+      const cadastreStateRepository = manager.getRepository(CadastreStateEntity);
       const processRepository = manager.getRepository(ProcessEntity);
       const catalogueRepository = manager.getRepository(CatalogueEntity);
 
       const process = await processRepository.findOne({
         where: { id: payload.processId },
         relations: { activity: true, establishment: { ruc: true }, establishmentAddress: true },
+      });
+
+      const state = await catalogueRepository.findOne({
+        where: {
+          code: CatalogueCadastresStateEnum.pending_1,
+          type: CatalogueTypeEnum.cadastres_state,
+        },
       });
 
       if (!process) {
@@ -198,7 +207,22 @@ export class ProcessAgencyService {
       cadastre.registeredAt = new Date();
       cadastre.systemOrigin = 'SITURIN V3';
 
-      return await cadastreRepository.save(cadastre);
+      cadastre = await cadastreRepository.save(cadastre);
+
+      let cadastreState = await cadastreStateRepository.findOneBy({ cadastreId: cadastre.id });
+
+      if (!cadastreState) {
+        cadastreState = cadastreStateRepository.create();
+        cadastreState.cadastreId = cadastre.id;
+
+        cadastreState.isCurrent = true;
+
+        if (state) cadastreState.stateId = state.id;
+
+        await cadastreStateRepository.save(cadastreState);
+      }
+
+      return cadastre;
     });
   }
 }

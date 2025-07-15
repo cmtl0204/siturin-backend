@@ -9,6 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { CadastreEntity } from '@modules/core/entities/cadastre.entity';
+import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
 
 @Entity('cadastre_states', { schema: 'core' })
 export class CadastreStateEntity {
@@ -61,10 +62,29 @@ export class CadastreStateEntity {
   })
   cadastreId: string;
 
+  @ManyToOne(() => CatalogueEntity, { nullable: true })
+  @JoinColumn({ name: 'state_id' })
+  state: CatalogueEntity;
+  @Column({
+    type: 'uuid',
+    name: 'state_id',
+    nullable: true,
+    comment: '',
+  })
+  stateId: string;
   /** Columns **/
+  @Column({
+    name: 'is_current',
+    type: 'boolean',
+    default: true,
+    comment: '',
+  })
+  isCurrent: boolean;
+
   @Column({
     name: 'id_temp',
     type: 'bigint',
+    nullable: true,
     comment: 'Codigo de la tabla migrada',
   })
   idTemp: number;

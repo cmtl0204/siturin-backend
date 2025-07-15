@@ -99,6 +99,7 @@ export enum CatalogueProcessesTypeEnum {
   registration = 'registration',
   inactivation = 'inactivation',
   new_classification = 'new_classification',
+  new_activity = 'new_activity',
   readmission = 'readmission',
   reclassification = 'reclassification',
   recategorization = 'recategorization',

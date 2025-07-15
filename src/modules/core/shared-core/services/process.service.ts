@@ -2,6 +2,7 @@ import { BadRequestException, Inject, Injectable, NotFoundException } from '@nes
 import { DataSource, EntityManager, Repository } from 'typeorm';
 import {
   CatalogueInspectionsStateEnum,
+  CatalogueProcessesTypeEnum,
   CatalogueTypeEnum,
   CommonRepositoryEnum,
   ConfigEnum,
@@ -54,11 +55,11 @@ export class ProcessService {
     this.paginateFilterService = new PaginateFilterService(this.repository);
   }
 
-  async findAll(params: PaginationDto): Promise<ServiceResponseHttpInterface> {
+  public async findAll(params: PaginationDto): Promise<ServiceResponseHttpInterface> {
     return this.paginateFilterService.execute(params, []);
   }
 
-  async findOne(id: string, options: FindTouristGuideDto): Promise<ProcessEntity> {
+  public async findOne(id: string, options: FindTouristGuideDto): Promise<ProcessEntity> {
     const entity = await this.repository.findOne({
       where: { id },
       relations: options.relations,
@@ -71,13 +72,13 @@ export class ProcessService {
     return entity;
   }
 
-  async create(payload: CreateProcessAgencyDto): Promise<ProcessEntity> {
+  public async create(payload: CreateProcessAgencyDto): Promise<ProcessEntity> {
     const entity = this.repository.create(payload);
 
     return await this.repository.save(entity);
   }
 
-  async update(id: string, payload: UpdateProcessAgencyDto): Promise<ProcessEntity> {
+  public async update(id: string, payload: UpdateProcessAgencyDto): Promise<ProcessEntity> {
     const entity = await this.findEntityOrThrow(id);
 
     this.repository.merge(entity, payload);
@@ -85,7 +86,7 @@ export class ProcessService {
     return await this.repository.save(entity);
   }
 
-  async delete(id: string): Promise<ProcessEntity> {
+  public async delete(id: string): Promise<ProcessEntity> {
     const entity = await this.findEntityOrThrow(id);
 
     return await this.repository.softRemove(entity);
@@ -99,7 +100,7 @@ export class ProcessService {
     return entity;
   }
 
-  async createStep1(payload: CreateStep1Dto): Promise<ProcessEntity> {
+  public async createStep1(payload: CreateStep1Dto): Promise<ProcessEntity> {
     let process: ProcessEntity | null = null;
 
     if (payload?.processId) {
@@ -122,7 +123,7 @@ export class ProcessService {
     return await this.repository.save(process);
   }
 
-  async createStep2(payload: CreateStep2Dto): Promise<ProcessEntity> {
+  public async createStep2(payload: CreateStep2Dto): Promise<ProcessEntity> {
     return await this.dataSource.transaction(async (manager) => {
       const processRepository = manager.getRepository(ProcessEntity);
 
@@ -146,7 +147,7 @@ export class ProcessService {
     });
   }
 
-  async createExternalInspection(payload: CreateInspectionDto, user: UserEntity) {
+  public async createExternalInspection(payload: CreateInspectionDto, user: UserEntity) {
     const actualInspection = await this.inspectionRepository.findOne({
       where: { processId: payload.processId, isCurrent: true },
       relations: { state: true },
@@ -213,7 +214,7 @@ export class ProcessService {
     return this.inspectionRepository.save(inspection);
   }
 
-  async createInternalInspection(payload: CreateInspectionDto, user: UserEntity) {
+  public async createInternalInspection(payload: CreateInspectionDto, user: UserEntity) {
     const actualInspection = await this.inspectionRepository.findOne({
       where: { processId: payload.processId, isCurrent: true },
       relations: { state: true },
@@ -248,7 +249,7 @@ export class ProcessService {
       .execute();
 
     const states = await this.catalogueRepository.find({
-      where: { type: 'inspections_state' },
+      where: { type: CatalogueTypeEnum.inspections_state },
     });
 
     let state: undefined | CatalogueEntity = undefined;
@@ -271,12 +272,12 @@ export class ProcessService {
         }
         break;
 
+      case CatalogueInspectionsStateEnum.confirmed:
       case CatalogueInspectionsStateEnum.scheduled:
         state = states.find((state) => state.code === CatalogueInspectionsStateEnum.rescheduled_1);
         observation = 'Fecha re-agendada por el Técnico Zonal';
         break;
 
-      case CatalogueInspectionsStateEnum.confirmed:
       case CatalogueInspectionsStateEnum.rescheduled_1:
         state = states.find((state) => state.code === CatalogueInspectionsStateEnum.rescheduled_2);
         observation = 'Fecha re-agendada por segunda ocasión por el Técnico Zonal';
@@ -286,11 +287,12 @@ export class ProcessService {
     const inspection = this.inspectionRepository.create();
 
     inspection.processId = payload.processId;
-    if (state) inspection.stateId = state.id;
-    if (user) inspection.userId = user.id;
     inspection.isCurrent = true;
     inspection.inspectionAt = inspectionAt;
     inspection.observation = observation;
+
+    if (state) inspection.stateId = state.id;
+    if (user) inspection.userId = user.id;
 
     return this.inspectionRepository.save(inspection);
   }
@@ -392,10 +394,32 @@ export class ProcessService {
 
     let inspectionAt = new Date();
 
-    switch ('registration') {
-      case 'registration':
+    switch (payload.type.code) {
+      case CatalogueProcessesTypeEnum.registration:
         inspectionAt = addDays(inspectionAt, 84);
         break;
+
+      case CatalogueProcessesTypeEnum.new_classification:
+        inspectionAt = addDays(inspectionAt, 84);
+        break;
+
+      case CatalogueProcessesTypeEnum.new_activity:
+        inspectionAt = addDays(inspectionAt, 84);
+        break;
+
+      case CatalogueProcessesTypeEnum.readmission:
+        inspectionAt = addDays(inspectionAt, 84);
+        break;
+
+      case CatalogueProcessesTypeEnum.reclassification:
+        inspectionAt = addDays(inspectionAt, 42);
+        break;
+
+      case CatalogueProcessesTypeEnum.recategorization:
+        inspectionAt = addDays(inspectionAt, 42);
+        break;
+      default:
+        throw new BadRequestException(`Tipo de trámite no encontrado ${payload.type.name}`);
     }
 
     let inspection = await inspectionRepository.findOne({

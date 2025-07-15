@@ -1,5 +1,5 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, EntityManager, Repository } from 'typeorm';
 import {
   CatalogueActivitiesCodeEnum,
   CatalogueCadastresStateEnum,
@@ -97,17 +97,18 @@ export class ProcessAgencyService {
         where: { id: payload.processId },
         relations: { establishmentAddress: true },
       });
-      // review
+      // review agregar enum para code y type
       const state = await catalogueRepository.findOneBy({
         code: 'pendiente_inspeccion_1',
         type: 'tramite_estados',
       });
 
       if (!process) {
-        throw new NotFoundException('Registro no encontrado');
+        throw new NotFoundException('Trámite no encontrado');
       }
 
       if (state) process.stateId = state.id;
+
       process.activityId = payload.activity.id;
       process.classificationId = payload.classification.id;
       process.categoryId = payload.category.id;
@@ -144,85 +145,83 @@ export class ProcessAgencyService {
 
       await processAgencyRepository.save(processAgency);
 
-      await this.createCadastre(payload, user);
+      await this.saveCadastre(payload.processId, manager);
 
       return await processRepository.save(process);
     });
   }
 
-  async createCadastre(payload: CreateProcessAgencyDto): Promise<CadastreEntity> {
-    return await this.dataSource.transaction(async (manager) => {
-      const cadastreRepository = manager.getRepository(CadastreEntity);
-      const cadastreStateRepository = manager.getRepository(CadastreStateEntity);
-      const processRepository = manager.getRepository(ProcessEntity);
-      const catalogueRepository = manager.getRepository(CatalogueEntity);
+  private async saveCadastre(processId: string, manager: EntityManager): Promise<CadastreEntity> {
+    const cadastreRepository = manager.getRepository(CadastreEntity);
+    const cadastreStateRepository = manager.getRepository(CadastreStateEntity);
+    const processRepository = manager.getRepository(ProcessEntity);
+    const catalogueRepository = manager.getRepository(CatalogueEntity);
 
-      const process = await processRepository.findOne({
-        where: { id: payload.processId },
-        relations: { activity: true, establishment: { ruc: true }, establishmentAddress: true },
-      });
-
-      const state = await catalogueRepository.findOne({
-        where: {
-          code: CatalogueCadastresStateEnum.pending_1,
-          type: CatalogueTypeEnum.cadastres_state,
-        },
-      });
-
-      if (!process) {
-        throw new NotFoundException('Trámite no encontrado');
-      }
-
-      const establishmentNumber = process?.establishment.number.padStart(3, '0');
-
-      const cadastreLast = await cadastreRepository
-        .createQueryBuilder('cadastres')
-        .innerJoin('cadastres.process', 'processes')
-        .innerJoin('processes.activity', 'activities')
-        .where('activities.code IN (:...activityCodes)', {
-          activityCodes: [
-            CatalogueActivitiesCodeEnum.agency_continent,
-            CatalogueActivitiesCodeEnum.agency_galapagos,
-          ],
-        })
-        .orderBy('processes.id', 'ASC')
-        .addOrderBy('SUBSTRING(cadastres.register_number, 20)', 'DESC')
-        .getOne();
-
-      let sequential = '1';
-
-      if (cadastreLast) {
-        sequential = (parseInt(cadastreLast.registerNumber.substring(20)) + 1).toString();
-      }
-
-      sequential = `4${sequential.padStart(6, '0')}`;
-      let cadastre = await cadastreRepository.findOneBy({ processId: process.id });
-
-      if (!cadastre) {
-        cadastre = cadastreRepository.create();
-      }
-
-      cadastre.processId = process.id;
-      cadastre.registerNumber = `${process?.establishment.ruc.number}.${establishmentNumber}.${sequential}`;
-      cadastre.registeredAt = new Date();
-      cadastre.systemOrigin = 'SITURIN V3';
-
-      cadastre = await cadastreRepository.save(cadastre);
-
-      let cadastreState = await cadastreStateRepository.findOneBy({ cadastreId: cadastre.id });
-
-      if (!cadastreState) {
-        cadastreState = cadastreStateRepository.create();
-        cadastreState.cadastreId = cadastre.id;
-
-        cadastreState.isCurrent = true;
-
-        if (state) cadastreState.stateId = state.id;
-
-        await cadastreStateRepository.save(cadastreState);
-      }
-
-      return cadastre;
+    const process = await processRepository.findOne({
+      where: { id: processId },
+      relations: { activity: true, establishment: { ruc: true }, establishmentAddress: true },
     });
+
+    const state = await catalogueRepository.findOne({
+      where: {
+        code: CatalogueCadastresStateEnum.pending_1,
+        type: CatalogueTypeEnum.cadastres_state,
+      },
+    });
+
+    if (!process) {
+      throw new NotFoundException('Trámite no encontrado');
+    }
+
+    const establishmentNumber = process?.establishment.number.padStart(3, '0');
+
+    const cadastreLast = await cadastreRepository
+      .createQueryBuilder('cadastres')
+      .innerJoin('cadastres.process', 'processes')
+      .innerJoin('processes.activity', 'activities')
+      .where('activities.code IN (:...activityCodes)', {
+        activityCodes: [
+          CatalogueActivitiesCodeEnum.agency_continent,
+          CatalogueActivitiesCodeEnum.agency_galapagos,
+        ],
+      })
+      .orderBy('processes.id', 'ASC')
+      .addOrderBy('SUBSTRING(cadastres.register_number, 20)', 'DESC')
+      .getOne();
+
+    let sequential = '1';
+
+    if (cadastreLast) {
+      sequential = (parseInt(cadastreLast.registerNumber.substring(20)) + 1).toString();
+    }
+
+    sequential = `4${sequential.padStart(6, '0')}`;
+    let cadastre = await cadastreRepository.findOneBy({ processId: process.id });
+
+    if (!cadastre) {
+      cadastre = cadastreRepository.create();
+    }
+
+    cadastre.processId = process.id;
+    cadastre.registerNumber = `${process?.establishment.ruc.number}.${establishmentNumber}.${sequential}`;
+    cadastre.registeredAt = new Date();
+    cadastre.systemOrigin = 'SITURIN V3';
+
+    cadastre = await cadastreRepository.save(cadastre);
+
+    let cadastreState = await cadastreStateRepository.findOneBy({ cadastreId: cadastre.id });
+
+    if (!cadastreState) {
+      cadastreState = cadastreStateRepository.create();
+      cadastreState.cadastreId = cadastre.id;
+
+      cadastreState.isCurrent = true;
+
+      if (state) cadastreState.stateId = state.id;
+
+      await cadastreStateRepository.save(cadastreState);
+    }
+
+    return cadastre;
   }
 }

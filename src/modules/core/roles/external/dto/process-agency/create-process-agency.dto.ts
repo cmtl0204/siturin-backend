@@ -3,7 +3,6 @@ import { isBooleanValidationOptions, isPositiveValidationOptions } from '@utils/
 import { Type } from 'class-transformer';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
 import { ActivityEntity, CategoryEntity, ClassificationEntity } from '@modules/core/entities';
-import { DpaEntity } from '@modules/common/dpa/dpa.entity';
 
 export class CreateProcessAgencyDto {
   @IsUUID()

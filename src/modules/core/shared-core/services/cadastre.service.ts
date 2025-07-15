@@ -248,7 +248,7 @@ export class CadastreService {
       .execute();
 
     const states = await this.catalogueRepository.find({
-      where: { type: 'inspections_state' },
+      where: { type: CatalogueTypeEnum.inspections_state },
     });
 
     let state: undefined | CatalogueEntity = undefined;

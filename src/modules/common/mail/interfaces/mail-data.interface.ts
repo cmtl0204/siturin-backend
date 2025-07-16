@@ -5,6 +5,6 @@ export interface MailDataInterface {
   subject: string;
   template: string;
   data: any;
-  attachment?: AttachmentInterface;
+  // attachment?: AttachmentInterface;
   attachments?: AttachmentInterface[];
 }

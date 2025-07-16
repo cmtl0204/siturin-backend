@@ -7,10 +7,11 @@ import { CadastreService } from '@modules/core/roles/external/services/cadastre.
 import { coreProviders } from '@modules/core/core.provider';
 import { ProcessAgencyService } from '@modules/core/roles/external/services/process-agency.service';
 import { SharedCoreModule } from '@modules/core/shared-core/shared-core.module';
+import { ReportsModule } from '@modules/reports/reports.module';
 
 @Global()
 @Module({
-  imports: [CatalogueModule, FileModule, MailModule, SharedCoreModule],
+  imports: [CatalogueModule, FileModule, MailModule, SharedCoreModule, ReportsModule],
   controllers,
   providers: [...coreProviders, CadastreService, ProcessAgencyService],
   exports: [],

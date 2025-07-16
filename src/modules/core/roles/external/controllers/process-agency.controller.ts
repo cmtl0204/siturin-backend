@@ -97,16 +97,16 @@ export class ProcessAgencyController {
 
   @ApiOperation({ summary: 'Registration Process' })
   @Post('registrations')
-  async createProcess(
+  async createRegistration(
     @Body() payload: CreateProcessAgencyDto,
     @User() user: UserEntity,
   ): Promise<ResponseHttpInterface> {
-    const serviceResponse = await this.service.registration(payload, user);
+    const serviceResponse = await this.service.createRegistration(payload, user);
 
     return {
-      data: serviceResponse,
-      message: `Registro Creado`,
-      title: `Creado`,
+      data: serviceResponse.data,
+      message: serviceResponse.message,
+      title: serviceResponse.title,
     };
   }
 }

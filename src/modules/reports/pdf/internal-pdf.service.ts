@@ -27,7 +27,7 @@ export class InternalPdfService {
 
   async generateUsersReportBuffer() {
     const data: any = await this.internalPdfSql.findUsers();
-    console.log(data);
+    // console.log(data);
     try {
       return await this.printerService.createPdfBuffer(usersReport(data));
     } catch (error) {

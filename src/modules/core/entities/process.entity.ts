@@ -15,6 +15,8 @@ import { EstablishmentEntity } from '@modules/core/entities/establishment.entity
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
 import { PaymentEntity } from '@modules/core/entities/payment.entity';
 import { EstablishmentAddressEntity } from '@modules/core/entities/establishment-address.entity';
+import { EstablishmentContactPersonEntity } from '@modules/core/entities/establishment-contact-person.entity';
+import { CadastreEntity } from '@modules/core/entities/cadastre.entity';
 
 @Entity('processes', { schema: 'core' })
 export class ProcessEntity {
@@ -56,6 +58,12 @@ export class ProcessEntity {
   /** Inverse Relationship **/
   @OneToOne(() => EstablishmentAddressEntity, (entity) => entity.process)
   establishmentAddress: EstablishmentAddressEntity;
+
+  @OneToOne(() => EstablishmentContactPersonEntity, (entity) => entity.process)
+  establishmentContactPerson: EstablishmentContactPersonEntity;
+
+  @OneToOne(() => CadastreEntity, (entity) => entity.process)
+  cadastre: CadastreEntity;
 
   /** Foreign Keys **/
   @ManyToOne(() => ActivityEntity, { nullable: true })

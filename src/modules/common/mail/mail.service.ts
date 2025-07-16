@@ -1,15 +1,15 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
+import { SentMessageInfo } from 'nodemailer';
 import { ConfigType } from '@nestjs/config';
 import { config } from '@config';
 import { MailDataInterface } from './interfaces/mail-data.interface';
 import { join } from 'path';
 import { FolderPathsService } from '../folder-paths.service';
-import { SentMessageInfo } from 'nodemailer';
 import { Attachment } from 'nodemailer/lib/mailer';
 
 @Injectable()
-export class MailService {
+export class MailService implements OnModuleInit {
   private transporter: nodemailer.Transporter;
 
   constructor(
@@ -25,6 +25,10 @@ export class MailService {
         pass: this.configService.mail.pass,
       },
     });
+  }
+
+  async onModuleInit() {
+    await this.configTemplates();
   }
 
   async configTemplates() {
@@ -80,28 +84,28 @@ export class MailService {
       });
     }
 
-    if (mailData?.attachment) {
-      let data!: Attachment;
-
-      if (mailData.attachment.file) {
-        data = {
-          content: mailData.attachment.file,
-          filename: mailData.attachment.filename,
-          contentDisposition: 'attachment',
-        };
-
-        mailAttachments.push(data);
-      }
-
-      if (mailData.attachment.path) {
-        data = {
-          path: join(this.folderPathsService.mailTemporaryFiles, mailData.attachment.path),
-          filename: mailData.attachment.filename,
-          contentDisposition: 'attachment',
-        };
-        mailAttachments.push(data);
-      }
-    }
+    // if (mailData?.attachment) {
+    //   let data!: Attachment;
+    //
+    //   if (mailData.attachment.file) {
+    //     data = {
+    //       content: mailData.attachment.file,
+    //       filename: mailData.attachment.filename,
+    //       contentDisposition: 'attachment',
+    //     };
+    //
+    //     mailAttachments.push(data);
+    //   }
+    //
+    //   if (mailData.attachment.path) {
+    //     data = {
+    //       path: join(this.folderPathsService.mailTemporaryFiles, mailData.attachment.path),
+    //       filename: mailData.attachment.filename,
+    //       contentDisposition: 'attachment',
+    //     };
+    //     mailAttachments.push(data);
+    //   }
+    // }
 
     const header = {
       filename: 'header.png',
@@ -120,10 +124,10 @@ export class MailService {
 
     const sendMailOptions = {
       to: mailData.to,
-      from: `${this.configService.mail.fromName} ${this.configService.mail.from}`,
+      from: `"${this.configService.mail.fromName}" <${this.configService.mail.from}>`,
       subject: mailData.subject,
       template: mailData.template,
-      context: { system: 'environments.appName', data: mailData.data },
+      context: { system: 'SITURIN', data: mailData.data },
       attachments: mailAttachments,
     };
 

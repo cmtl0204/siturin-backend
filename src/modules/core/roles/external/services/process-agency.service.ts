@@ -1,13 +1,15 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { DataSource, EntityManager, Repository } from 'typeorm';
 import {
+  AuthRepositoryEnum,
   CatalogueActivitiesCodeEnum,
   CatalogueCadastresStateEnum,
   CatalogueTypeEnum,
   ConfigEnum,
   CoreRepositoryEnum,
+  MailTemplateEnum,
 } from '@utils/enums';
-import { ServiceResponseHttpInterface } from '@utils/interfaces';
+import { ResponseHttpInterface, ServiceResponseHttpInterface } from '@utils/interfaces';
 import {
   CadastreEntity,
   CadastreStateEntity,
@@ -25,6 +27,10 @@ import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
 import { ProcessService } from '@modules/core/shared-core/services/process.service';
 import { UserEntity } from '@auth/entities';
 import { addDays, set } from 'date-fns';
+import { MailService } from '@modules/common/mail/mail.service';
+import { MailDataInterface } from '@modules/common/mail/interfaces/mail-data.interface';
+import { InternalPdfService } from '@modules/reports/pdf/internal-pdf.service';
+import { isEmail } from 'class-validator';
 
 @Injectable()
 export class ProcessAgencyService {
@@ -33,11 +39,15 @@ export class ProcessAgencyService {
   constructor(
     @Inject(ConfigEnum.PG_DATA_SOURCE)
     private readonly dataSource: DataSource,
+    private readonly mailService: MailService,
     @Inject(CoreRepositoryEnum.PROCESS_REPOSITORY)
     private readonly processRepository: Repository<ProcessEntity>,
     @Inject(CoreRepositoryEnum.PROCESS_AGENCY_REPOSITORY)
     private readonly processAgencyRepository: Repository<ProcessAgencyEntity>,
+    @Inject(AuthRepositoryEnum.USER_REPOSITORY)
+    private readonly userRepository: Repository<UserEntity>,
     private readonly processService: ProcessService,
+    private readonly internalPdfService: InternalPdfService,
   ) {
     this.paginateFilterService = new PaginateFilterService(this.processAgencyRepository);
   }
@@ -79,7 +89,10 @@ export class ProcessAgencyService {
     return await this.processAgencyRepository.softRemove(entity);
   }
 
-  async registration(payload: CreateProcessAgencyDto, user: UserEntity): Promise<ProcessEntity> {
+  async createRegistration(
+    payload: CreateProcessAgencyDto,
+    user: UserEntity,
+  ): Promise<ResponseHttpInterface> {
     return await this.dataSource.transaction(async (manager) => {
       const processRepository = manager.getRepository(ProcessEntity);
       const processAgencyRepository = manager.getRepository(ProcessAgencyEntity);
@@ -137,9 +150,25 @@ export class ProcessAgencyService {
 
       await processAgencyRepository.save(processAgency);
 
-      await this.saveCadastre(payload.processId, manager);
+      const cadastre = await this.saveCadastre(payload.processId, manager);
 
-      return await processRepository.save(process);
+      const responseSendEmail = await this.sendRegistrationCertificateEmail(cadastre);
+
+      console.log(responseSendEmail);
+
+      if (responseSendEmail) {
+        return {
+          data: await processRepository.save(process),
+          title: responseSendEmail.title,
+          message: responseSendEmail.message,
+        };
+      }
+
+      return {
+        data: await processRepository.save(process),
+        title: '',
+        message: '',
+      };
     });
   }
 
@@ -225,7 +254,71 @@ export class ProcessAgencyService {
     return entity;
   }
 
-  async sendRegistrationCertificateEmail(){
+  async sendRegistrationCertificateEmail(cadastre: CadastreEntity) {
+    const process = await this.processRepository.findOne({
+      where: { id: cadastre.processId },
+      relations: {
+        cadastre: true,
+        establishment: { ruc: true },
+        establishmentAddress: true,
+        establishmentContactPerson: true,
+      },
+    });
 
+    const user = await this.userRepository.findOneBy({
+      identification: process?.establishment.ruc.number,
+    });
+
+    if (!process) {
+      throw new NotFoundException('Trámite no encontrado');
+    }
+
+    if (!user) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+
+    const data = {
+      ruc: process?.establishment.ruc.number,
+      registerNumber: cadastre.registerNumber,
+    };
+
+    const failedRecipients: string[] = [];
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // user.email, process.establishmentContactPerson.email,
+    const recipients = ['asd@'].filter((email) => {
+      if (emailRegex.test(email)) {
+        return true;
+      }
+
+      failedRecipients.push(email);
+      return false;
+    });
+
+    if (recipients.length === 0) {
+      return {
+        title: 'No se pudo entregar a ningun correo',
+        message: failedRecipients,
+      };
+    }
+
+    if (recipients.length === 0) {
+      return {
+        title: 'No se pudo entregar a a los siguientes correos',
+        message: failedRecipients,
+      };
+    }
+
+    const pdf = await this.internalPdfService.generateUsersReportBuffer();
+
+    const mailData: MailDataInterface = {
+      to: recipients,
+      data,
+      subject: `Registro de Turismo ${process.cadastre.registerNumber}`,
+      template: MailTemplateEnum.INTERNAL_REGISTRATION_CERTIFICATE,
+      attachments: [{ file: pdf, filename: `${process.cadastre.registerNumber}.pdf` }],
+    };
+
+    await this.mailService.sendMail(mailData);
   }
 }

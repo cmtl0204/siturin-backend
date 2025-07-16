@@ -10,6 +10,6 @@ import { coreProviders } from '@modules/core/core.provider';
   imports: [],
   controllers: [InternalPdfController],
   providers: [...coreProviders, InternalPdfService, InternalPdfSql, PrinterService],
-  exports: [],
+  exports: [InternalPdfService],
 })
 export class PdfModule {}

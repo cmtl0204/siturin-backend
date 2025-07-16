@@ -9,4 +9,5 @@ export enum MailSubjectEnum {
 export enum MailTemplateEnum {
   TESTING = 'testing/testing',
   TRANSACTIONAL_CODE = 'auth/transactional-code',
+  INTERNAL_REGISTRATION_CERTIFICATE = 'internal/registration-certificate',
 }

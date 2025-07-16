@@ -79,14 +79,6 @@ export class ProcessAgencyService {
     return await this.processAgencyRepository.softRemove(entity);
   }
 
-  private async findEntityOrThrow(id: string): Promise<ProcessAgencyEntity> {
-    const entity = await this.processAgencyRepository.findOneBy({ id });
-
-    if (!entity) throw new NotFoundException('Registro no encontrado');
-
-    return entity;
-  }
-
   async registration(payload: CreateProcessAgencyDto, user: UserEntity): Promise<ProcessEntity> {
     return await this.dataSource.transaction(async (manager) => {
       const processRepository = manager.getRepository(ProcessEntity);
@@ -223,5 +215,17 @@ export class ProcessAgencyService {
     }
 
     return cadastre;
+  }
+
+  private async findEntityOrThrow(id: string): Promise<ProcessAgencyEntity> {
+    const entity = await this.processAgencyRepository.findOneBy({ id });
+
+    if (!entity) throw new NotFoundException('Registro no encontrado');
+
+    return entity;
+  }
+
+  async sendRegistrationCertificateEmail(){
+
   }
 }

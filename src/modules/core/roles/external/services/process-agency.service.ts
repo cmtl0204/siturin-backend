@@ -152,6 +152,7 @@ export class ProcessAgencyService {
 
       const cadastre = await this.saveCadastre(payload.processId, manager);
 
+      console.log(cadastre);
       const responseSendEmail = await this.sendRegistrationCertificateEmail(cadastre);
 
       console.log(responseSendEmail);
@@ -285,8 +286,8 @@ export class ProcessAgencyService {
     const failedRecipients: string[] = [];
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    // user.email, process.establishmentContactPerson.email,
-    const recipients = ['asd@'].filter((email) => {
+
+    const recipients = [user.email, process.establishmentContactPerson.email].filter((email) => {
       if (emailRegex.test(email)) {
         return true;
       }

@@ -125,34 +125,34 @@ export class AuthService {
         message: 'Su usuario se encuentra suspendido',
       });
 
-    if (payload.username.includes('@turismo.gob.ec')) {
-      if (!(await this.signInLDAP(payload)))
-        throw new UnauthorizedException({
-          error: 'Sin Autorización',
-          message: 'Usuario y/o contraseña no válidos',
-        });
-    }
+    // if (payload.username.includes('@turismo.gob.ec')) {
+    //   if (!(await this.signInLDAP(payload)))
+    //     throw new UnauthorizedException({
+    //       error: 'Sin Autorización',
+    //       message: 'Usuario y/o contraseña no válidos',
+    //     });
+    // }
 
-    if (!payload.username.includes('@turismo.gob.ec')) {
-      if (user?.payment?.hasDebt)
-        throw new UnauthorizedException({
-          error: 'El RUC ingresado mantiene pendiente el pago',
-          message:
-            'De la Contribución Uno por Mil sobre Activos Fijos, cobrados por esta Cartera de Estado, dentro del periodo de vigencia de la Ley de Turismo de Registro Oficial Suplemento No. 733 de 27 de Diciembre 2002, por favor sírvase asistir a la oficina zonal en la que se encuentra registrado su establecimiento para el trámite de revisión y declaración respectiva.',
-        });
-
-      if (user?.maxAttempts === 0)
-        throw new UnauthorizedException({
-          error: 'Sin Autorización',
-          message: 'Ha excedido el número máximo de intentos permitidos',
-        });
-
-      if (!(await this.checkPassword(payload.password, user))) {
-        throw new UnauthorizedException(
-          `Usuario y/o contraseña no válidos, ${user.maxAttempts - 1} intentos restantes`,
-        );
-      }
-    }
+    // if (!payload.username.includes('@turismo.gob.ec')) {
+    //   if (user?.payment?.hasDebt)
+    //     throw new UnauthorizedException({
+    //       error: 'El RUC ingresado mantiene pendiente el pago',
+    //       message:
+    //         'De la Contribución Uno por Mil sobre Activos Fijos, cobrados por esta Cartera de Estado, dentro del periodo de vigencia de la Ley de Turismo de Registro Oficial Suplemento No. 733 de 27 de Diciembre 2002, por favor sírvase asistir a la oficina zonal en la que se encuentra registrado su establecimiento para el trámite de revisión y declaración respectiva.',
+    //     });
+    //
+    //   if (user?.maxAttempts === 0)
+    //     throw new UnauthorizedException({
+    //       error: 'Sin Autorización',
+    //       message: 'Ha excedido el número máximo de intentos permitidos',
+    //     });
+    //
+    //   if (!(await this.checkPassword(payload.password, user))) {
+    //     throw new UnauthorizedException(
+    //       `Usuario y/o contraseña no válidos, ${user.maxAttempts - 1} intentos restantes`,
+    //     );
+    //   }
+    // }
     const { password, suspendedAt, maxAttempts, roles, ...userRest } = user;
 
     await this.repository.update(user.id, { activatedAt: new Date() });

@@ -40,6 +40,7 @@
     "cls-hooked": "^4.2.2",
     "date-fns": "^4.1.0",
     "exceljs": "^4.4.0",
+    "googleapis": "^153.0.0",
     "joi": "^17.13.3",
     "nodemailer": "^7.0.4",
     "nodemailer-express-handlebars": "^7.0.0",

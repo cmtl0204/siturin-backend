@@ -152,7 +152,6 @@ export class ProcessAgencyService {
 
       const cadastre = await this.saveCadastre(payload.processId, manager);
 
-      console.log(cadastre);
       const responseSendEmail = await this.sendRegistrationCertificateEmail(cadastre);
 
       console.log(responseSendEmail);
@@ -229,8 +228,9 @@ export class ProcessAgencyService {
     cadastre.registeredAt = new Date();
     cadastre.systemOrigin = 'SITURIN V3';
 
+    console.log(cadastre);
     cadastre = await cadastreRepository.save(cadastre);
-
+    console.log(cadastre);
     let cadastreState = await cadastreStateRepository.findOneBy({ cadastreId: cadastre.id });
 
     if (!cadastreState) {
@@ -266,6 +266,7 @@ export class ProcessAgencyService {
       },
     });
 
+    console.log(process);
     const user = await this.userRepository.findOneBy({
       identification: process?.establishment.ruc.number,
     });

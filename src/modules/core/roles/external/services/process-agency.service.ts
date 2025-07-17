@@ -154,8 +154,6 @@ export class ProcessAgencyService {
 
       const responseSendEmail = await this.sendRegistrationCertificateEmail(cadastre);
 
-      console.log(responseSendEmail);
-
       if (responseSendEmail) {
         return {
           data: await processRepository.save(process),
@@ -228,9 +226,8 @@ export class ProcessAgencyService {
     cadastre.registeredAt = new Date();
     cadastre.systemOrigin = 'SITURIN V3';
 
-    console.log(cadastre);
     cadastre = await cadastreRepository.save(cadastre);
-    console.log(cadastre);
+
     let cadastreState = await cadastreStateRepository.findOneBy({ cadastreId: cadastre.id });
 
     if (!cadastreState) {
@@ -266,7 +263,6 @@ export class ProcessAgencyService {
       },
     });
 
-    console.log(process);
     const user = await this.userRepository.findOneBy({
       identification: process?.establishment.ruc.number,
     });
@@ -316,9 +312,9 @@ export class ProcessAgencyService {
     const mailData: MailDataInterface = {
       to: recipients,
       data,
-      subject: `Registro de Turismo ${process.cadastre.registerNumber}`,
+      subject: `Registro de Turismo ${cadastre.registerNumber}`,
       template: MailTemplateEnum.INTERNAL_REGISTRATION_CERTIFICATE,
-      attachments: [{ file: pdf, filename: `${process.cadastre.registerNumber}.pdf` }],
+      attachments: [{ file: pdf, filename: `${cadastre.registerNumber}.pdf` }],
     };
 
     await this.mailService.sendMail(mailData);

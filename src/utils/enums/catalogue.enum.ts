@@ -97,6 +97,7 @@ export enum CatalogueInspectionsStateEnum {
 
 export enum CatalogueProcessesTypeEnum {
   registration = 'registration',
+  update = 'update',
   inactivation = 'inactivation',
   new_classification = 'new_classification',
   new_activity = 'new_activity',

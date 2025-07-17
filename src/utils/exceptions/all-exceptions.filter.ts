@@ -39,12 +39,12 @@ export class AllExceptionsFilter implements ExceptionFilter {
       errorResponseHttpModel.message = message;
 
       if (exception instanceof BadRequestException) {
-        errorResponseHttpModel.error = 'No se pudo procesar su petición';
+        errorResponseHttpModel.error = error || 'No se pudo procesar su petición';
         errorResponseHttpModel.message = message;
       }
 
       if (exception instanceof UnprocessableEntityException) {
-        errorResponseHttpModel.error = 'Datos no válidos';
+        errorResponseHttpModel.error = error || 'Datos no válidos';
         errorResponseHttpModel.message = message;
       }
 

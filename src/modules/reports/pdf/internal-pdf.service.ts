@@ -16,7 +16,6 @@ export class InternalPdfService {
   async generateUsersReport() {
     const data: any = await this.internalPdfSql.findRegulationResults('1234567890001');
 
-    console.log(data);
     try {
       return this.printerService.createPdf(usersReport(data));
     } catch (error) {

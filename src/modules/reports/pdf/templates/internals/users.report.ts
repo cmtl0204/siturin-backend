@@ -200,7 +200,7 @@ export const usersReport = (data: any): TDocumentDefinitions => {
   return {
     pageOrientation: 'portrait',
 
-    pageMargins: [40, 100, 30, 100],
+    pageMargins: [20, 100, 20, 100],
 
     pageSize: 'A4',
 
@@ -372,6 +372,12 @@ export const usersReport = (data: any): TDocumentDefinitions => {
         fontSize: 8,
         color: '#333',
       },
+    },
+
+    background: {
+      image: './storage/resources/reports/layouts/watermark.png',
+      width: 595, // tamaño A4 en puntos (opcional)
+      height: 842, // tamaño A4 en puntos (opcional)
     },
   };
 };

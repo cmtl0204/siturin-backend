@@ -1,8 +1,14 @@
-import { IsBoolean, IsObject, IsOptional, IsPositive, IsUUID } from 'class-validator';
+import { IsArray, IsBoolean, IsObject, IsOptional, IsPositive, IsUUID } from 'class-validator';
 import { isBooleanValidationOptions, isPositiveValidationOptions } from '@utils/dto-validation';
 import { Type } from 'class-transformer';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
-import { ActivityEntity, CategoryEntity, ClassificationEntity } from '@modules/core/entities';
+import {
+  ActivityEntity,
+  CategoryEntity,
+  ClassificationEntity,
+  TouristGuideEntity,
+} from '@modules/core/entities';
+import { TouristGuideDto } from '@modules/core/shared-core/dto/process';
 
 export class CreateProcessAgencyDto {
   @IsUUID()
@@ -47,4 +53,9 @@ export class CreateProcessAgencyDto {
 
   @IsBoolean(isBooleanValidationOptions())
   readonly hasProtectedAreaContract: boolean;
+
+  @IsOptional()
+  @IsArray()
+  @Type(() => TouristGuideDto)
+  readonly touristGuides: TouristGuideDto[];
 }

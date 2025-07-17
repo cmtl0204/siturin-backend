@@ -9,20 +9,16 @@ import {
   CoreRepositoryEnum,
   MailTemplateEnum,
 } from '@utils/enums';
-import { ResponseHttpInterface, ServiceResponseHttpInterface } from '@utils/interfaces';
+import { ResponseHttpInterface } from '@utils/interfaces';
 import {
   CadastreEntity,
   CadastreStateEntity,
   ProcessAgencyEntity,
   ProcessEntity,
+  TouristGuideEntity,
 } from '@modules/core/entities';
-import { PaginationDto } from '@utils/dto';
 import { PaginateFilterService } from '@utils/pagination/paginate-filter.service';
-import { FindTouristGuideDto } from '@modules/core/shared-core/dto/tourist-guide/find-tourist-guide.dto';
-import {
-  CreateProcessAgencyDto,
-  UpdateProcessAgencyDto,
-} from '@modules/core/roles/external/dto/process-agency';
+import { CreateProcessAgencyDto } from '@modules/core/roles/external/dto/process-agency';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
 import { ProcessService } from '@modules/core/shared-core/services/process.service';
 import { UserEntity } from '@auth/entities';
@@ -30,7 +26,6 @@ import { addDays, set } from 'date-fns';
 import { MailService } from '@modules/common/mail/mail.service';
 import { MailDataInterface } from '@modules/common/mail/interfaces/mail-data.interface';
 import { InternalPdfService } from '@modules/reports/pdf/internal-pdf.service';
-import { isEmail } from 'class-validator';
 
 @Injectable()
 export class ProcessAgencyService {
@@ -52,103 +47,24 @@ export class ProcessAgencyService {
     this.paginateFilterService = new PaginateFilterService(this.processAgencyRepository);
   }
 
-  async findAll(params: PaginationDto): Promise<ServiceResponseHttpInterface> {
-    return this.paginateFilterService.execute(params, ['process']);
-  }
-
-  async findOne(id: string, options: FindTouristGuideDto): Promise<ProcessAgencyEntity> {
-    const entity = await this.processAgencyRepository.findOne({
-      where: { id },
-      relations: options.relations,
-    });
-
-    if (!entity) {
-      throw new NotFoundException('Registro no encontrado');
-    }
-
-    return entity;
-  }
-
-  async create(payload: CreateProcessAgencyDto): Promise<ProcessAgencyEntity> {
-    const entity = this.processAgencyRepository.create(payload);
-
-    return await this.processAgencyRepository.save(entity);
-  }
-
-  async update(id: string, payload: UpdateProcessAgencyDto): Promise<ProcessAgencyEntity> {
-    const entity = await this.findEntityOrThrow(id);
-
-    this.processAgencyRepository.merge(entity, payload);
-
-    return await this.processAgencyRepository.save(entity);
-  }
-
-  async delete(id: string): Promise<ProcessAgencyEntity> {
-    const entity = await this.findEntityOrThrow(id);
-
-    return await this.processAgencyRepository.softRemove(entity);
-  }
-
   async createRegistration(
     payload: CreateProcessAgencyDto,
     user: UserEntity,
   ): Promise<ResponseHttpInterface> {
     return await this.dataSource.transaction(async (manager) => {
-      const processRepository = manager.getRepository(ProcessEntity);
-      const processAgencyRepository = manager.getRepository(ProcessAgencyEntity);
-      const catalogueRepository = manager.getRepository(CatalogueEntity);
+      const process = await this.saveProcess(payload, manager);
 
-      const process = await processRepository.findOne({
-        where: { id: payload.processId },
-        relations: { establishmentAddress: true },
-      });
-      // review agregar enum para code y type
-      const state = await catalogueRepository.findOneBy({
-        code: 'pendiente_inspeccion_1',
-        type: 'tramite_estados',
-      });
+      await this.saveProcessAgency(payload, manager);
 
-      if (!process) {
-        throw new NotFoundException('Trámite no encontrado');
-      }
-
-      if (state) process.stateId = state.id;
-
-      process.activityId = payload.activity.id;
-      process.classificationId = payload.classification.id;
-      process.categoryId = payload.category.id;
-      process.hasLandUse = payload.hasLandUse;
-      process.registeredAt = new Date();
-      process.endedAt = new Date();
-      process.isProtectedArea = payload.isProtectedArea;
-      process.hasProtectedAreaContract = payload.hasProtectedAreaContract;
+      await this.saveTouristGuides(payload, manager);
 
       await this.processService.saveAutoInspection(payload, manager, user);
+
       await this.processService.saveAutoAssignment(
         payload.processId,
         process.establishmentAddress.provinceId,
         manager,
       );
-
-      process.inspectionExpirationAt = set(addDays(new Date(), 114), {
-        hours: 23,
-        minutes: 23,
-        seconds: 59,
-        milliseconds: 0,
-      });
-
-      let processAgency = await processAgencyRepository.findOneBy({ processId: payload.processId });
-
-      if (!processAgency) {
-        processAgency = processAgencyRepository.create();
-      }
-
-      processAgency.processId = payload.processId;
-      processAgency.permanentPhysicalSpaceId = payload.permanentPhysicalSpace.id;
-      processAgency.totalAccreditedStaffLanguage = payload.totalAccreditedStaffLanguage;
-      processAgency.percentageAccreditedStaffLanguage = payload.percentageAccreditedStaffLanguage;
-
-      await processAgencyRepository.save(processAgency);
 
       const cadastre = await this.saveCadastre(payload.processId, manager);
 
@@ -156,18 +72,115 @@ export class ProcessAgencyService {
 
       if (responseSendEmail) {
         return {
-          data: await processRepository.save(process),
+          data: process,
           title: responseSendEmail.title,
           message: responseSendEmail.message,
         };
       }
 
       return {
-        data: await processRepository.save(process),
-        title: '',
-        message: '',
+        data: process,
+        title:
+          'El certificado de registro de turismo ha sido enviado a la cuenta de correo electrónico registrado y en la plataforma SITURIN, en la sección de descargas.',
+        message:
+          'Recuerde que puede solicitar la primera inspección, ingresando al sistema SITURIN antes de los 84 días calendario, contados a partir de la emisión del certificado de registro',
       };
     });
+  }
+
+  private async saveProcess(
+    payload: CreateProcessAgencyDto,
+    manager: EntityManager,
+  ): Promise<ProcessEntity> {
+    const processRepository = manager.getRepository(ProcessEntity);
+    const catalogueRepository = manager.getRepository(CatalogueEntity);
+
+    const process = await processRepository.findOne({
+      where: { id: payload.processId },
+      relations: { establishmentAddress: true },
+    });
+
+    // review agregar enum para code y type
+    const state = await catalogueRepository.findOneBy({
+      code: 'pendiente_inspeccion_1',
+      type: 'tramite_estados',
+    });
+
+    if (!process) {
+      throw new NotFoundException('Trámite no encontrado');
+    }
+
+    if (state) process.stateId = state.id;
+
+    process.activityId = payload.activity.id;
+    process.classificationId = payload.classification.id;
+    process.categoryId = payload.category.id;
+    process.hasLandUse = payload.hasLandUse;
+    process.registeredAt = new Date();
+    process.endedAt = new Date();
+    process.isProtectedArea = payload.isProtectedArea;
+    process.hasProtectedAreaContract = payload.hasProtectedAreaContract;
+    process.inspectionExpirationAt = set(addDays(new Date(), 114), {
+      hours: 23,
+      minutes: 23,
+      seconds: 59,
+      milliseconds: 0,
+    });
+
+    return await processRepository.save(process);
+  }
+
+  private async saveProcessAgency(
+    payload: CreateProcessAgencyDto,
+    manager: EntityManager,
+  ): Promise<ProcessAgencyEntity> {
+    const processAgencyRepository = manager.getRepository(ProcessAgencyEntity);
+    let processAgency = await processAgencyRepository.findOneBy({ processId: payload.processId });
+
+    if (!processAgency) {
+      processAgency = processAgencyRepository.create();
+    }
+
+    processAgency.processId = payload.processId;
+    processAgency.permanentPhysicalSpaceId = payload.permanentPhysicalSpace.id;
+    processAgency.totalAccreditedStaffLanguage = payload.totalAccreditedStaffLanguage;
+    processAgency.percentageAccreditedStaffLanguage = payload.percentageAccreditedStaffLanguage;
+
+    return await processAgencyRepository.save(processAgency);
+  }
+
+  private async saveTouristGuides(
+    payload: CreateProcessAgencyDto,
+    manager: EntityManager,
+  ): Promise<boolean> {
+    const touristGuideRepository = manager.getRepository(TouristGuideEntity);
+
+    for (const item of payload.touristGuides) {
+      try {
+        const touristGuide = touristGuideRepository.create();
+        touristGuide.processId = payload.processId;
+        touristGuide.isGuide = item.isGuide;
+        touristGuide.identification = item.identification;
+        touristGuide.name = item.name;
+
+        await touristGuideRepository.save(touristGuide);
+      } catch (error: unknown) {
+        let errorMessage = 'Error desconocido';
+
+        if (error instanceof Error) {
+          errorMessage = error.message;
+        } else if (typeof error === 'string') {
+          errorMessage = error;
+        }
+
+        throw new BadRequestException({
+          error: errorMessage,
+          message: `Error guardando Guía de Turismo: ${item.name || item.identification}`,
+        });
+      }
+    }
+
+    return true;
   }
 
   private async saveCadastre(processId: string, manager: EntityManager): Promise<CadastreEntity> {
@@ -244,19 +257,10 @@ export class ProcessAgencyService {
     return cadastre;
   }
 
-  private async findEntityOrThrow(id: string): Promise<ProcessAgencyEntity> {
-    const entity = await this.processAgencyRepository.findOneBy({ id });
-
-    if (!entity) throw new NotFoundException('Registro no encontrado');
-
-    return entity;
-  }
-
   async sendRegistrationCertificateEmail(cadastre: CadastreEntity) {
     const process = await this.processRepository.findOne({
       where: { id: cadastre.processId },
       relations: {
-        cadastre: true,
         establishment: { ruc: true },
         establishmentAddress: true,
         establishmentContactPerson: true,

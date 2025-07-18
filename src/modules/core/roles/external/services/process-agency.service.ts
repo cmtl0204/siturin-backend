@@ -72,14 +72,14 @@ export class ProcessAgencyService {
 
       if (responseSendEmail) {
         return {
-          data: process,
+          data: cadastre,
           title: responseSendEmail.title,
           message: responseSendEmail.message,
         };
       }
 
       return {
-        data: process,
+        data: cadastre,
         title:
           'El certificado de registro de turismo ha sido enviado a la cuenta de correo electrónico registrado y en la plataforma SITURIN, en la sección de descargas.',
         message:

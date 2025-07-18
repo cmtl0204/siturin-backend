@@ -112,7 +112,13 @@ export enum CatalogueActivitiesCodeEnum {
 }
 
 export enum CatalogueCadastresStateEnum {
-  pending_1 = 'pending_1',
+  pending = 'pending',
+  ratified = 'ratified',
+  inactive = 'inactive',
+  temporary_suspension = 'temporary_suspension',
+  definitive_suspension = 'definitive_suspension',
+  recategorized = 'recategorized',
+  reclassified = 'reclassified',
 }
 
 export enum CatalogueSchoolPeriodStateEnum {

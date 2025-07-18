@@ -476,12 +476,10 @@ export class ProcessService {
   }
 
   private async getAvailableInternalUser(dpaId: string): Promise<InternalUserEntity | null> {
-    // Paso 1: Buscar un usuario disponible sin proceso asignado
     let internalUser = await this.internalUserRepository.findOne({
       where: { isAvailable: true, internalDpaUser: { hasProcess: false, dpaId } },
     });
 
-    // Paso 2: Si no hay, resetear `hasProcess` a false y volver a intentar
     if (!internalUser) {
       await this.internalDpaUserRepository
         .createQueryBuilder()
@@ -495,8 +493,7 @@ export class ProcessService {
         where: { isAvailable: true, internalDpaUser: { hasProcess: false, dpaId } },
       });
     }
-
-    // Paso 3: Si se encontró uno, actualizar su estado a hasProcess = true
+    
     if (internalUser) {
       await this.internalDpaUserRepository
         .createQueryBuilder()

@@ -1,6 +1,7 @@
 import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { DataSource, EntityManager, Repository } from 'typeorm';
 import {
+  CatalogueCadastresStateEnum,
   CatalogueInspectionsStateEnum,
   CatalogueTypeEnum,
   CommonRepositoryEnum,
@@ -10,6 +11,8 @@ import {
 import { ServiceResponseHttpInterface } from '@utils/interfaces';
 import {
   AssignmentEntity,
+  CadastreEntity,
+  CadastreStateEntity,
   EstablishmentAddressEntity,
   EstablishmentContactPersonEntity,
   EstablishmentEntity,
@@ -27,9 +30,10 @@ import {
 } from '@modules/core/roles/external/dto/process-agency';
 import { CreateStep1Dto, CreateStep2Dto } from '@modules/core/shared-core/dto/process';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
-import { addDays, differenceInDays, set, startOfDay } from 'date-fns';
+import { addDays, differenceInDays, format, set, startOfDay } from 'date-fns';
 import { CreateInspectionDto } from '@modules/core/shared-core/dto/process/create-inspection.dto';
 import { UserEntity } from '@auth/entities';
+import { CreateInspectionStatusDto } from '@modules/core/shared-core/dto/cadastre';
 
 @Injectable()
 export class CadastreService {
@@ -99,27 +103,74 @@ export class CadastreService {
     return entity;
   }
 
-  async createStep1(payload: CreateStep1Dto): Promise<ProcessEntity> {
-    let process: ProcessEntity | null = null;
+  async createInspectionStatus(payload: CreateInspectionStatusDto): Promise<CadastreEntity> {
+    return await this.dataSource.transaction(async (manager) => {
+      const cadastreRepository = manager.getRepository(CadastreEntity);
+      const cadastreStateRepository = manager.getRepository(CadastreStateEntity);
+      const processRepository = manager.getRepository(ProcessEntity);
+      const inspectionRepository = manager.getRepository(InspectionEntity);
 
-    if (payload?.processId) {
-      process = await this.repository.findOneBy({ id: payload?.processId });
-    }
+      let cadastre: CadastreEntity | null = null;
 
-    if (!process) {
-      process = this.repository.create();
-    }
+      if (payload?.cadastreId) {
+        cadastre = await cadastreRepository.findOneBy({ id: payload.cadastreId });
+      }
 
-    process.startedAt = new Date();
-    process.typeId = payload.type.id;
+      if (!cadastre) {
+        throw new NotFoundException('Catastro no encontrado');
+      }
 
-    if (payload.legalEntity) {
-      process.legalEntityId = payload.legalEntity.id;
-      process.hasTouristActivityDocument = payload.hasTouristActivityDocument;
-      process.hasPersonDesignation = payload.hasPersonDesignation;
-    }
+      const actualInspection = await inspectionRepository.findOne({
+        where: { processId: cadastre.processId, isCurrent: true },
+      });
 
-    return await this.repository.save(process);
+      if (!actualInspection) {
+        throw new NotFoundException('Inspección no encontrada');
+      }
+
+      if (differenceInDays(startOfDay(actualInspection.inspectionAt), startOfDay(new Date())) > 0) {
+        throw new BadRequestException({
+          error: 'No se puede cambiar el estado',
+          message: `La fecha de inspección (${format(actualInspection.inspectionAt, 'yyyy-MM-dd')}) es mayor a la actual`,
+        });
+      }
+
+      const process = await processRepository.findOneBy({ id: cadastre.processId });
+
+      if (!process) {
+        throw new NotFoundException('Trámite no encontrado');
+      }
+
+      if (
+        differenceInDays(startOfDay(process.inspectionExpirationAt), startOfDay(new Date())) < 0
+      ) {
+        throw new BadRequestException({
+          error: 'No se puede cambiar el estado',
+          message: `La fecha límite fue el ${format(process.inspectionExpirationAt, 'yyyy-MM-dd')}`,
+        });
+      }
+
+      await cadastreStateRepository
+        .createQueryBuilder()
+        .update(CadastreStateEntity)
+        .set({ isCurrent: false })
+        .where('cadastre_id = :cadastreId', { cadastreId: payload.cadastreId })
+        .execute();
+
+      const cadastreState = cadastreStateRepository.create();
+      cadastreState.cadastreId = payload.cadastreId;
+      cadastreState.isCurrent = true;
+      cadastreState.stateId = payload.state.id;
+
+      await cadastreStateRepository.save(cadastreState);
+
+      switch (payload.state.code) {
+        case CatalogueCadastresStateEnum.ratified:
+          break;
+      }
+
+      return cadastre;
+    });
   }
 
   async createStep2(payload: CreateStep2Dto): Promise<ProcessEntity> {

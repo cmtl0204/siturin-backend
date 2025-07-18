@@ -6,9 +6,9 @@ export class GoogleController {
   constructor(private readonly sheetsService: GoogleService) {}
 
   @Get()
-  async getData(@Query('spreadsheetId') spreadsheetId: string, @Query('range') range: string) {
+  async getData() {
     return {
-      data: await this.sheetsService.getSheetData(spreadsheetId, range),
+      data: await this.sheetsService.getSheetData(),
       title: '',
       detail: '',
     };

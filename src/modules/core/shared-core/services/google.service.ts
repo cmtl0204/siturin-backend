@@ -3,8 +3,11 @@ import { google } from 'googleapis';
 
 @Injectable()
 export class GoogleService {
-  async getSheetData(spreadsheetId: string, range: string) {
+  async getSheetData() {
     const sheets = google.sheets({ version: 'v4' });
+
+    const spreadsheetId = '18KFTMbFYwx-gLM8ThARblyW7QSVT0sd-TL6XvKnfdC8';
+    const range = 'sheet!B1:K100';
 
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId,

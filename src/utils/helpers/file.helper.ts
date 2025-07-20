@@ -5,6 +5,7 @@ export const getFileName = (req, file, callback) => {
 
   callback(null, `${Date.now()}${fileExtName}`);
 };
+
 export const imageFilter = (req, file, callback) => {
   if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
     return callback(new Error('Solo jpg|jpeg|png estos tipos están permitidos!'), false);

@@ -1,16 +1,20 @@
-import { IsArray, IsBoolean, IsObject, IsOptional, IsPositive, IsUUID } from 'class-validator';
+import {
+  IsArray,
+  IsBoolean,
+  IsObject,
+  IsOptional,
+  IsPositive,
+  IsUUID,
+  ValidateNested,
+} from 'class-validator';
 import { isBooleanValidationOptions, isPositiveValidationOptions } from '@utils/dto-validation';
 import { Type } from 'class-transformer';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
-import {
-  ActivityEntity,
-  CategoryEntity,
-  ClassificationEntity,
-  TouristGuideEntity,
-} from '@modules/core/entities';
+import { ActivityEntity, CategoryEntity, ClassificationEntity } from '@modules/core/entities';
 import { TouristGuideDto } from '@modules/core/shared-core/dto/process';
+import { CatalogueDto } from '@modules/common/catalogue/dto';
 
-export class CreateProcessAgencyDto {
+export class CreateRegistrationProcessAgencyDto {
   @IsUUID()
   readonly processId: string;
 
@@ -32,12 +36,12 @@ export class CreateProcessAgencyDto {
 
   @IsOptional()
   @IsObject()
-  @Type(() => CatalogueEntity)
-  readonly localType: CatalogueEntity;
+  @Type(() => CatalogueDto)
+  readonly localType: CatalogueDto;
 
   @IsObject()
-  @Type(() => CatalogueEntity)
-  readonly permanentPhysicalSpace: CatalogueEntity;
+  @Type(() => CatalogueDto)
+  readonly permanentPhysicalSpace: CatalogueDto;
 
   @IsPositive(isPositiveValidationOptions())
   readonly totalAccreditedStaffLanguage: number;
@@ -56,6 +60,7 @@ export class CreateProcessAgencyDto {
 
   @IsOptional()
   @IsArray()
+  @ValidateNested()
   @Type(() => TouristGuideDto)
   readonly touristGuides: TouristGuideDto[];
 }

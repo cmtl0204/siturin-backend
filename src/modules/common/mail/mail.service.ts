@@ -31,7 +31,7 @@ export class MailService implements OnModuleInit {
     await this.configTemplates();
   }
 
-  async configTemplates() {
+  private async configTemplates() {
     let pathTemplates = join(__dirname, 'templates');
 
     if (this.configService.env !== 'production') {

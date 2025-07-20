@@ -4,7 +4,7 @@ import {
   DeleteDateColumn,
   Entity,
   JoinColumn,
-  ManyToOne, OneToOne,
+  ManyToOne, OneToMany, OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -17,6 +17,7 @@ import { PaymentEntity } from '@modules/core/entities/payment.entity';
 import { EstablishmentAddressEntity } from '@modules/core/entities/establishment-address.entity';
 import { EstablishmentContactPersonEntity } from '@modules/core/entities/establishment-contact-person.entity';
 import { CadastreEntity } from '@modules/core/entities/cadastre.entity';
+import { InspectionEntity } from '@modules/core/entities/inspection.entity';
 
 @Entity('processes', { schema: 'core' })
 export class ProcessEntity {
@@ -64,6 +65,9 @@ export class ProcessEntity {
 
   @OneToOne(() => CadastreEntity, (entity) => entity.process)
   cadastre: CadastreEntity;
+
+  @OneToOne(() => InspectionEntity, (entity) => entity.process)
+  actualInspection: InspectionEntity;
 
   /** Foreign Keys **/
   @ManyToOne(() => ActivityEntity, { nullable: true })

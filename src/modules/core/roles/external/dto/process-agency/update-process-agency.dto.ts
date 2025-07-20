@@ -1,4 +1,4 @@
 import { PartialType } from '@nestjs/swagger';
-import { CreateProcessAgencyDto } from './create-process-agency.dto';
+import { CreateRegistrationProcessAgencyDto } from './create-registration-process-agency.dto';
 
-export class UpdateProcessAgencyDto extends PartialType(CreateProcessAgencyDto) {}
+export class UpdateProcessAgencyDto extends PartialType(CreateRegistrationProcessAgencyDto) {}

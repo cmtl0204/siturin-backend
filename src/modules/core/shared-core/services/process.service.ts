@@ -1,5 +1,6 @@
 import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { DataSource, EntityManager, Repository } from 'typeorm';
+import { addDays, differenceInDays, format, set, startOfDay } from 'date-fns';
 import {
   CatalogueInspectionsStateEnum,
   CatalogueProcessesTypeEnum,
@@ -8,41 +9,37 @@ import {
   ConfigEnum,
   CoreRepositoryEnum,
 } from '@utils/enums';
-import { ServiceResponseHttpInterface } from '@utils/interfaces';
 import {
   AssignmentEntity,
+  BreachCauseEntity,
   EstablishmentAddressEntity,
   EstablishmentContactPersonEntity,
   EstablishmentEntity,
+  InactivationCauseEntity,
   InspectionEntity,
   InternalDpaUserEntity,
   InternalUserEntity,
   ProcessEntity,
 } from '@modules/core/entities';
-import { PaginationDto } from '@utils/dto';
-import { PaginateFilterService } from '@utils/pagination/paginate-filter.service';
-import { FindTouristGuideDto } from '@modules/core/shared-core/dto/tourist-guide/find-tourist-guide.dto';
+import { CreateRegistrationProcessAgencyDto } from '@modules/core/roles/external/dto/process-agency';
 import {
-  CreateProcessAgencyDto,
-  UpdateProcessAgencyDto,
-} from '@modules/core/roles/external/dto/process-agency';
-import { CreateStep1Dto, CreateStep2Dto } from '@modules/core/shared-core/dto/process';
+  BreachCauseDto,
+  CreateInspectionDto,
+  CreateStep1Dto,
+  CreateStep2Dto,
+  InactivationCauseDto,
+} from '@modules/core/shared-core/dto/process';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
-import { addDays, differenceInDays, set, startOfDay } from 'date-fns';
-import { CreateInspectionDto } from '@modules/core/shared-core/dto/process/create-inspection.dto';
 import { UserEntity } from '@auth/entities';
+import { FileService } from '@modules/common/file/file.service';
 
 @Injectable()
 export class ProcessService {
-  private paginateFilterService: PaginateFilterService<ProcessEntity>;
-
   constructor(
     @Inject(ConfigEnum.PG_DATA_SOURCE)
     private readonly dataSource: DataSource,
     @Inject(CoreRepositoryEnum.PROCESS_REPOSITORY)
-    private readonly repository: Repository<ProcessEntity>,
-    @Inject(CoreRepositoryEnum.ESTABLISHMENT_REPOSITORY)
-    private readonly establishmentRepository: Repository<EstablishmentEntity>,
+    private readonly processRepository: Repository<ProcessEntity>,
     @Inject(CoreRepositoryEnum.INTERNAL_USER_REPOSITORY)
     private readonly internalUserRepository: Repository<InternalUserEntity>,
     @Inject(CoreRepositoryEnum.INTERNAL_DPA_USER_REPOSITORY)
@@ -51,64 +48,18 @@ export class ProcessService {
     private readonly catalogueRepository: Repository<CatalogueEntity>,
     @Inject(CoreRepositoryEnum.INSPECTION_REPOSITORY)
     private readonly inspectionRepository: Repository<InspectionEntity>,
-  ) {
-    this.paginateFilterService = new PaginateFilterService(this.repository);
-  }
-
-  async findAll(params: PaginationDto): Promise<ServiceResponseHttpInterface> {
-    return this.paginateFilterService.execute(params, []);
-  }
-
-  async findOne(id: string, options: FindTouristGuideDto): Promise<ProcessEntity> {
-    const entity = await this.repository.findOne({
-      where: { id },
-      relations: options.relations,
-    });
-
-    if (!entity) {
-      throw new NotFoundException('Registro no encontrado');
-    }
-
-    return entity;
-  }
-
-  async create(payload: CreateProcessAgencyDto): Promise<ProcessEntity> {
-    const entity = this.repository.create(payload);
-
-    return await this.repository.save(entity);
-  }
-
-  async update(id: string, payload: UpdateProcessAgencyDto): Promise<ProcessEntity> {
-    const entity = await this.findEntityOrThrow(id);
-
-    this.repository.merge(entity, payload);
-
-    return await this.repository.save(entity);
-  }
-
-  async delete(id: string): Promise<ProcessEntity> {
-    const entity = await this.findEntityOrThrow(id);
-
-    return await this.repository.softRemove(entity);
-  }
-
-  private async findEntityOrThrow(id: string): Promise<ProcessEntity> {
-    const entity = await this.repository.findOneBy({ id });
-
-    if (!entity) throw new NotFoundException('Registro no encontrado');
-
-    return entity;
-  }
+    private readonly fileService: FileService,
+  ) {}
 
   async createStep1(payload: CreateStep1Dto): Promise<ProcessEntity> {
     let process: ProcessEntity | null = null;
 
     if (payload?.processId) {
-      process = await this.repository.findOneBy({ id: payload?.processId });
+      process = await this.processRepository.findOneBy({ id: payload?.processId });
     }
 
     if (!process) {
-      process = this.repository.create();
+      process = this.processRepository.create();
     }
 
     process.startedAt = new Date();
@@ -120,7 +71,7 @@ export class ProcessService {
       process.hasPersonDesignation = payload.hasPersonDesignation;
     }
 
-    return await this.repository.save(process);
+    return await this.processRepository.save(process);
   }
 
   async createStep2(payload: CreateStep2Dto): Promise<ProcessEntity> {
@@ -174,7 +125,8 @@ export class ProcessService {
     }
 
     if (
-      actualInspection.state.code !== CatalogueInspectionsStateEnum.autogenerated &&
+      actualInspection.state.code !== CatalogueInspectionsStateEnum.autogenerated_1 &&
+      actualInspection.state.code !== CatalogueInspectionsStateEnum.autogenerated_2 &&
       actualInspection.state.code !== CatalogueInspectionsStateEnum.requested
     ) {
       throw new BadRequestException(
@@ -221,17 +173,48 @@ export class ProcessService {
     });
 
     if (!actualInspection) {
-      throw new NotFoundException('Registro no encontrado');
+      throw new NotFoundException('Inspeccion Actual no encontrada');
     }
 
     if (!actualInspection?.state) {
       throw new NotFoundException('Estado inspección no encontrado');
     }
 
+    const process = await this.processRepository.findOne({
+      where: { id: payload.processId },
+    });
+
+    if (!process) {
+      throw new NotFoundException('Trámite no encontrado');
+    }
+
     const inspectionAt = payload.inspectionAt;
 
+    if (
+      differenceInDays(startOfDay(inspectionAt), startOfDay(process.inspectionExpirationAt)) > 0
+    ) {
+      throw new BadRequestException({
+        error: 'No se puede agendar',
+        message: `No puede agendar una fecha fuera posterior a la fecha límite ${format(process.inspectionExpirationAt, 'yyyy-MM-dd')}`,
+      });
+    }
+
     if (differenceInDays(inspectionAt, new Date()) < 0) {
-      throw new BadRequestException(`No puede agendar una fecha anterior a la fecha actual`);
+      throw new BadRequestException({
+        error: 'No se puede agendar',
+        message: 'No puede agendar una fecha anterior a la fecha actual',
+      });
+    }
+
+    if (
+      (actualInspection.state.code === CatalogueInspectionsStateEnum.autogenerated_1 ||
+        actualInspection.state.code === CatalogueInspectionsStateEnum.autogenerated_2) &&
+      differenceInDays(actualInspection.inspectionAt, new Date()) > 0
+    ) {
+      throw new BadRequestException({
+        error: 'No se puede agendar',
+        message: 'Mientras el usuario no solicite una inspección o se cumpla la fecha',
+      });
     }
 
     if (actualInspection.state.code === CatalogueInspectionsStateEnum.rescheduled_2) {
@@ -256,7 +239,7 @@ export class ProcessService {
     let observation: string = '';
 
     switch (actualInspection?.state.code) {
-      case CatalogueInspectionsStateEnum.autogenerated:
+      case CatalogueInspectionsStateEnum.autogenerated_1:
       case CatalogueInspectionsStateEnum.autogenerated_2:
         state = states.find((state) => state.code === CatalogueInspectionsStateEnum.scheduled);
         observation = 'Fecha agendada por el Técnico Zonal';
@@ -298,8 +281,8 @@ export class ProcessService {
   }
 
   async saveAutoInspection(
-    payload: CreateProcessAgencyDto,
     manager: EntityManager,
+    payload: CreateRegistrationProcessAgencyDto,
     user: UserEntity,
   ) {
     const inspectionRepository = manager.getRepository(InspectionEntity);
@@ -307,7 +290,7 @@ export class ProcessService {
 
     const state = await catalogueRepository.findOne({
       where: {
-        code: CatalogueInspectionsStateEnum.autogenerated,
+        code: CatalogueInspectionsStateEnum.autogenerated_1,
         type: CatalogueTypeEnum.inspections_state,
       },
     });
@@ -372,6 +355,49 @@ export class ProcessService {
     return inspectionRepository.save(inspection);
   }
 
+  async saveAutoInspection2(manager: EntityManager, processId: string, userId: string) {
+    const inspectionRepository = manager.getRepository(InspectionEntity);
+    const catalogueRepository = manager.getRepository(CatalogueEntity);
+
+    const state = await catalogueRepository.findOne({
+      where: {
+        code: CatalogueInspectionsStateEnum.autogenerated_2,
+        type: CatalogueTypeEnum.inspections_state,
+      },
+    });
+
+    let inspection = await inspectionRepository.findOne({
+      where: { processId },
+    });
+
+    if (!inspection) {
+      inspection = inspectionRepository.create();
+    }
+
+    await inspectionRepository
+      .createQueryBuilder()
+      .update(InspectionEntity)
+      .set({ isCurrent: false })
+      .where('process_id = :processId', { processId })
+      .execute();
+
+    inspection.processId = processId;
+    inspection.isCurrent = true;
+    inspection.observation = 'Fecha auto generada para segunda inspección por el sistema';
+    inspection.userId = userId;
+
+    if (state) inspection.stateId = state.id;
+
+    inspection.inspectionAt = set(addDays(new Date(), 42), {
+      hours: 23,
+      minutes: 23,
+      seconds: 59,
+      milliseconds: 0,
+    });
+
+    return inspectionRepository.save(inspection);
+  }
+
   async saveAutoAssignment(processId: string, dpaId: string, manager: EntityManager) {
     const assignmentRepository = manager.getRepository(AssignmentEntity);
 
@@ -392,6 +418,63 @@ export class ProcessService {
     if (availableInternalUser) assignment.internalUser = availableInternalUser;
 
     return assignmentRepository.save(assignment);
+  }
+
+  async saveBreachCauses(
+    manager: EntityManager,
+    processId: string,
+    breachCauses: BreachCauseDto[],
+  ): Promise<void> {
+    const breachCauseRepository = manager.getRepository(BreachCauseEntity);
+
+    for (const item of breachCauses) {
+      let breachCause = await breachCauseRepository.findOne({
+        where: { processId, code: item.code },
+      });
+
+      if (!breachCause) {
+        breachCause = breachCauseRepository.create();
+      }
+
+      breachCause.processId = processId;
+      breachCause.code = item.code;
+      breachCause.name = item.name;
+
+      await breachCauseRepository.save(breachCause);
+    }
+  }
+
+  async saveInactivationCauses(
+    manager: EntityManager,
+    processId: string,
+    inactivationCauses: InactivationCauseDto[],
+  ): Promise<void> {
+    const inactivationCauseRepository = manager.getRepository(InactivationCauseEntity);
+
+    for (const item of inactivationCauses) {
+      let inactivationCause = await inactivationCauseRepository.findOne({
+        where: { processId, code: item.code },
+      });
+
+      if (!inactivationCause) {
+        inactivationCause = inactivationCauseRepository.create();
+      }
+
+      inactivationCause.processId = processId;
+      inactivationCause.code = item.code;
+      inactivationCause.name = item.name;
+
+      await inactivationCauseRepository.save(inactivationCause);
+    }
+  }
+
+  async createFilesInspectionStatus(
+    files: Array<Express.Multer.File>,
+    modelId: string,
+    typeIds: string[],
+    user: UserEntity,
+  ): Promise<void> {
+    await this.fileService.uploadFiles(files, modelId, typeIds, user.id);
   }
 
   private async saveEstablishment(payload: CreateStep2Dto, manager: EntityManager) {
@@ -493,7 +576,7 @@ export class ProcessService {
         where: { isAvailable: true, internalDpaUser: { hasProcess: false, dpaId } },
       });
     }
-    
+
     if (internalUser) {
       await this.internalDpaUserRepository
         .createQueryBuilder()

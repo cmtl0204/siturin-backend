@@ -7,7 +7,6 @@ import {
   CatalogueTypeEnum,
   ConfigEnum,
   CoreRepositoryEnum,
-  MailTemplateEnum,
 } from '@utils/enums';
 import { ResponseHttpInterface } from '@utils/interfaces';
 import {
@@ -17,38 +16,24 @@ import {
   ProcessEntity,
   TouristGuideEntity,
 } from '@modules/core/entities';
-import { PaginateFilterService } from '@utils/pagination/paginate-filter.service';
-import { CreateProcessAgencyDto } from '@modules/core/roles/external/dto/process-agency';
+import { CreateRegistrationProcessAgencyDto } from '@modules/core/roles/external/dto/process-agency';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
 import { ProcessService } from '@modules/core/shared-core/services/process.service';
 import { UserEntity } from '@auth/entities';
 import { addDays, set } from 'date-fns';
-import { MailService } from '@modules/common/mail/mail.service';
-import { MailDataInterface } from '@modules/common/mail/interfaces/mail-data.interface';
-import { InternalPdfService } from '@modules/reports/pdf/internal-pdf.service';
+import { EmailService } from '@modules/core/shared-core/services/email.service';
 
 @Injectable()
 export class ProcessAgencyService {
-  private paginateFilterService: PaginateFilterService<ProcessAgencyEntity>;
-
   constructor(
     @Inject(ConfigEnum.PG_DATA_SOURCE)
     private readonly dataSource: DataSource,
-    private readonly mailService: MailService,
-    @Inject(CoreRepositoryEnum.PROCESS_REPOSITORY)
-    private readonly processRepository: Repository<ProcessEntity>,
-    @Inject(CoreRepositoryEnum.PROCESS_AGENCY_REPOSITORY)
-    private readonly processAgencyRepository: Repository<ProcessAgencyEntity>,
-    @Inject(AuthRepositoryEnum.USER_REPOSITORY)
-    private readonly userRepository: Repository<UserEntity>,
+    private readonly emailService: EmailService,
     private readonly processService: ProcessService,
-    private readonly internalPdfService: InternalPdfService,
-  ) {
-    this.paginateFilterService = new PaginateFilterService(this.processAgencyRepository);
-  }
+  ) {}
 
   async createRegistration(
-    payload: CreateProcessAgencyDto,
+    payload: CreateRegistrationProcessAgencyDto,
     user: UserEntity,
   ): Promise<ResponseHttpInterface> {
     return await this.dataSource.transaction(async (manager) => {
@@ -58,7 +43,7 @@ export class ProcessAgencyService {
 
       await this.saveTouristGuides(payload, manager);
 
-      await this.processService.saveAutoInspection(payload, manager, user);
+      await this.processService.saveAutoInspection(manager, payload, user);
 
       await this.processService.saveAutoAssignment(
         payload.processId,
@@ -68,7 +53,7 @@ export class ProcessAgencyService {
 
       const cadastre = await this.saveCadastre(payload.processId, manager);
 
-      const responseSendEmail = await this.sendRegistrationCertificateEmail(cadastre);
+      const responseSendEmail = await this.emailService.sendRegistrationCertificateEmail(cadastre);
 
       if (responseSendEmail) {
         return {
@@ -89,7 +74,7 @@ export class ProcessAgencyService {
   }
 
   private async saveProcess(
-    payload: CreateProcessAgencyDto,
+    payload: CreateRegistrationProcessAgencyDto,
     manager: EntityManager,
   ): Promise<ProcessEntity> {
     const processRepository = manager.getRepository(ProcessEntity);
@@ -100,15 +85,15 @@ export class ProcessAgencyService {
       relations: { establishmentAddress: true },
     });
 
+    if (!process) {
+      throw new NotFoundException('Trámite no encontrado');
+    }
+
     // review agregar enum para code y type
     const state = await catalogueRepository.findOneBy({
       code: 'pendiente_inspeccion_1',
       type: 'tramite_estados',
     });
-
-    if (!process) {
-      throw new NotFoundException('Trámite no encontrado');
-    }
 
     if (state) process.stateId = state.id;
 
@@ -131,7 +116,7 @@ export class ProcessAgencyService {
   }
 
   private async saveProcessAgency(
-    payload: CreateProcessAgencyDto,
+    payload: CreateRegistrationProcessAgencyDto,
     manager: EntityManager,
   ): Promise<ProcessAgencyEntity> {
     const processAgencyRepository = manager.getRepository(ProcessAgencyEntity);
@@ -150,7 +135,7 @@ export class ProcessAgencyService {
   }
 
   private async saveTouristGuides(
-    payload: CreateProcessAgencyDto,
+    payload: CreateRegistrationProcessAgencyDto,
     manager: EntityManager,
   ): Promise<boolean> {
     const touristGuideRepository = manager.getRepository(TouristGuideEntity);
@@ -196,7 +181,7 @@ export class ProcessAgencyService {
 
     const state = await catalogueRepository.findOne({
       where: {
-        code: CatalogueCadastresStateEnum.pending_1,
+        code: CatalogueCadastresStateEnum.pending,
         type: CatalogueTypeEnum.cadastres_state,
       },
     });
@@ -255,72 +240,5 @@ export class ProcessAgencyService {
     }
 
     return cadastre;
-  }
-
-  async sendRegistrationCertificateEmail(cadastre: CadastreEntity) {
-    const process = await this.processRepository.findOne({
-      where: { id: cadastre.processId },
-      relations: {
-        establishment: { ruc: true },
-        establishmentAddress: true,
-        establishmentContactPerson: true,
-      },
-    });
-
-    const user = await this.userRepository.findOneBy({
-      identification: process?.establishment.ruc.number,
-    });
-
-    if (!process) {
-      throw new NotFoundException('Trámite no encontrado');
-    }
-
-    if (!user) {
-      throw new NotFoundException('Usuario no encontrado');
-    }
-
-    const data = {
-      ruc: process?.establishment.ruc.number,
-      registerNumber: cadastre.registerNumber,
-    };
-
-    const failedRecipients: string[] = [];
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    const recipients = [user.email, process.establishmentContactPerson.email].filter((email) => {
-      if (emailRegex.test(email)) {
-        return true;
-      }
-
-      failedRecipients.push(email);
-      return false;
-    });
-
-    if (recipients.length === 0) {
-      return {
-        title: 'No se pudo entregar a ningun correo',
-        message: failedRecipients,
-      };
-    }
-
-    if (recipients.length === 0) {
-      return {
-        title: 'No se pudo entregar a a los siguientes correos',
-        message: failedRecipients,
-      };
-    }
-
-    const pdf = await this.internalPdfService.generateUsersReportBuffer();
-
-    const mailData: MailDataInterface = {
-      to: recipients,
-      data,
-      subject: `Registro de Turismo ${cadastre.registerNumber}`,
-      template: MailTemplateEnum.INTERNAL_REGISTRATION_CERTIFICATE,
-      attachments: [{ file: pdf, filename: `${cadastre.registerNumber}.pdf` }],
-    };
-
-    await this.mailService.sendMail(mailData);
   }
 }

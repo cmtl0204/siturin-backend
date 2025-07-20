@@ -2,7 +2,7 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Auth, User } from '@auth/decorators';
 import { ResponseHttpInterface } from '@utils/interfaces';
-import { CreateProcessAgencyDto } from '@modules/core/roles/external/dto/process-agency';
+import { CreateRegistrationProcessAgencyDto } from '@modules/core/roles/external/dto/process-agency';
 import { ProcessAgencyService } from '@modules/core/roles/external/services/process-agency.service';
 import { UserEntity } from '@auth/entities';
 
@@ -15,7 +15,7 @@ export class ProcessAgencyController {
   @ApiOperation({ summary: 'Registration Process' })
   @Post('registrations')
   async createRegistration(
-    @Body() payload: CreateProcessAgencyDto,
+    @Body() payload: CreateRegistrationProcessAgencyDto,
     @User() user: UserEntity,
   ): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.service.createRegistration(payload, user);

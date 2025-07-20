@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { CadastreEntity } from '@modules/core/entities/cadastre.entity';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
+import { UserEntity } from '@auth/entities';
 
 @Entity('cadastre_states', { schema: 'core' })
 export class CadastreStateEntity {
@@ -72,6 +73,18 @@ export class CadastreStateEntity {
     comment: '',
   })
   stateId: string;
+
+  @ManyToOne(() => UserEntity, { nullable: true })
+  @JoinColumn({ name: 'user_id' })
+  user: UserEntity;
+  @Column({
+    type: 'uuid',
+    name: 'user_id',
+    nullable: true,
+    comment: '',
+  })
+  userId: string;
+
   /** Columns **/
   @Column({
     name: 'is_current',

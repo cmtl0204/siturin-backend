@@ -1,13 +1,14 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Equal, FindOptionsWhere, ILike, Repository } from 'typeorm';
 import { FileEntity } from './file.entity';
-import { CommonRepositoryEnum, MessageEnum } from '../../../utils/enums';
+import { CommonRepositoryEnum, MessageEnum } from '@utils/enums';
 import * as path from 'path';
 import { join } from 'path';
 import * as fs from 'fs';
 import { PaginationDto } from '../../../utils/dto';
-import { ServiceResponseHttpInterface } from '../../../utils/interfaces';
+import { ServiceResponseHttpInterface } from '@utils/interfaces';
 import { FilterFileDto } from './dto';
+import { IsArray } from 'class-validator';
 
 @Injectable()
 export class FileService {
@@ -33,23 +34,44 @@ export class FileService {
     return await this.repository.save(newFile);
   }
 
-  async uploadFiles(files: Array<Express.Multer.File>, modelId: string) {
-    files.forEach((file) => {
-      const filePath = `uploads/${new Date().getFullYear()}/${new Date().getMonth()}/${file.filename}`;
+  async uploadFiles(
+    files: Array<Express.Multer.File>,
+    modelId: string,
+    typeIds: string[],
+    userId: string,
+  ): Promise<FileEntity[]> {
+    if (!files?.length) {
+      throw new Error('No existen archivos para subir');
+    }
+
+    let i = 0;
+
+    if (!Array.isArray(typeIds)) {
+      typeIds = [typeIds];
+    }
+
+    const saveOperations = files.map((file) => {
+      const relativePath = path.relative(process.cwd(), path.join(file.destination, file.filename));
+
       const payload = {
         modelId,
+        userId,
         fileName: file.filename,
         extension: path.extname(file.originalname),
         originalName: file.originalname,
-        path: filePath,
+        path: relativePath,
         size: file.size,
-        // type: 'user',
+        typeId: typeIds[i],
       };
 
       const newFile = this.repository.create(payload);
 
-      this.repository.save(newFile);
+      i++;
+
+      return this.repository.save(newFile);
     });
+
+    return await Promise.all(saveOperations);
   }
 
   async findOne(id: string): Promise<FileEntity> {

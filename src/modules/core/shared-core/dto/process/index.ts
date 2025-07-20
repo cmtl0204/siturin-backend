@@ -4,3 +4,6 @@ export * from './create-step2-establishment.dto';
 export * from './create-step2-establishment-address.dto';
 export * from './create-step2-establishment-contact-person.dto';
 export * from './tourist-guide.dto';
+export * from './breach-cause.dto';
+export * from './inactivation-cause.dto';
+export * from './create-inspection.dto';

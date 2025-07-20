@@ -1,4 +1,13 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  Query,
+  UploadedFiles,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Auth, User } from '@auth/decorators';
 import { ResponseHttpInterface } from '@utils/interfaces';
@@ -6,6 +15,12 @@ import { ProcessService } from '@modules/core/shared-core/services/process.servi
 import { CreateStep1Dto, CreateStep2Dto } from '@modules/core/shared-core/dto/process';
 import { CreateInspectionDto } from '@modules/core/shared-core/dto/process/create-inspection.dto';
 import { UserEntity } from '@auth/entities';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { join } from 'path';
+import { fileFilter, getFileName } from '@utils/helpers';
+import * as fs from 'node:fs';
+import { format } from 'date-fns';
 
 @ApiTags('Processes')
 @Auth()
@@ -64,6 +79,43 @@ export class ProcessesController {
       data: serviceResponse,
       message: `Por favor revise la fecha generada`,
       title: `Se agendó correctamente`,
+    };
+  }
+
+  @ApiOperation({ summary: 'Upload Files' })
+  @Post('inspection-status/uploads')
+  @UseInterceptors(
+    FilesInterceptor('files', 10, {
+      storage: diskStorage({
+        destination: (req, file, callback) => {
+          const folder = (req.query.folder as string) || '';
+          const year = format(new Date(), 'yyyy');
+
+          const fullPath = join(process.cwd(), 'storage/private/uploads', year, folder);
+
+          fs.mkdirSync(fullPath, { recursive: true });
+
+          callback(null, fullPath);
+        },
+        filename: getFileName,
+      }),
+      fileFilter: fileFilter,
+      limits: { fieldSize: 1024 },
+    }),
+  )
+  async createFilesInspectionStatus(
+    @UploadedFiles() files: Array<Express.Multer.File>,
+    @Query('modelId', ParseUUIDPipe) modelId: string,
+    @Body('typeIds') typeIds: string[],
+    @User() user: UserEntity,
+  ): Promise<ResponseHttpInterface> {
+
+    await this.service.createFilesInspectionStatus(files, modelId, typeIds, user);
+
+    return {
+      data: null,
+      message: 'Archivos Subidos Correctamente',
+      title: 'Archivos Subidos',
     };
   }
 }

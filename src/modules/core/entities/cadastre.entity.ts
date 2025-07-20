@@ -6,13 +6,13 @@ import {
   DeleteDateColumn,
   Entity,
   JoinColumn,
-  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { CadastreStateEntity, ProcessEntity } from '@modules/core/entities';
+import { UserEntity } from '@auth/entities';
 
 @Entity('cadastres', { schema: 'core' })
 export class CadastreEntity {
@@ -72,14 +72,6 @@ export class CadastreEntity {
 
   /** Columns **/
   @Column({
-    name: 'id_process',
-    type: 'varchar',
-    nullable: true,
-    comment: 'Codigo de la tabla migrada',
-  })
-  idProcess: string;
-
-  @Column({
     name: 'observation',
     type: 'text',
     nullable: true,
@@ -115,6 +107,14 @@ export class CadastreEntity {
     comment: 'PK de la tabla migrada',
   })
   idTemp: number;
+
+  @Column({
+    name: 'id_process',
+    type: 'varchar',
+    nullable: true,
+    comment: 'Codigo de la tabla migrada',
+  })
+  idProcess: string;
 
   @BeforeInsert()
   @BeforeUpdate()

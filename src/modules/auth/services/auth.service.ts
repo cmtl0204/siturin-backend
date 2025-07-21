@@ -16,7 +16,7 @@ import {
   CoreRepositoryEnum,
   MailSubjectEnum,
   MailTemplateEnum,
-} from '../../../utils/enums';
+} from '@utils/enums';
 import {
   PasswordChangeDto,
   SignInDto,
@@ -24,13 +24,13 @@ import {
   UpdateProfileDto,
   UpdateUserInformationDto,
 } from '@auth/dto';
-import { ServiceResponseHttpInterface } from '../../../utils/interfaces';
+import { ServiceResponseHttpInterface } from '@utils/interfaces';
 import { MailService } from '@modules/common/mail/mail.service';
 import { config } from '@config';
 import { ConfigType } from '@nestjs/config';
 import { MailDataInterface } from '@modules/common/mail/interfaces/mail-data.interface';
 import { UsersService } from './users.service';
-import { PaymentEntity, RucEntity } from '@modules/core/entities';
+import { RucEntity } from '@modules/core/entities';
 import { lastValueFrom } from 'rxjs';
 import { HttpService } from '@nestjs/axios';
 

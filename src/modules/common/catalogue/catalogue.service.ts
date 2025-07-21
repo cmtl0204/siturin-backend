@@ -107,6 +107,7 @@ export class CataloguesService {
 
     if (catalogues === null || catalogues === undefined || catalogues.length === 0) {
       catalogues = await this.repository.find({
+        select: ['id', 'code', 'name', 'type', 'enabled', 'parentId', 'acronym', 'required'],
         order: { type: 'asc', sort: 'asc', name: 'asc' },
       });
 
@@ -116,15 +117,14 @@ export class CataloguesService {
     return catalogues;
   }
 
-  async loadCache(): Promise<ServiceResponseHttpInterface> {
+  async loadCache(): Promise<CatalogueEntity[]> {
     const catalogues = await this.repository.find({
-      relations: { children: true },
-      where: { parent: IsNull() },
+      select: ['id', 'code', 'name', 'type', 'enabled', 'parentId', 'acronym', 'required'],
       order: { type: 'asc', sort: 'asc', name: 'asc' },
     });
 
     await this.cacheManager.set(CacheEnum.CATALOGUES, catalogues);
 
-    return { data: catalogues };
+    return catalogues;
   }
 }

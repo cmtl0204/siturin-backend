@@ -46,9 +46,9 @@ export class CatalogueController {
   @Patch('cache')
   @HttpCode(HttpStatus.OK)
   async loadCache(): Promise<ResponseHttpInterface> {
-    const response = await this.catalogueService.loadCache();
+    const serviceResponse = await this.catalogueService.loadCache();
     return {
-      data: response,
+      data: serviceResponse,
       message: `Load Cache de Catalogos`,
       title: `Load Cache`,
     };

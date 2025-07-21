@@ -1,86 +1,37 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Param,
-  ParseUUIDPipe,
-  Post,
-  Put,
-  Query,
-} from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus, Patch } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ResponseHttpInterface } from '../../../utils/interfaces';
-import {
-  CreateCatalogueDto,
-  FilterCatalogueDto,
-  UpdateCatalogueDto,
-} from '@modules/common/catalogue/dto';
+import { ResponseHttpInterface } from '@utils/interfaces';
 import { DpaService } from '@modules/common/dpa/dpa.service';
+import { PublicRoute } from '@auth/decorators';
 
-@ApiTags('Catalogues')
-@Controller('catalogues')
+@ApiTags('DPA')
+@Controller('common/dpa')
 export class DpaController {
   constructor(private service: DpaService) {}
 
-  @Post()
-  @HttpCode(HttpStatus.CREATED)
-  async create(@Body() payload: CreateCatalogueDto) {
-    const data = await this.service.create(payload);
+  @PublicRoute()
+  @ApiOperation({ summary: 'Find Cache' })
+  @Get('cache')
+  @HttpCode(HttpStatus.OK)
+  async findCache(): Promise<ResponseHttpInterface> {
+    const serviceResponse = await this.service.findCache();
 
     return {
-      data,
-      message: 'created',
+      data: serviceResponse,
+      message: `Cache de Catalogos`,
+      title: `Cache`,
     };
   }
 
-  @ApiOperation({ summary: 'List of catalogues' })
-  // @Roles(RoleEnum.ADMIN)
-  @Get()
+  @ApiOperation({ summary: 'Load Cache' })
+  @Patch('cache')
   @HttpCode(HttpStatus.OK)
-  async findAll(@Query() params: FilterCatalogueDto) {
-    const response = await this.service.findAll(params);
+  async loadCache(): Promise<ResponseHttpInterface> {
+    const serviceResponse = await this.service.loadCache();
     return {
-      data: response.data,
-      pagination: response.pagination,
-      message: `index`,
-    };
-  }
-
-  @Get(':id')
-  @HttpCode(HttpStatus.OK)
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
-    const data = await this.service.findOne(id);
-    return {
-      data,
-      message: `show ${id}`,
-      title: `Success`,
-    } as ResponseHttpInterface;
-  }
-
-  @Put(':id')
-  @HttpCode(HttpStatus.CREATED)
-  async update(@Param('id', ParseUUIDPipe) id: string, @Body() payload: UpdateCatalogueDto) {
-    const data = await this.service.update(id, payload);
-
-    return {
-      data: data,
-      message: `Catalogue updated ${id}`,
-      title: `Updated`,
-    } as ResponseHttpInterface;
-  }
-
-  @Delete(':id')
-  @HttpCode(HttpStatus.CREATED)
-  async remove(@Param('id', ParseUUIDPipe) id: string) {
-    const data = await this.service.remove(id);
-
-    return {
-      data,
-      message: `Catalogue deleted ${id}`,
-      title: `Deleted`,
+      data: serviceResponse,
+      message: `Load Cache de Catalogos`,
+      title: `Load Cache`,
     };
   }
 }

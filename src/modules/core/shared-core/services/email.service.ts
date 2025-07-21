@@ -19,6 +19,7 @@ export class EmailService {
   ) {}
 
   async sendRegistrationCertificateEmail(cadastre: CadastreEntity) {
+    // Cargar el proceso y lanzar NotFoundException si no existe
     const process = await this.processRepository.findOne({
       where: { id: cadastre.processId },
       relations: {
@@ -27,55 +28,41 @@ export class EmailService {
         establishmentContactPerson: true,
       },
     });
-
-    const user = await this.userRepository.findOneBy({
-      identification: process?.establishment.ruc.number,
-    });
-
     if (!process) {
       throw new NotFoundException('Trámite no encontrado');
     }
 
+    const user = await this.userRepository.findOneBy({
+      identification: process.establishment.ruc.number,
+    });
     if (!user) {
       throw new NotFoundException('Usuario no encontrado');
     }
 
+    // Preparar los datos del correo
     const data = {
-      ruc: process?.establishment.ruc.number,
+      ruc: process.establishment.ruc.number,
       registerNumber: cadastre.registerNumber,
     };
 
-    const failedRecipients: string[] = [];
+    // Validar correos usando un método reutilizable
+    const { validRecipients, invalidRecipients } = this.extractValidEmails([
+      user.email,
+      process.establishmentContactPerson.email,
+    ]);
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    const recipients = [user.email, process.establishmentContactPerson.email].filter((email) => {
-      if (emailRegex.test(email)) {
-        return true;
-      }
-
-      failedRecipients.push(email);
-      return false;
-    });
-
-    if (recipients.length === 0) {
+    if (validRecipients.length === 0) {
       return {
-        title: 'No se pudo entregar a ningun correo',
-        message: failedRecipients,
+        title: 'No se pudo entregar a ningún correo válid',
+        message: invalidRecipients,
       };
     }
 
-    if (recipients.length === 0) {
-      return {
-        title: 'No se pudo entregar a a los siguientes correos',
-        message: failedRecipients,
-      };
-    }
-
+    // Generar el PDF y enviar el correo
     const pdf = await this.internalPdfService.generateUsersReportBuffer();
 
     const mailData: MailDataInterface = {
-      to: recipients,
+      to: validRecipients,
       data,
       subject: `Registro de Turismo ${cadastre.registerNumber}`,
       template: MailTemplateEnum.INTERNAL_REGISTRATION_CERTIFICATE,
@@ -83,5 +70,35 @@ export class EmailService {
     };
 
     await this.mailService.sendMail(mailData);
+
+    // Manejar posibles correos fallidos
+    if (invalidRecipients.length > 0) {
+      return {
+        title: 'No se pudo entregar a los siguientes correos',
+        message: invalidRecipients,
+      };
+    }
+  }
+
+  /**
+   * Valida y separa correos electrónicos válidos e inválidos.
+   */
+  private extractValidEmails(emails: string[]): {
+    validRecipients: string[];
+    invalidRecipients: string[];
+  } {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const validRecipients: string[] = [];
+    const invalidRecipients: string[] = [];
+
+    emails.forEach((email) => {
+      if (emailRegex.test(email)) {
+        validRecipients.push(email);
+      } else {
+        invalidRecipients.push(email);
+      }
+    });
+
+    return { validRecipients, invalidRecipients };
   }
 }

@@ -118,7 +118,8 @@ export class ProcessService {
       seconds: 59,
     });
 
-    if (differenceInDays(startOfDay(inspectionAt), startOfDay(new Date())) <= 0) {
+    // review aumentar el igual porque no debe dejar agenar el mismo dia
+    if (differenceInDays(startOfDay(inspectionAt), startOfDay(new Date())) < 0) {
       throw new BadRequestException(
         `No puede agendar una fecha igual o anterior a la fecha actual`,
       );

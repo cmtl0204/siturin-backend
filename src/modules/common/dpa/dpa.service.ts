@@ -13,16 +13,15 @@ export class DpaService {
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
     @Inject(CommonRepositoryEnum.DPA_REPOSITORY)
     private repository: Repository<DpaEntity>,
-  ) {
-  }
+  ) {}
 
   async findCache(): Promise<DpaEntity[]> {
     let items = (await this.cacheManager.get(CacheEnum.DPA)) as DpaEntity[];
 
-    console.log(items);
     if (items === null || items === undefined || items.length === 0) {
       items = await this.repository.find({
-        select: ['id',
+        select: [
+          'id',
           'parentId',
           'zoneId',
           'zone',
@@ -30,12 +29,12 @@ export class DpaService {
           'name',
           'latitude',
           'longitude',
-          'zoneType'],
+          'zoneType',
+        ],
         relations: { zone: true },
         order: { name: 'asc' },
       });
 
-      console.log(items);
       await this.cacheManager.set(CacheEnum.DPA, items);
     }
 

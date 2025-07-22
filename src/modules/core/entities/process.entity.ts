@@ -4,7 +4,8 @@ import {
   DeleteDateColumn,
   Entity,
   JoinColumn,
-  ManyToOne, OneToMany, OneToOne,
+  ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -13,7 +14,6 @@ import { ClassificationEntity } from '@modules/core/entities/classification.enti
 import { CategoryEntity } from '@modules/core/entities/category.entity';
 import { EstablishmentEntity } from '@modules/core/entities/establishment.entity';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
-import { PaymentEntity } from '@modules/core/entities/payment.entity';
 import { EstablishmentAddressEntity } from '@modules/core/entities/establishment-address.entity';
 import { EstablishmentContactPersonEntity } from '@modules/core/entities/establishment-contact-person.entity';
 import { CadastreEntity } from '@modules/core/entities/cadastre.entity';

@@ -9,9 +9,9 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
 import { ActivityEntity } from '@modules/core/entities/activity.entity';
 import { ObservationEntity } from '@modules/core/entities/observation.entity';
+import { CategoryEntity } from '@modules/core/entities/category.entity';
 
 @Entity('classifications', { schema: 'core' })
 export class ClassificationEntity {
@@ -51,6 +51,9 @@ export class ClassificationEntity {
   enabled: boolean;
 
   /** Inverse Relationship **/
+  @OneToMany(() => CategoryEntity, (entity) => entity.classification)
+  categories: CategoryEntity[];
+
   @OneToMany(() => ObservationEntity, (entity) => entity.modelId)
   observations: ObservationEntity[];
 

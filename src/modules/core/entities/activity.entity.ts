@@ -5,10 +5,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
+import { ClassificationEntity } from '@modules/core/entities/classification.entity';
 
 @Entity('activities', { schema: 'core' })
 export class ActivityEntity {
@@ -48,6 +50,8 @@ export class ActivityEntity {
   enabled: boolean;
 
   /** Inverse Relationship **/
+  @OneToMany(() => ClassificationEntity, (entity) => entity.activity)
+  classifications: ClassificationEntity[];
 
   /** Foreign Keys **/
   @ManyToOne(() => CatalogueEntity, { nullable: true })

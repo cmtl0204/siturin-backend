@@ -4,7 +4,7 @@ import {
   Delete,
   Get,
   Param,
-  ParseUUIDPipe,
+  ParseUUIDPipe, Patch,
   Post,
   Put,
   Query,
@@ -13,19 +13,44 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Auth, PublicRoute } from '@auth/decorators';
 import { ResponseHttpInterface } from '@utils/interfaces';
 import { PaginationDto } from '@utils/dto';
-import {
-  CreateTouristGuideDto,
-  FindTouristGuideDto,
-  UpdateTouristGuideDto,
-} from '@modules/core/shared-core/dto/tourist-guide';
 import { ActivityService } from '@modules/core/shared-core/services/activity.service';
-import { CreateActivityDto, FindActivityDto, UpdateActivityDto } from '@modules/core/shared-core/dto/activity';
+import {
+  CreateActivityDto,
+  FindActivityDto,
+  UpdateActivityDto,
+} from '@modules/core/shared-core/dto/activity';
 
 @ApiTags('Activity')
 @Auth()
 @Controller('core/shared/activities')
 export class ActivityController {
   constructor(private service: ActivityService) {}
+
+  @PublicRoute()
+  @ApiOperation({ summary: 'Find Cache' })
+  @Get('cache')
+  async findCache(): Promise<ResponseHttpInterface> {
+    const serviceResponse = await this.service.findCache();
+
+    return {
+      ...serviceResponse,
+      message: `Registros Consultados`,
+      title: `Consultados`,
+    };
+  }
+
+  @PublicRoute()
+  @ApiOperation({ summary: 'Find Cache' })
+  @Patch('cache')
+  async loadCache(): Promise<ResponseHttpInterface> {
+    const serviceResponse = await this.service.loadCache();
+
+    return {
+      ...serviceResponse,
+      message: `Registros Consultados`,
+      title: `Consultados`,
+    };
+  }
 
   @PublicRoute()
   @ApiOperation({ summary: 'Find All' })

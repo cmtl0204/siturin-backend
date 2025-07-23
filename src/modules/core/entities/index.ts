@@ -32,8 +32,9 @@ export { ProcessEventEntity } from './process-event.entity';
 export { ProcessFoodDrinkEntity } from './process-food-drink.entity';
 export { ProcessParkEntity } from './process-park.entity';
 export { ProcessTransportEntity } from './process-transport.entity';
-export { RegulationEntity } from './regulation.entity';
-export { RegulatoryProcessEntity } from './regulatory-process.entity';
+export { RegulationSectionEntity } from './regulation-section.entity';
+export { RegulationItemEntity } from './regulation-item.entity';
+export { RegulationResponseEntity } from './regulation-response.entity';
 export { RoomEntity } from './room.entity';
 export { RoomCapacityEntity } from './room-capacity.entity';
 export { RoomRateEntity } from './room-rate.entity';
@@ -79,8 +80,9 @@ import { ProcessEventEntity } from './process-event.entity';
 import { ProcessFoodDrinkEntity } from './process-food-drink.entity';
 import { ProcessParkEntity } from './process-park.entity';
 import { ProcessTransportEntity } from './process-transport.entity';
-import { RegulationEntity } from './regulation.entity';
-import { RegulatoryProcessEntity } from './regulatory-process.entity';
+import { RegulationSectionEntity } from './regulation-section.entity';
+import { RegulationItemEntity } from './regulation-item.entity';
+import { RegulationResponseEntity } from './regulation-response.entity';
 import { RoomEntity } from './room.entity';
 import { RoomCapacityEntity } from './room-capacity.entity';
 import { RoomRateEntity } from './room-rate.entity';
@@ -127,8 +129,9 @@ export const entities = [
   ProcessFoodDrinkEntity,
   ProcessParkEntity,
   ProcessTransportEntity,
-  RegulationEntity,
-  RegulatoryProcessEntity,
+  RegulationSectionEntity,
+  RegulationItemEntity,
+  RegulationResponseEntity,
   RoomEntity,
   RoomCapacityEntity,
   RoomRateEntity,

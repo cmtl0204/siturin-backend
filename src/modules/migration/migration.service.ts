@@ -26,7 +26,8 @@ import {
   InternalDpaUserEntity,
   InternalUserEntity,
   InternalZonalUserEntity,
-  LandTransportEntity, ModelCatalogueEntity,
+  LandTransportEntity,
+  ModelCatalogueEntity,
   PaymentEntity,
   ProcessAccommodationEntity,
   ProcessAgencyEntity,
@@ -36,6 +37,9 @@ import {
   ProcessFoodDrinkEntity,
   ProcessParkEntity,
   ProcessTransportEntity,
+  RegulationItemEntity,
+  RegulationResponseEntity,
+  RegulationSectionEntity,
   RoomCapacityEntity,
   RoomEntity,
   RoomRateEntity,
@@ -151,6 +155,12 @@ export class MigrationService {
     private readonly salesRepresentativeRepository: Repository<SalesRepresentativeEntity>,
     @Inject(CoreRepositoryEnum.MODEL_CATALOGUE_REPOSITORY)
     private readonly modelCatalogueRepository: Repository<ModelCatalogueEntity>,
+    @Inject(CoreRepositoryEnum.REGULATION_SECTION_REPOSITORY)
+    private readonly regulationSectionRepository: Repository<RegulationSectionEntity>,
+    @Inject(CoreRepositoryEnum.REGULATION_ITEM_REPOSITORY)
+    private readonly regulationItemRepository: Repository<RegulationItemEntity>,
+    @Inject(CoreRepositoryEnum.REGULATION_RESPONSE_REPOSITORY)
+    private readonly regulationResponseRepository: Repository<RegulationResponseEntity>,
   ) {}
 
   async getData(table: string): Promise<any> {
@@ -1602,6 +1612,56 @@ export class MigrationService {
         if (catalogue) entity.catalogueId = catalogue.id;
 
         await this.modelCatalogueRepository.save(entity);
+      }
+    }
+
+    return { data: null };
+  }
+
+  async migrateRegulations() {
+    const data = await this.getData('siturin.normativas');
+
+    const regulationSectionTable = await this.regulationSectionRepository.find();
+    const regulationItemTable = await this.regulationItemRepository.find();
+    const regulationResponseTable = await this.regulationResponseRepository.find();
+    const classifications = await this.classificationRepository.find();
+    const categories = await this.categoryRepository.find();
+    const catalogues = await this.catalogueRepository.find();
+
+    for (const item of data) {
+      const exists = regulationSectionTable.find((register) => register.idTemp == item.id);
+
+      if (!exists) {
+        const entity = this.regulationSectionRepository.create();
+
+        entity.createdAt = item.created_at || new Date();
+        entity.updatedAt = item.updated_at || new Date();
+        entity.deletedAt = item.deleted_at;
+        entity.idTemp = item.id;
+
+        let model = catalogues.find((x) => x.idTemp == item.modelo_id);
+
+        switch (item.modelo_type) {
+          case 'App\\Models\\Siturin\\Categoria':
+            model = categories.find((x) => x.idTemp == item.modelo_id);
+            break;
+
+          case 'App\\Models\\Siturin\\Clasificacion':
+            model = classifications.find((x) => x.idTemp == item.modelo_id);
+            break;
+        }
+
+        if (model) entity.modelId = model.id;
+
+        entity.name = item.nombre;
+
+        entity = await this.regulationSectionRepository.save(entity);
+
+        let regulationItem = regulationItemTable.find((x) => x.idTemp == item.id);
+
+        if(!regulationItem){
+
+        }
       }
     }
 

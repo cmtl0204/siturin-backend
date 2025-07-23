@@ -1,5 +1,5 @@
 import { DataSource } from 'typeorm';
-import { ConfigEnum, CoreRepositoryEnum } from '../../utils/enums';
+import { ConfigEnum, CoreRepositoryEnum } from '@utils/enums';
 import {
   ActivityEntity,
   AdventureTourismModalityEntity,
@@ -35,8 +35,9 @@ import {
   ProcessFoodDrinkEntity,
   ProcessParkEntity,
   ProcessTransportEntity,
-  RegulationEntity,
-  RegulatoryProcessEntity,
+  RegulationSectionEntity,
+  RegulationItemEntity,
+  RegulationResponseEntity,
   RoomCapacityEntity,
   RoomEntity,
   RoomRateEntity,
@@ -231,13 +232,18 @@ export const coreProviders = [
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
-    provide: CoreRepositoryEnum.REGULATION_REPOSITORY,
-    useFactory: (dataSource: DataSource) => dataSource.getRepository(RegulationEntity),
+    provide: CoreRepositoryEnum.REGULATION_SECTION_REPOSITORY,
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(RegulationSectionEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {
-    provide: CoreRepositoryEnum.REGULATORY_PROCESS_REPOSITORY,
-    useFactory: (dataSource: DataSource) => dataSource.getRepository(RegulatoryProcessEntity),
+    provide: CoreRepositoryEnum.REGULATION_ITEM_REPOSITORY,
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(RegulationItemEntity),
+    inject: [ConfigEnum.PG_DATA_SOURCE],
+  },
+  {
+    provide: CoreRepositoryEnum.REGULATION_RESPONSE_REPOSITORY,
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(RegulationResponseEntity),
     inject: [ConfigEnum.PG_DATA_SOURCE],
   },
   {

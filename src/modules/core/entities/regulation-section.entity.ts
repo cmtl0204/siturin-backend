@@ -60,8 +60,8 @@ export class RegulationSectionEntity {
   })
   sort: number;
 
-  @Column({ name: 'model_id', comment: '' })
-  modelId: number;
+  @Column({ name: 'model_id', type: 'varchar', comment: '' })
+  modelId: string;
 
   @Column({
     name: 'is_adventure_requirement',

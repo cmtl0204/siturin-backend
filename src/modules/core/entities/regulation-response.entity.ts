@@ -35,7 +35,7 @@ export class RegulationResponseEntity {
   @JoinColumn({ name: 'process_id' })
   process: ProcessEntity;
 
-  @ManyToOne(() => RegulationItemEntity, (regulationItem) => regulationItem.complianceResponses)
+  @ManyToOne(() => RegulationItemEntity, (entity) => entity.regulationResponses)
   @JoinColumn({ name: 'regulation_item_id' })
   regulationItem: RegulationItemEntity;
 

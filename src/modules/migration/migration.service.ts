@@ -1632,16 +1632,20 @@ export class MigrationService {
       const exists = regulationSectionTable.find((register) => register.idTemp == item.id);
 
       if (!exists) {
-        const entity = this.regulationSectionRepository.create();
+        let entity = this.regulationSectionRepository.create();
 
         entity.createdAt = item.created_at || new Date();
         entity.updatedAt = item.updated_at || new Date();
-        entity.deletedAt = item.deleted_at;
+        // entity.deletedAt = item.deleted_at;
         entity.idTemp = item.id;
 
-        let model = catalogues.find((x) => x.idTemp == item.modelo_id);
+        let model: ClassificationEntity | CategoryEntity | CatalogueEntity | undefined = undefined;
 
         switch (item.modelo_type) {
+          case 'App\\Models\\Siturin\\Catalogo':
+            model = categories.find((x) => x.idTemp == item.modelo_id);
+            break;
+
           case 'App\\Models\\Siturin\\Categoria':
             model = categories.find((x) => x.idTemp == item.modelo_id);
             break;
@@ -1659,8 +1663,7 @@ export class MigrationService {
 
         let regulationItem = regulationItemTable.find((x) => x.idTemp == item.id);
 
-        if(!regulationItem){
-
+        if (!regulationItem) {
         }
       }
     }

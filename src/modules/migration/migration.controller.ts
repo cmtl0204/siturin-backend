@@ -502,4 +502,17 @@ export class MigrationController {
       title: 'model-catalogues',
     };
   }
+
+  @PublicRoute()
+  @Post('regulations')
+  @HttpCode(HttpStatus.CREATED)
+  async migrateRegulations(): Promise<ResponseHttpInterface> {
+    const responseService = await this.migrationService.migrateRegulations();
+
+    return {
+      data: responseService.data,
+      message: 'created',
+      title: 'model-catalogues',
+    };
+  }
 }

@@ -21,6 +21,17 @@ export class InternalPdfController {
   }
 
   @PublicRoute()
+  @Header('Content-Type', 'application/pdf')
+  @Get('register-certificates')
+  async generateRegisterCertificate(@Res() response: Response) {
+    const pdfDoc = await this.internalPdfService.generateUsersReport2();
+
+    pdfDoc.info.Title = 'Users Report';
+    pdfDoc.pipe(response);
+    pdfDoc.end();
+  }
+
+  @PublicRoute()
   @Get('users')
   @Header('Content-Type', 'application/pdf')
   @Header('Content-Disposition', 'inline; filename=users-report.pdf') // o "attachment;"

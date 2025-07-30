@@ -9,12 +9,19 @@ import { ProcessAgencyService } from '@modules/core/roles/external/services/proc
 import { SharedCoreModule } from '@modules/core/shared-core/shared-core.module';
 import { ReportsModule } from '@modules/reports/reports.module';
 import { EstablishmentService } from '@modules/core/roles/external/services/establishment.service';
+import { ProcessParkService } from '@modules/core/roles/external/services/process-park.service';
 
 @Global()
 @Module({
   imports: [CatalogueModule, FileModule, MailModule, SharedCoreModule, ReportsModule],
   controllers,
-  providers: [...coreProviders, CadastreService, EstablishmentService, ProcessAgencyService],
+  providers: [
+    ...coreProviders,
+    CadastreService,
+    EstablishmentService,
+    ProcessAgencyService,
+    ProcessParkService,
+  ],
   exports: [],
 })
 export class ExternalModule {}

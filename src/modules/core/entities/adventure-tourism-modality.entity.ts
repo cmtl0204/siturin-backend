@@ -75,6 +75,13 @@ export class AdventureTourismModalityEntity {
 
   /** Columns **/
   @Column({
+    name: 'className',
+    type: 'varchar',
+    comment: 'Nombre Clase de modalidad',
+  })
+  className: string;
+
+  @Column({
     name: 'id_temp',
     type: 'bigint',
     comment: 'Codigo de la tabla migrada',

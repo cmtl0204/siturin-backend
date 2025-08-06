@@ -115,6 +115,17 @@ export class ProcessEntity {
   establishmentId: string;
 
   @ManyToOne(() => CatalogueEntity, { nullable: true })
+  @JoinColumn({ name: 'local_type_id' })
+  localType: CatalogueEntity;
+  @Column({
+    type: 'uuid',
+    name: 'local_type_id',
+    nullable: true,
+    comment: '',
+  })
+  localTypeId: string;
+
+  @ManyToOne(() => CatalogueEntity, { nullable: true })
   @JoinColumn({ name: 'legal_entity_id' })
   legalEntity: CatalogueEntity;
   @Column({

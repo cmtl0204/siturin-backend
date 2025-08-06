@@ -73,17 +73,6 @@ export class ProcessFoodDrinkEntity {
   })
   establishmentTypeId: string;
 
-  @ManyToOne(() => CatalogueEntity, { nullable: true })
-  @JoinColumn({ name: 'local_type_id' })
-  localType: CatalogueEntity;
-  @Column({
-    type: 'uuid',
-    name: 'local_type_id',
-    nullable: true,
-    comment: '',
-  })
-  localTypeId: string;
-
   /** Columns **/
   @Column({
     name: 'establishment_name',

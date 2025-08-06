@@ -109,7 +109,6 @@ export class ProcessesController {
     @Body('typeIds') typeIds: string[],
     @User() user: UserEntity,
   ): Promise<ResponseHttpInterface> {
-
     await this.service.createFilesInspectionStatus(files, modelId, typeIds, user);
 
     return {

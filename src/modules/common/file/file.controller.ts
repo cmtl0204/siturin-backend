@@ -50,7 +50,6 @@ export class FileController {
     @Param('modelId', ParseUUIDPipe) modelId: string,
     @Query('typeId') typeId: string,
   ): Promise<ResponseHttpInterface> {
-
     const response = await this.filesService.uploadFile(file, modelId, typeId);
 
     return {

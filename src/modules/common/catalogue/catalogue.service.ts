@@ -1,5 +1,5 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { IsNull, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import {
   CreateCatalogueDto,
   FilterCatalogueDto,

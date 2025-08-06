@@ -151,9 +151,9 @@ export class ProcessCtcService {
     }
 
     processCtc.processId = payload.processId;
-    processCtc.totalBeds = payload.totalBeds;
-    processCtc.totalPlaces = payload.totalPlaces;
-    processCtc.totalRooms = payload.totalRooms;
+    processCtc.totalBeds = payload.accommodation.totalBeds;
+    processCtc.totalPlaces = payload.accommodation.totalPlaces;
+    processCtc.totalRooms = payload.accommodation.totalRooms;
 
     return await processCtcRepository.save(processCtc);
   }

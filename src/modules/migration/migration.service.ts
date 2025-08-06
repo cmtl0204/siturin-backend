@@ -1619,55 +1619,109 @@ export class MigrationService {
   }
 
   async migrateRegulations() {
-    const data = await this.getData('siturin.normativas');
+    const data = await this.dataSource.query(`
+      SELECT *
+      FROM siturin.normativas
+      WHERE es_visible = true
+      ORDER BY modelo_type,modelo_id ,orden
+    `);
 
     const regulationSectionTable = await this.regulationSectionRepository.find();
     const regulationItemTable = await this.regulationItemRepository.find();
-    const regulationResponseTable = await this.regulationResponseRepository.find();
     const classifications = await this.classificationRepository.find();
     const categories = await this.categoryRepository.find();
     const catalogues = await this.catalogueRepository.find();
 
+    let currentSection: RegulationSectionEntity;
     for (const item of data) {
-      const exists = regulationSectionTable.find((register) => register.idTemp == item.id);
+      if (!item.es_pregunta) {
+        const exists = regulationSectionTable.find((register) => register.idTemp == item.id);
 
-      if (!exists) {
-        let entity = this.regulationSectionRepository.create();
+        if (!exists) {
+          let newRegulationSection = this.regulationSectionRepository.create();
 
-        entity.createdAt = item.created_at || new Date();
-        entity.updatedAt = item.updated_at || new Date();
-        // entity.deletedAt = item.deleted_at;
-        entity.idTemp = item.id;
+          newRegulationSection.createdAt = item.created_at || new Date();
+          newRegulationSection.updatedAt = item.updated_at || new Date();
+          newRegulationSection.enabled = item.es_visible;
+          newRegulationSection.idTemp = item.id;
+          newRegulationSection.isAdventureRequirement = item.es_requisito_aventura;
+          newRegulationSection.isProtectedArea = item.es_area_protegida;
+          newRegulationSection.minimumItems = item.minimo_preguntas;
+          newRegulationSection.validationType = '';
+          newRegulationSection.name = item.nombre;
+          newRegulationSection.sort = item.orden;
 
-        let model: ClassificationEntity | CategoryEntity | CatalogueEntity | undefined = undefined;
+          let model: ClassificationEntity | CategoryEntity | CatalogueEntity | undefined =
+            undefined;
 
-        switch (item.modelo_type) {
-          case 'App\\Models\\Siturin\\Catalogo':
-            model = categories.find((x) => x.idTemp == item.modelo_id);
-            break;
+          switch (item.modelo_type) {
+            case 'App\\Models\\Siturin\\Catalogo':
+              model = catalogues.find((x) => {
+                return x.idTemp == item.modelo_id;
+              });
+              break;
 
-          case 'App\\Models\\Siturin\\Categoria':
-            model = categories.find((x) => x.idTemp == item.modelo_id);
-            break;
+            case 'App\\Models\\Siturin\\Categoria':
+              model = categories.find((x) => x.idTemp == item.modelo_id);
+              break;
 
-          case 'App\\Models\\Siturin\\Clasificacion':
-            model = classifications.find((x) => x.idTemp == item.modelo_id);
-            break;
+            case 'App\\Models\\Siturin\\Clasificacion':
+              model = classifications.find((x) => x.idTemp == item.modelo_id);
+              break;
+          }
+
+          if (model) newRegulationSection.modelId = model.id;
+
+
+          currentSection = await this.regulationSectionRepository.save(newRegulationSection);
         }
+      }
 
-        if (model) entity.modelId = model.id;
+      if (item.es_pregunta) {
+        const exists = regulationItemTable.find((register) => register.idTemp == item.id);
 
-        entity.name = item.nombre;
+        if (!exists) {
+          let newItemRegulation = this.regulationItemRepository.create();
 
-        entity = await this.regulationSectionRepository.save(entity);
+          newItemRegulation.createdAt = item.created_at || new Date();
+          newItemRegulation.updatedAt = item.updated_at || new Date();
+          newItemRegulation.enabled = item.es_visible;
+          newItemRegulation.idTemp = item.id;
+          newItemRegulation.name = item.nombre;
+          newItemRegulation.regulationSection = currentSection!;
+          newItemRegulation.regulationSectionId = currentSection!.id;
+          newItemRegulation.required = item.es_obligatorio;
+          newItemRegulation.score = item.puntaje;
+          newItemRegulation.sort = item.orden;
 
-        let regulationItem = regulationItemTable.find((x) => x.idTemp == item.id);
-
-        if (!regulationItem) {
+          await this.regulationItemRepository.save(newItemRegulation);
         }
       }
     }
 
+    return { data: null };
+  }
+
+  async updateSectionsValidationType() {
+    const sections = await this.regulationSectionRepository.find({
+      relations: { items: true },
+    });
+    for (const section of sections) {
+      const items = section.items || [];
+      if (items.length === 0) continue;
+      const hasScore = items.some((item) => item.score);
+      const hasRequired = items.some((item) => item.required);
+      const hasNotRequired = items.some((item) => !item.required);
+
+      if (hasScore) {
+        section.validationType = 'SCORE_BASED';
+      } else if (hasRequired && hasNotRequired) {
+        section.validationType = 'MINIMUM_ITEMS';
+      } else if (hasRequired && !hasNotRequired) {
+        section.validationType = 'REQUIRED_ITEMS';
+      }
+      await this.regulationSectionRepository.save(section);
+    }
     return { data: null };
   }
 }

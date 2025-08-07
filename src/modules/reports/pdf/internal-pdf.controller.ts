@@ -10,35 +10,26 @@ export class InternalPdfController {
   constructor(private readonly internalPdfService: InternalPdfService) {}
 
   @PublicRoute()
+  @Get('users')
   @Header('Content-Type', 'application/pdf')
-  @Get('users2')
-  async generateUsersReport2(@Res() response: Response) {
-    const pdfDoc = await this.internalPdfService.generateUsersReport();
-
-    pdfDoc.info.Title = 'Users Report';
-    pdfDoc.pipe(response);
-    pdfDoc.end();
+  @Header('Content-Disposition', 'inline; filename=users-report.pdf') // o "attachment;"
+  async generateUsersReportBuffer() {
+    return await this.internalPdfService.generateUsersReportBuffer();
   }
-
   @PublicRoute()
   @Header('Content-Type', 'application/pdf')
-  @Get('register-certificates/:cadastreId')
+  @Get('register-certificate/:cadastreId')
   async generateRegisterCertificate(
     @Res() response: Response,
     @Param('cadastreId', ParseUUIDPipe) cadastreId: string,
   ) {
-    const pdfDoc = await this.internalPdfService.generateUsersReport2(cadastreId);
+    const pdfDoc: PDFKit.PDFDocument = (await this.internalPdfService.generateRegisterCertificate({
+      type:'pdf',
+      cadastreId: cadastreId,
+    })) as PDFKit.PDFDocument;
 
     pdfDoc.info.Title = 'Users Report';
     pdfDoc.pipe(response);
     pdfDoc.end();
-  }
-
-  @PublicRoute()
-  @Get('users')
-  @Header('Content-Type', 'application/pdf')
-  @Header('Content-Disposition', 'inline; filename=users-report.pdf') // o "attachment;"
-  async generateUsersReport() {
-    return await this.internalPdfService.generateUsersReportBuffer();
   }
 }

@@ -56,7 +56,7 @@ export class CadastreEntity {
   cadastreStates: CadastreEntity[];
 
   @OneToOne(() => CadastreStateEntity, (entity) => entity.cadastre)
-  cadastreState: CadastreEntity;
+  cadastreState: CadastreStateEntity;
 
   /** Foreign Keys **/
   @OneToOne(() => ProcessEntity, { nullable: true })

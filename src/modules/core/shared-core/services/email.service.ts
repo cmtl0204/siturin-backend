@@ -59,7 +59,9 @@ export class EmailService {
     }
 
     // Generar el PDF y enviar el correo
-    const pdf = await this.internalPdfService.generateUsersReportBuffer();
+    const pdf = (await this.internalPdfService.generateRegisterCertificate({
+      cadastreId: cadastre.id,
+    })) as Buffer;
 
     const mailData: MailDataInterface = {
       to: validRecipients,

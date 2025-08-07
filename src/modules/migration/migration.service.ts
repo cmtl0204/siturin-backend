@@ -795,6 +795,7 @@ export class MigrationService {
         );
         const establishment = establishments.find((x) => x.idTemp == item.establecimiento_id);
         const legalEntity = catalogues.find((x) => x.idTemp == item.personeria_juridica_id);
+        const localType = catalogues.find((x) => x.idTemp == item.tipo_local_id);
 
         if (activity) entity.activityId = activity.id;
         if (classification) entity.classificationId = classification.id;
@@ -804,6 +805,7 @@ export class MigrationService {
         if (causeInactivationType) entity.causeInactivationTypeId = causeInactivationType.id;
         if (establishment) entity.establishmentId = establishment.id;
         if (legalEntity) entity.legalEntityId = legalEntity.id;
+        if (localType) entity.localTypeId = localType.id;
 
         entity.registeredAt = item.fecha;
         entity.hasTouristActivityDocument = item.tiene_documento_actividad_turistica || false;
@@ -1183,11 +1185,9 @@ export class MigrationService {
         entity.totalSeats = item.total_asientos;
 
         const process = processes.find((x) => x.idTemp == item.tramite_id);
-        const localType = catalogues.find((x) => x.idTemp == item.tipo_local_id);
         const airlineType = catalogues.find((x) => x.idTemp == item.tipo_aerolinea_id);
 
         if (process) entity.processId = process.id;
-        if (localType) entity.localTypeId = localType.id;
         if (airlineType) entity.airlineTypeId = airlineType.id;
 
         await this.processTransportRepository.save(entity);

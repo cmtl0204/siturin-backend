@@ -170,8 +170,8 @@ export class ProcessCtcService {
     }
 
     processCtc.processId = payload.processId;
-    processCtc.totalCapacities = payload.totalCapacities;
-    processCtc.totalTables = payload.totalTables;
+    processCtc.totalCapacities = payload.foodDrink.totalCapacities;
+    processCtc.totalTables = payload.foodDrink.totalTables;
 
     return await processCtcRepository.save(processCtc);
   }
@@ -270,8 +270,8 @@ export class ProcessCtcService {
     //if (!payload.transport.hasTransports || payload.transport.touristTransportCompanies.length === 0 ) {
     //return true;
     //}
-    if (payload.transport.hasTransports) {
-      for (const item of payload.transport.touristTransportCompanies) {
+    if (payload.touristTransport.hasTransports) {
+      for (const item of payload.touristTransport.touristTransportCompanies) {
         try {
           const transport = touristTransportCompanyRepository.create();
           const rucType = catalogues.find((x) => (x.code = item.rucType.code));
@@ -316,7 +316,7 @@ export class ProcessCtcService {
   ): Promise<boolean> {
     const touristGuideRepository = manager.getRepository(TouristGuideEntity);
 
-    for (const item of payload.touristGuides) {
+    for (const item of payload.communityOperation.touristGuides) {
       try {
         const touristGuide = touristGuideRepository.create();
         touristGuide.processId = payload.processId;

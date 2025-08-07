@@ -1,4 +1,4 @@
-import { Controller, Get, Header, Res } from '@nestjs/common';
+import { Controller, Get, Header, Param, ParseUUIDPipe, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { ApiTags } from '@nestjs/swagger';
 import { InternalPdfService } from '@modules/reports/pdf/internal-pdf.service';
@@ -22,9 +22,12 @@ export class InternalPdfController {
 
   @PublicRoute()
   @Header('Content-Type', 'application/pdf')
-  @Get('register-certificates')
-  async generateRegisterCertificate(@Res() response: Response) {
-    const pdfDoc = await this.internalPdfService.generateUsersReport2();
+  @Get('register-certificates/:cadastreId')
+  async generateRegisterCertificate(
+    @Res() response: Response,
+    @Param('cadastreId', ParseUUIDPipe) cadastreId: string,
+  ) {
+    const pdfDoc = await this.internalPdfService.generateUsersReport2(cadastreId);
 
     pdfDoc.info.Title = 'Users Report';
     pdfDoc.pipe(response);

@@ -283,7 +283,8 @@ export class ProcessService {
 
   async saveAutoInspection(
     manager: EntityManager,
-    payload: CreateRegistrationProcessAgencyDto,
+    processId: string,
+    type: CatalogueEntity,
     user: UserEntity,
   ) {
     const inspectionRepository = manager.getRepository(InspectionEntity);
@@ -298,7 +299,7 @@ export class ProcessService {
 
     let inspectionAt = new Date();
 
-    switch (payload.type.code) {
+    switch (type.code) {
       case CatalogueProcessesTypeEnum.registration:
         inspectionAt = addDays(inspectionAt, 84);
         break;
@@ -328,18 +329,18 @@ export class ProcessService {
         break;
 
       default:
-        throw new BadRequestException(`Tipo de trámite no encontrado ${payload.type.name}`);
+        throw new BadRequestException(`Tipo de trámite no encontrado ${type.name}`);
     }
 
     let inspection = await inspectionRepository.findOne({
-      where: { processId: payload.processId },
+      where: { processId },
     });
 
     if (!inspection) {
       inspection = inspectionRepository.create();
     }
 
-    inspection.processId = payload.processId;
+    inspection.processId = processId;
     inspection.isCurrent = true;
     inspection.observation = 'Fecha auto generada por el sistema';
 

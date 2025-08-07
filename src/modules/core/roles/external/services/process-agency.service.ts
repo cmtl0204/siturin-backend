@@ -1,12 +1,10 @@
 import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { DataSource, EntityManager, Repository } from 'typeorm';
+import { DataSource, EntityManager } from 'typeorm';
 import {
-  AuthRepositoryEnum,
   CatalogueActivitiesCodeEnum,
   CatalogueCadastresStateEnum,
   CatalogueTypeEnum,
   ConfigEnum,
-  CoreRepositoryEnum,
 } from '@utils/enums';
 import { ResponseHttpInterface } from '@utils/interfaces';
 import {
@@ -39,17 +37,17 @@ export class ProcessAgencyService {
     return await this.dataSource.transaction(async (manager) => {
       const process = await this.saveProcess(payload, manager);
 
-      await this.saveProcessAgency(payload, manager);
-
-      await this.saveTouristGuides(payload, manager);
-
-      await this.processService.saveAutoInspection(manager, payload, user);
+      await this.processService.saveAutoInspection(manager, payload.processId, payload.type, user);
 
       await this.processService.saveAutoAssignment(
         payload.processId,
         process.establishmentAddress.provinceId,
         manager,
       );
+
+      await this.saveProcessAgency(payload, manager);
+
+      await this.saveTouristGuides(payload, manager);
 
       const cadastre = await this.saveCadastre(payload.processId, manager);
 
@@ -206,13 +204,14 @@ export class ProcessAgencyService {
       .addOrderBy('SUBSTRING(cadastres.register_number, 20)', 'DESC')
       .getOne();
 
+    const init = '2';
     let sequential = '1';
 
     if (cadastreLast) {
       sequential = (parseInt(cadastreLast.registerNumber.substring(20)) + 1).toString();
     }
 
-    sequential = `4${sequential.padStart(6, '0')}`;
+    sequential = `${init}${sequential.padStart(6, '0')}`;
     let cadastre = await cadastreRepository.findOneBy({ processId: process.id });
 
     if (!cadastre) {

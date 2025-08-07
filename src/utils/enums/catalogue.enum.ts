@@ -45,8 +45,20 @@ export enum CatalogueProcessesStateEnum {
 }
 
 export enum CatalogueActivitiesCodeEnum {
+  accommodation_continent = 'accommodation_continent',
+  accommodation_galapagos = 'accommodation_galapagos',
   agency_continent = 'agency_continent',
   agency_galapagos = 'agency_galapagos',
+  ctc_continent = 'ctc_continent',
+  ctc_galapagos = 'ctc_galapagos',
+  event_continent = 'events_continent',
+  event_galapagos = 'events_galapagos',
+  food_drink_continent = 'food_drink_continent',
+  food_drink_galapagos = 'food_drink_galapagos',
+  park_continent = 'park_continent',
+  park_galapagos = 'park_galapagos',
+  transport_continent = 'transport_continent',
+  transport_galapagos = 'transport_galapagos'
 }
 
 export enum CatalogueCadastresStateEnum {

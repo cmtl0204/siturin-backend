@@ -25,8 +25,8 @@ export class InternalPdfService {
     }
   }
 
-  async generateUsersReport2() {
-    const data: any = await this.internalPdfSql.findRegulationResults('1234567890001');
+  async generateUsersReport2(cadastreId:string) {
+    const data: any = await this.internalPdfSql.findRegulationResults(cadastreId);
 
     try {
       return this.printerService.createPdf(registerCertificateReport(data));

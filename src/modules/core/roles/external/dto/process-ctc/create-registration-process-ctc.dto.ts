@@ -1,32 +1,33 @@
-import {
-  IsArray,
-  IsBoolean,
-  IsObject,
-  IsOptional,
-  IsPositive,
-  IsUUID,
-  ValidateNested,
-} from 'class-validator';
+import { IsBoolean, IsObject, IsOptional, IsUUID, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
-import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
-import { isBooleanValidationOptions, isPositiveValidationOptions } from '@utils/dto-validation';
-import { TouristGuideDto } from '@modules/core/shared-core/dto/process';
+import { isBooleanValidationOptions } from '@utils/dto-validation';
 import { CatalogueDto } from '@modules/common/catalogue/dto';
 import { ActivityEntity, CategoryEntity, ClassificationEntity } from '@modules/core/entities';
-import { TransportDto } from '@modules/core/roles/external/dto/process-ctc/transport';
 import { AccommodationDto } from '@modules/core/roles/external/dto/process-ctc/accommodation.dto';
+import { FoodDrinkDto } from './food-drink.dto';
+import { TouristTransportDto } from './tourist-transport.dto';
+import { CommunityOperationDto } from '@modules/core/roles/external/dto/process-ctc/community-operation.dto';
 
 export class CreateRegistrationProcessCtcDto {
   @IsUUID()
   readonly processId: string;
 
   @IsObject()
-  @Type(() => CatalogueEntity)
-  readonly type: CatalogueEntity;
+  @Type(() => CatalogueDto)
+  readonly type: CatalogueDto;
+
+  @IsObject()
+  @Type(() => CatalogueDto)
+  readonly activities: CatalogueDto;
 
   @IsObject()
   @Type(() => ActivityEntity)
   readonly activity: ActivityEntity;
+
+  @IsOptional()
+  @IsObject()
+  @Type(() => CatalogueDto)
+  readonly geographicArea: CatalogueDto;
 
   @IsObject()
   @Type(() => ClassificationEntity)
@@ -35,14 +36,6 @@ export class CreateRegistrationProcessCtcDto {
   @IsObject()
   @Type(() => CategoryEntity)
   readonly category: CategoryEntity;
-
-  @IsOptional()
-  @IsPositive(isPositiveValidationOptions())
-  readonly totalCapacities: number;
-
-  @IsOptional()
-  @IsPositive(isPositiveValidationOptions())
-  readonly totalTables: number;
 
   @IsOptional()
   @IsBoolean(isBooleanValidationOptions())
@@ -57,36 +50,22 @@ export class CreateRegistrationProcessCtcDto {
   readonly hasStatute: boolean;
 
   @IsOptional()
-  @IsArray()
-  @ValidateNested()
-  @Type(() => TouristGuideDto)
-  readonly touristGuides: TouristGuideDto[];
-
-  @IsOptional()
   @ValidateNested()
   @Type(() => AccommodationDto)
   readonly accommodation: AccommodationDto;
 
   @IsOptional()
   @ValidateNested()
-  @Type(() => TransportDto)
-  readonly transport: TransportDto;
+  @Type(() => FoodDrinkDto)
+  readonly foodDrink: FoodDrinkDto;
 
   @IsOptional()
-  @IsArray()
   @ValidateNested()
-  @Type(() => CatalogueDto)
-  readonly waters: CatalogueDto[];
+  @Type(() => TouristTransportDto)
+  readonly touristTransport: TouristTransportDto;
 
   @IsOptional()
-  @IsArray()
   @ValidateNested()
-  @Type(() => CatalogueDto)
-  readonly airs: CatalogueDto[];
-
-  @IsOptional()
-  @IsArray()
-  @ValidateNested()
-  @Type(() => CatalogueDto)
-  readonly lands: CatalogueDto[];
+  @Type(() => CommunityOperationDto)
+  readonly communityOperation: CommunityOperationDto;
 }

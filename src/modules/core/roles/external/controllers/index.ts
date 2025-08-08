@@ -4,6 +4,7 @@ import { ProcessAgencyController } from '@modules/core/roles/external/controller
 import { EstablishmentController } from '@modules/core/roles/external/controllers/establishment.controller';
 import { ProcessParkController } from '@modules/core/roles/external/controllers/process-park.controller';
 import { ProcessCtcController } from '@modules/core/roles/external/controllers/ctc.controller';
+import { ProcessEventController } from '@modules/core/roles/external/controllers/process-event.controller';
 
 export const controllers = [
   CadastreController,
@@ -12,4 +13,5 @@ export const controllers = [
   ProcessTransportController,
   ProcessParkController,
   ProcessCtcController,
+  ProcessEventController,
 ];

@@ -11,6 +11,7 @@ import { ReportsModule } from '@modules/reports/reports.module';
 import { EstablishmentService } from '@modules/core/roles/external/services/establishment.service';
 import { ProcessParkService } from '@modules/core/roles/external/services/process-park.service';
 import { ProcessCtcService } from '@modules/core/roles/external/services/process-ctc.service';
+import { ProcessEventService } from '@modules/core/roles/external/services/process-event.service';
 
 @Global()
 @Module({
@@ -23,6 +24,7 @@ import { ProcessCtcService } from '@modules/core/roles/external/services/process
     ProcessAgencyService,
     ProcessParkService,
     ProcessCtcService,
+    ProcessEventService,
   ],
   exports: [],
 })

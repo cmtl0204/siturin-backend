@@ -43,7 +43,7 @@ export class RegulationSectionEntity {
     enum: ['REQUIRED_ITEMS', 'SCORE_BASED', 'MINIMUM_ITEMS'],
     comment: 'Tipo de validación por sección de normativa',
   })
-  validationType: string;
+  validationType: string | null;
 
   @Column({
     name: 'minimum_items',

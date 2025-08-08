@@ -20,8 +20,8 @@ import {
   InternalDpaUserEntity,
   InternalUserEntity,
   ProcessEntity,
+  RegulationResponseEntity,
 } from '@modules/core/entities';
-import { CreateRegistrationProcessAgencyDto } from '@modules/core/roles/external/dto/process-agency';
 import {
   BreachCauseDto,
   CreateInspectionDto,
@@ -32,6 +32,7 @@ import {
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
 import { UserEntity } from '@auth/entities';
 import { FileService } from '@modules/common/file/file.service';
+import { CreateRegulationResponseDto } from '@modules/core/shared-core/dto/process/create-regulation-response.dto';
 
 @Injectable()
 export class ProcessService {
@@ -355,6 +356,27 @@ export class ProcessService {
     });
 
     return inspectionRepository.save(inspection);
+  }
+
+  async saveRegulation(
+    manager: EntityManager,
+    processId: string,
+    regulationResponses: CreateRegulationResponseDto[],
+  ) {
+    const regulationResponseRepository = manager.getRepository(RegulationResponseEntity);
+
+    // console.log(regulationResponses);
+    const data = regulationResponses.map((x) => {
+      return {
+        processId,
+        regulationItemId: x.id,
+        isCompliant: x.isCompliant,
+        score: x.score,
+      };
+    });
+
+    console.log(data);
+    return regulationResponseRepository.save(data);
   }
 
   async saveAutoInspection2(manager: EntityManager, processId: string, userId: string) {

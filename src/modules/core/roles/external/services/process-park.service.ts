@@ -44,6 +44,12 @@ export class ProcessParkService {
         manager,
       );
 
+      await this.processService.saveRegulation(
+        manager,
+        payload.processId,
+        payload.regulation.regulationResponses,
+      );
+
       await this.saveProcessPark(payload, manager);
 
       const cadastre = await this.saveCadastre(payload.processId, manager);

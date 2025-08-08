@@ -34,10 +34,22 @@ export class RegulationResponseEntity {
   @ManyToOne(() => ProcessEntity)
   @JoinColumn({ name: 'process_id' })
   process: ProcessEntity;
+  @Column({
+    name: 'process_id',
+    type: 'uuid',
+    comment: 'Id del proceso',
+  })
+  processId: string;
 
   @ManyToOne(() => RegulationItemEntity, (entity) => entity.regulationResponses)
   @JoinColumn({ name: 'regulation_item_id' })
   regulationItem: RegulationItemEntity;
+  @Column({
+    name: 'regulation_item_id',
+    type: 'uuid',
+    comment: 'Id del item de la normativa',
+  })
+  regulationItemId: string;
 
   @Column({
     name: 'is_compliant',

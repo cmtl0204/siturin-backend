@@ -1,6 +1,6 @@
-import { Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { Controller, HttpCode, HttpStatus, Patch, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { ResponseHttpInterface } from '../../utils/interfaces';
+import { ResponseHttpInterface } from '@utils/interfaces';
 import { MigrationService } from '@modules/migration/migration.service';
 import { PublicRoute } from '@auth/decorators';
 
@@ -513,6 +513,32 @@ export class MigrationController {
       data: responseService.data,
       message: 'created',
       title: 'model-catalogues',
+    };
+  }
+
+  @PublicRoute()
+  @Patch('regulations/sections')
+  @HttpCode(HttpStatus.CREATED)
+  async updateSectionsValidationType(): Promise<ResponseHttpInterface> {
+    const responseService = await this.migrationService.updateSectionsValidationType();
+
+    return {
+      data: responseService.data,
+      message: 'updated',
+      title: 'sections-validation-type',
+    };
+  }
+
+  @PublicRoute()
+  @Patch('regulations/classifications')
+  @HttpCode(HttpStatus.CREATED)
+  async updateClassificationCodes(): Promise<ResponseHttpInterface> {
+    const responseService = await this.migrationService.updateClassificationCodes();
+
+    return {
+      data: responseService.data,
+      message: 'updated',
+      title: 'classification-codes',
     };
   }
 }

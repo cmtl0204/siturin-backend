@@ -7,6 +7,8 @@ import { CadastreService } from '@modules/core/shared-core/services/cadastre.ser
 import { EmailService } from '@modules/core/shared-core/services/email.service';
 import { ActivityService } from '@modules/core/shared-core/services/activity.service';
 import { CacheModule } from '@nestjs/cache-manager';
+import { RegulationSectionService } from '@modules/core/shared-core/services/regulation-section.service';
+import { RegulationResponsesService } from '@modules/core/shared-core/services/regulation-responses.service';
 
 @Global()
 @Module({
@@ -19,6 +21,8 @@ import { CacheModule } from '@nestjs/cache-manager';
     TouristGuideService,
     ProcessService,
     CadastreService,
+    RegulationSectionService,
+    RegulationResponsesService,
   ],
   exports: [ProcessService, EmailService],
 })

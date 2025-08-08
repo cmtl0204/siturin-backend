@@ -1,9 +1,18 @@
-import { IsBoolean, IsNumber, IsObject, IsOptional, IsUUID } from 'class-validator';
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsNumber,
+  IsObject,
+  IsOptional,
+  IsUUID,
+  ValidateNested,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
 import { ActivityEntity, CategoryEntity, ClassificationEntity } from '@modules/core/entities';
 import { isBooleanValidationOptions } from '@utils/dto-validation';
 import { CatalogueDto } from '@modules/common/catalogue/dto';
+import { CreateRegulationDto } from '@modules/core/shared-core/dto/process/create-regulation.dto';
 
 export class CreateRegistrationProcessParkDto {
   @IsUUID()
@@ -43,4 +52,9 @@ export class CreateRegistrationProcessParkDto {
 
   @IsNumber()
   readonly totalCapacities: number;
+
+  @IsNotEmpty()
+  @ValidateNested()
+  @Type(() => CreateRegulationDto)
+  readonly regulation: CreateRegulationDto;
 }

@@ -45,6 +45,12 @@ export class ProcessAgencyService {
         manager,
       );
 
+      await this.processService.saveRegulation(
+        manager,
+        payload.processId,
+        payload.regulation.regulationResponses,
+      );
+
       await this.saveProcessAgency(payload, manager);
 
       await this.saveTouristGuides(payload, manager);

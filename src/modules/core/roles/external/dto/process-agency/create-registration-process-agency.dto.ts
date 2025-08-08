@@ -1,6 +1,7 @@
 import {
   IsArray,
   IsBoolean,
+  IsNotEmpty,
   IsObject,
   IsOptional,
   IsPositive,
@@ -13,6 +14,8 @@ import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
 import { ActivityEntity, CategoryEntity, ClassificationEntity } from '@modules/core/entities';
 import { TouristGuideDto } from '@modules/core/shared-core/dto/process';
 import { CatalogueDto } from '@modules/common/catalogue/dto';
+import { CreateRegulationResponseDto } from '@modules/core/shared-core/dto/process/create-regulation-response.dto';
+import { CreateRegulationDto } from '@modules/core/shared-core/dto/process/create-regulation.dto';
 
 export class CreateRegistrationProcessAgencyDto {
   @IsUUID()
@@ -63,4 +66,9 @@ export class CreateRegistrationProcessAgencyDto {
   @ValidateNested()
   @Type(() => TouristGuideDto)
   readonly touristGuides: TouristGuideDto[];
+
+  @IsNotEmpty()
+  @ValidateNested()
+  @Type(() => CreateRegulationDto)
+  readonly regulation: CreateRegulationDto;
 }

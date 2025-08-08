@@ -1647,7 +1647,7 @@ export class MigrationService {
           newRegulationSection.isAdventureRequirement = item.es_requisito_aventura;
           newRegulationSection.isProtectedArea = item.es_area_protegida;
           newRegulationSection.minimumItems = item.minimo_preguntas;
-          newRegulationSection.validationType = '';
+          newRegulationSection.validationType = null;
           newRegulationSection.name = item.nombre;
           newRegulationSection.sort = item.orden;
 
@@ -1671,7 +1671,6 @@ export class MigrationService {
           }
 
           if (model) newRegulationSection.modelId = model.id;
-
 
           currentSection = await this.regulationSectionRepository.save(newRegulationSection);
         }
@@ -1722,6 +1721,61 @@ export class MigrationService {
       }
       await this.regulationSectionRepository.save(section);
     }
+    return { data: null };
+  }
+
+  async updateClassificationCodes() {
+    const translationMap: Record<string, string> = {
+      establecimiento_movil: 'mobile_establishment',
+      plazas_comida: 'food_courts',
+      servicio_catering: 'catering_service',
+      refugio: 'shelter',
+      casa_huespedes: 'guest_house',
+      agencia_viajes_dual: 'dual_travel_agency',
+      agencia_viajes_internacional: 'international_travel_agency',
+      agencia_viajes_mayorista: 'wholesale_travel_agency',
+      cafeteria: 'cafeteria',
+      bar: 'bar',
+      discoteca: 'nightclub',
+      hostal: 'hostel',
+      ctc: 'ctc',
+      campamento_turistico: 'tourist_camp',
+      aereo: 'air_transport',
+      maritimo: 'maritime_transport',
+      terrestre: 'land_transport',
+      inmuebles_habitacionales: 'residential_properties',
+      hotel: 'hotel',
+      resort: 'resort',
+      restaurante: 'restaurant',
+      hacienda_turistica: 'tourist_ranch',
+      lodge: 'lodge',
+      hosteria: 'inn',
+      parques: 'parks',
+      boleras: 'bowling_alleys',
+      pistas: 'tracks',
+      termas: 'hot_springs',
+      balnearios: 'spas',
+      centros: 'centers',
+      eventos: 'events',
+      convenciones: 'conventions',
+      salas: 'rooms',
+      operador_turistico: 'tour_operator',
+    };
+
+    const classifications = await this.classificationRepository.find();
+
+    for (const classification of classifications) {
+      const currentCode = classification.code;
+      const translatedCode = translationMap[currentCode];
+
+      if (translatedCode) {
+        classification.code = translatedCode;
+        await this.classificationRepository.save(classification);
+      } else {
+        console.log(`No translation found for code: ${currentCode}`);
+      }
+    }
+
     return { data: null };
   }
 }

@@ -14,8 +14,8 @@ import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
 import { ActivityEntity, CategoryEntity, ClassificationEntity } from '@modules/core/entities';
 import { TouristGuideDto } from '@modules/core/shared-core/dto/process';
 import { CatalogueDto } from '@modules/common/catalogue/dto';
-import { CreateRegulationResponseDto } from '@modules/core/shared-core/dto/process/create-regulation-response.dto';
 import { CreateRegulationDto } from '@modules/core/shared-core/dto/process/create-regulation.dto';
+import { CreateAdventureTourismModalityDto } from '@modules/core/shared-core/dto/adventure-tourism-modality';
 
 export class CreateRegistrationProcessAgencyDto {
   @IsUUID()
@@ -66,6 +66,12 @@ export class CreateRegistrationProcessAgencyDto {
   @ValidateNested()
   @Type(() => TouristGuideDto)
   readonly touristGuides: TouristGuideDto[];
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested()
+  @Type(() => CreateAdventureTourismModalityDto)
+  readonly adventureTourismModalities: CreateAdventureTourismModalityDto[];
 
   @IsNotEmpty()
   @ValidateNested()

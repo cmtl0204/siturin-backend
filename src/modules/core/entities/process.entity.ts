@@ -148,15 +148,15 @@ export class ProcessEntity {
   typeId: string;
 
   @ManyToOne(() => CatalogueEntity, { nullable: true })
-  @JoinColumn({ name: 'cause_inactivation_type_id' })
-  causeInactivationType: CatalogueEntity;
+  @JoinColumn({ name: 'inactivation_cause_type_id' })
+  inactivationCauseType: CatalogueEntity;
   @Column({
     type: 'uuid',
-    name: 'cause_inactivation_type_id',
+    name: 'inactivation_cause_type_id',
     nullable: true,
     comment: '',
   })
-  causeInactivationTypeId: string;
+  inactivationCauseTypeId: string;
 
   @ManyToOne(() => CatalogueEntity, { nullable: true })
   @JoinColumn({ name: 'state_id' })

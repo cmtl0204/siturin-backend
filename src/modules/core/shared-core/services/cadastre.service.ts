@@ -170,9 +170,9 @@ export class CadastreService {
         throw new NotFoundException('Catastro no encontrado');
       }
 
-      await this.validateInspectionAt(manager, cadastre);
+      // await this.validateInspectionAt(manager, cadastre);
 
-      await this.saveInactivationInspectionStatus(manager, payload, user.id);
+      await this.saveInactivationInspectionStatus(manager, cadastre.processId, payload, user.id);
 
       return cadastre;
     });
@@ -372,13 +372,14 @@ export class CadastreService {
 
   private async saveInactivationInspectionStatus(
     manager: EntityManager,
+    processId: string,
     payload: CreateInactivationInspectionStatusDto,
     userId: string,
   ): Promise<void> {
     const processRepository = manager.getRepository(ProcessEntity);
     const catalogueRepository = manager.getRepository(CatalogueEntity);
 
-    const process = await processRepository.findOneBy({ id: payload.processId });
+    const process = await processRepository.findOneBy({ id: processId });
 
     if (!process) {
       throw new NotFoundException('Trámite no encontrado');
@@ -386,7 +387,7 @@ export class CadastreService {
 
     await this.processService.saveInactivationCauses(
       manager,
-      payload.processId,
+      processId,
       payload.inactivationCauses,
     );
 
@@ -398,7 +399,7 @@ export class CadastreService {
     });
 
     process.attendedAt = new Date();
-    process.causeInactivationTypeId = payload.causeInactivationType.id;
+    process.inactivationCauseTypeId = payload.inactivationCauseType.id;
 
     if (processState) process.stateId = processState.id;
 

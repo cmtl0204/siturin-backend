@@ -802,7 +802,7 @@ export class MigrationService {
         if (category) entity.categoryId = category.id;
         if (state) entity.stateId = state.id;
         if (type) entity.typeId = type.id;
-        if (causeInactivationType) entity.causeInactivationTypeId = causeInactivationType.id;
+        if (causeInactivationType) entity.inactivationCauseTypeId = causeInactivationType.id;
         if (establishment) entity.establishmentId = establishment.id;
         if (legalEntity) entity.legalEntityId = legalEntity.id;
         if (localType) entity.localTypeId = localType.id;

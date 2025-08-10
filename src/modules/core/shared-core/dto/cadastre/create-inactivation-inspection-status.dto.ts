@@ -9,21 +9,14 @@ export class CreateInactivationInspectionStatusDto {
   readonly cadastreId: string;
 
   @IsNotEmpty()
-  @IsUUID()
-  readonly processId: string;
-
-  @IsNotEmpty()
-  @ValidateNested()
   @Type(() => CatalogueDto)
   readonly state: CatalogueDto;
 
   @IsNotEmpty()
-  @ValidateNested()
   @Type(() => CatalogueDto)
-  readonly causeInactivationType: CatalogueDto;
+  readonly inactivationCauseType: CatalogueDto;
 
   @IsArray()
-  @ValidateNested()
   @Type(() => InactivationCauseDto)
   readonly inactivationCauses: InactivationCauseDto[];
 }

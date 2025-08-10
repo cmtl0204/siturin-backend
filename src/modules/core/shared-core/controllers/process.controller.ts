@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Param,
   ParseUUIDPipe,
   Post,
   Query,

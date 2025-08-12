@@ -45,9 +45,9 @@ export class CadastreService {
         throw new NotFoundException('Catastro no encontrado');
       }
 
-      await this.validateInspectionAt(manager, cadastre);
+      /* await this.validateInspectionAt(manager, cadastre); */
 
-      await this.saveRatifiedInspectionStatus(manager, payload, user.id);
+      await this.saveRatifiedInspectionStatus(manager, cadastre.processId, payload, user.id);
 
       return cadastre;
     });
@@ -70,9 +70,9 @@ export class CadastreService {
         throw new NotFoundException('Catastro no encontrado');
       }
 
-      await this.validateInspectionAt(manager, cadastre);
+      /* await this.validateInspectionAt(manager, cadastre); */
 
-      await this.saveReclassifiedInspectionStatus(manager, payload, user.id);
+      await this.saveReclassifiedInspectionStatus(manager, cadastre.processId, payload, user.id);
 
       return cadastre;
     });
@@ -95,9 +95,9 @@ export class CadastreService {
         throw new NotFoundException('Catastro no encontrado');
       }
 
-      await this.validateInspectionAt(manager, cadastre);
+      /* await this.validateInspectionAt(manager, cadastre); */
 
-      await this.saveRecategorizedInspectionStatus(manager, payload, user.id);
+      await this.saveRecategorizedInspectionStatus(manager, cadastre.processId, payload, user.id);
 
       return cadastre;
     });
@@ -120,9 +120,14 @@ export class CadastreService {
         throw new NotFoundException('Catastro no encontrado');
       }
 
-      await this.validateInspectionAt(manager, cadastre);
+      /* await this.validateInspectionAt(manager, cadastre); */
 
-      await this.saveTemporarySuspensionInspectionStatus(manager, payload, user.id);
+      await this.saveTemporarySuspensionInspectionStatus(
+        manager,
+        cadastre.processId,
+        payload,
+        user.id,
+      );
 
       return cadastre;
     });
@@ -147,7 +152,12 @@ export class CadastreService {
 
       await this.validateInspectionAt(manager, cadastre);
 
-      await this.saveDefinitiveSuspensionInspectionStatus(manager, payload, user.id);
+      await this.saveDefinitiveSuspensionInspectionStatus(
+        manager,
+        cadastre.processId,
+        payload,
+        user.id,
+      );
 
       return cadastre;
     });
@@ -215,13 +225,14 @@ export class CadastreService {
 
   private async saveRatifiedInspectionStatus(
     manager: EntityManager,
+    processId: string,
     payload: CreateRegistrationInspectionStatusDto,
     userId: string,
   ): Promise<void> {
     const processRepository = manager.getRepository(ProcessEntity);
     const catalogueRepository = manager.getRepository(CatalogueEntity);
 
-    const process = await processRepository.findOneBy({ id: payload.processId });
+    const process = await processRepository.findOneBy({ id: processId });
 
     if (!process) {
       throw new NotFoundException('Trámite no encontrado');
@@ -245,13 +256,14 @@ export class CadastreService {
 
   private async saveReclassifiedInspectionStatus(
     manager: EntityManager,
+    processId: string,
     payload: CreateReclassifiedInspectionStatusDto,
     userId: string,
   ): Promise<void> {
     const processRepository = manager.getRepository(ProcessEntity);
     const catalogueRepository = manager.getRepository(CatalogueEntity);
 
-    const process = await processRepository.findOneBy({ id: payload.processId });
+    const process = await processRepository.findOneBy({ id: processId });
 
     if (!process) {
       throw new NotFoundException('Trámite no encontrado');
@@ -277,13 +289,14 @@ export class CadastreService {
 
   private async saveRecategorizedInspectionStatus(
     manager: EntityManager,
+    processId: string,
     payload: CreateRecategorizedInspectionStatusDto,
     userId: string,
   ): Promise<void> {
     const processRepository = manager.getRepository(ProcessEntity);
     const catalogueRepository = manager.getRepository(CatalogueEntity);
 
-    const process = await processRepository.findOneBy({ id: payload.processId });
+    const process = await processRepository.findOneBy({ id: processId });
 
     if (!process) {
       throw new NotFoundException('Trámite no encontrado');
@@ -308,21 +321,22 @@ export class CadastreService {
 
   private async saveTemporarySuspensionInspectionStatus(
     manager: EntityManager,
+    processId: string,
     payload: CreateTemporarySuspensionInspectionStatusDto,
     userId: string,
   ): Promise<void> {
     const processRepository = manager.getRepository(ProcessEntity);
     const catalogueRepository = manager.getRepository(CatalogueEntity);
 
-    const process = await processRepository.findOneBy({ id: payload.processId });
+    const process = await processRepository.findOneBy({ id: processId });
 
     if (!process) {
       throw new NotFoundException('Trámite no encontrado');
     }
 
-    await this.processService.saveAutoInspection2(manager, payload.processId, userId);
+    await this.processService.saveAutoInspection2(manager, processId, userId);
 
-    await this.processService.saveBreachCauses(manager, payload.processId, payload.breachCauses);
+    await this.processService.saveBreachCauses(manager, processId, payload.breachCauses);
 
     const processState = await catalogueRepository.findOne({
       where: {
@@ -342,13 +356,14 @@ export class CadastreService {
 
   private async saveDefinitiveSuspensionInspectionStatus(
     manager: EntityManager,
+    processId: string,
     payload: CreateDefinitiveSuspensionInspectionStatusDto,
     userId: string,
   ): Promise<void> {
     const processRepository = manager.getRepository(ProcessEntity);
     const catalogueRepository = manager.getRepository(CatalogueEntity);
 
-    const process = await processRepository.findOneBy({ id: payload.processId });
+    const process = await processRepository.findOneBy({ id: processId });
 
     if (!process) {
       throw new NotFoundException('Trámite no encontrado');

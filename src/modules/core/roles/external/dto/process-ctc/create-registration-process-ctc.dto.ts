@@ -1,4 +1,11 @@
-import { IsBoolean, IsObject, IsOptional, IsUUID, ValidateNested } from 'class-validator';
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsObject,
+  IsOptional,
+  IsUUID,
+  ValidateNested,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { isBooleanValidationOptions } from '@utils/dto-validation';
 import { CatalogueDto } from '@modules/common/catalogue/dto';
@@ -7,6 +14,7 @@ import { AccommodationDto } from '@modules/core/roles/external/dto/process-ctc/a
 import { FoodDrinkDto } from './food-drink.dto';
 import { TouristTransportDto } from './tourist-transport.dto';
 import { CommunityOperationDto } from '@modules/core/roles/external/dto/process-ctc/community-operation.dto';
+import { CreateRegulationDto } from '@modules/core/shared-core/dto/process/create-regulation.dto';
 
 export class CreateRegistrationProcessCtcDto {
   @IsUUID()
@@ -16,9 +24,9 @@ export class CreateRegistrationProcessCtcDto {
   @Type(() => CatalogueDto)
   readonly type: CatalogueDto;
 
-  @IsObject()
+  @IsOptional()
   @Type(() => CatalogueDto)
-  readonly activities: CatalogueDto;
+  readonly activities: CatalogueDto[];
 
   @IsObject()
   @Type(() => ActivityEntity)
@@ -62,10 +70,15 @@ export class CreateRegistrationProcessCtcDto {
   @IsOptional()
   @ValidateNested()
   @Type(() => TouristTransportDto)
-  readonly touristTransport: TouristTransportDto;
+  readonly touristTransportCompany: TouristTransportDto;
 
   @IsOptional()
   @ValidateNested()
   @Type(() => CommunityOperationDto)
   readonly communityOperation: CommunityOperationDto;
+
+  @IsNotEmpty()
+  @ValidateNested()
+  @Type(() => CreateRegulationDto)
+  readonly regulation: CreateRegulationDto;
 }

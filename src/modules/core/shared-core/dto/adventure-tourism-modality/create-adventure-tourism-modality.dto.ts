@@ -1,10 +1,10 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsOptional, IsString, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { CatalogueDto } from '@modules/common/catalogue/dto';
 
 export class CreateAdventureTourismModalityDto {
-  @IsNotEmpty()
-  // @ValidateNested()
+  @IsOptional()
+  @ValidateNested()
   @Type(() => CatalogueDto)
   readonly type: CatalogueDto;
 

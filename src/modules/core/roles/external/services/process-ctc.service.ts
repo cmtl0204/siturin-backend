@@ -12,13 +12,11 @@ import { DataSource, EntityManager } from 'typeorm';
 import { CreateRegistrationProcessCtcDto } from '@modules/core/roles/external/dto/process-ctc/create-registration-process-ctc.dto';
 import { ProcessService } from '@modules/core/shared-core/services/process.service';
 import {
-  AdventureTourismModalityEntity,
   CadastreEntity,
   CadastreStateEntity,
+  CtcActivityEntity,
   ProcessCtcEntity,
   ProcessEntity,
-  TouristGuideEntity,
-  TouristTransportCompanyEntity,
 } from '@modules/core/entities';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
 import { addDays, set } from 'date-fns';
@@ -41,22 +39,60 @@ export class ProcessCtcService {
 
       await this.saveProcessCtc(payload, manager);
 
-      await this.saveTouristGuides(payload, manager);
+      await this.saveCtcActivities(payload, manager);
 
-      await this.saveAccommodation(payload, manager);
+      if (
+        payload.communityOperation &&
+        payload.communityOperation.adventureTourismModalities &&
+        payload.communityOperation.adventureTourismModalities.length > 0
+      ) {
+        await this.processService.saveAdventureTourismModalities(
+          payload.processId,
+          payload.communityOperation.adventureTourismModalities,
+          manager,
+        );
+      }
 
-      await this.saveFood(payload, manager);
+      if (
+        payload.communityOperation &&
+        payload.communityOperation.touristGuides &&
+        payload.communityOperation.touristGuides.length > 0
+      ) {
+        const touristGuides = await this.processService.saveTouristGuides(
+          payload.processId,
+          payload.communityOperation.touristGuides,
+          manager,
+        );
+      }
 
-      // await this.saveCommunityOperation(payload, manager);
+      if (payload.touristTransportCompany) {
+        const touristTransport = await this.processService.saveTouristTransports(
+          payload.processId,
+          payload.touristTransportCompany.touristTransportCompanies,
+          manager,
+        );
+      }
 
-      await this.saveTransport(payload, manager);
+      if (payload.accommodation) {
+        const accommodation = await this.saveAccommodation(payload, manager);
+      }
 
-      // await this.processService.saveAutoInspection(manager, payload, user);// todo: el payload que recibe es de process agency y tengo de mi actividad: ctc
+      if (payload.foodDrink) {
+        const food = await this.saveFood(payload, manager);
+      }
 
-      await this.processService.saveAutoAssignment(
+      await this.processService.saveAutoInspection(manager, payload.processId, payload.type, user);
+
+      const autoAssignment = await this.processService.saveAutoAssignment(
         payload.processId,
         process.establishmentAddress.provinceId,
         manager,
+      );
+
+      await this.processService.saveRegulation(
+        manager,
+        payload.processId,
+        payload.regulation.regulationResponses,
       );
 
       const cadastre = await this.saveCadastre(payload.processId, manager);
@@ -120,6 +156,23 @@ export class ProcessCtcService {
     return await processRepository.save(process);
   }
 
+  private async saveCtcActivities(
+    payload: CreateRegistrationProcessCtcDto,
+    manager: EntityManager,
+  ): Promise<void> {
+    const ctcActivityRepository = manager.getRepository(CtcActivityEntity);
+
+    if (payload.activities && payload.activities.length > 0) {
+      for (const activity of payload.activities) {
+        const ctcActivity = ctcActivityRepository.create();
+        ctcActivity.processId = payload.processId;
+        ctcActivity.activityId = activity.id;
+        ctcActivity.enabled = true;
+        await ctcActivityRepository.save(ctcActivity);
+      }
+    }
+  }
+
   private async saveProcessCtc(
     payload: CreateRegistrationProcessCtcDto,
     manager: EntityManager,
@@ -135,8 +188,13 @@ export class ProcessCtcService {
     processCtc.hasPropertyRegistrationCertificate = payload.hasPropertyRegistrationCertificate;
     processCtc.hasTechnicalReport = payload.hasTechnicalReport;
     processCtc.hasStatute = payload.hasStatute;
-
-    return await processCtcRepository.save(processCtc);
+    try {
+      const savedProcessCtc = await processCtcRepository.save(processCtc);
+      return savedProcessCtc;
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestException('Error al guardar el proceso CTC');
+    }
   }
 
   private async saveAccommodation(
@@ -174,174 +232,6 @@ export class ProcessCtcService {
     processCtc.totalTables = payload.foodDrink.totalTables;
 
     return await processCtcRepository.save(processCtc);
-  }
-
-  // private async saveCommunityOperation(
-  //   payload: CreateRegistrationProcessCtcDto,
-  //   manager: EntityManager,
-  // ): Promise<boolean> {
-  //   const adventureTourismModalityRepository = manager.getRepository(AdventureTourismModalityEntity);
-
-  //   for (const modality of payload.waters) {
-  //     try {
-  //       const adventureTourism = adventureTourismModalityRepository.create();
-  //       adventureTourism.processId = payload.processId;
-  //       adventureTourism.typeId = modality.id
-
-  //       await adventureTourismModalityRepository.save(adventureTourism);
-  //     } catch (error: unknown) {
-  //       let errorMessage = 'Error desconocido';
-
-  //       if (error instanceof Error) {
-  //         errorMessage = error.message;
-  //       } else if (typeof error === 'string') {
-  //         errorMessage = error;
-  //       }
-
-  //       throw new BadRequestException({
-  //         error: errorMessage,
-  //         message: `Error guardando modalidades`,
-  //       });
-  //     }
-  //   }
-
-  //   for (const modality of payload.lands) {
-  //     try {
-  //       const adventureTourism = adventureTourismModalityRepository.create();
-  //       adventureTourism.processId = payload.processId;
-  //       adventureTourism.typeId = modality.id
-
-  //       await adventureTourismModalityRepository.save(adventureTourism);
-  //     } catch (error: unknown) {
-  //       let errorMessage = 'Error desconocido';
-
-  //       if (error instanceof Error) {
-  //         errorMessage = error.message;
-  //       } else if (typeof error === 'string') {
-  //         errorMessage = error;
-  //       }
-
-  //       throw new BadRequestException({
-  //         error: errorMessage,
-  //         message: `Error guardando modalidades`,
-  //       });
-  //     }
-  //   }
-
-  //   for (const modality of payload.airs) {
-  //     try {
-  //       const adventureTourism = adventureTourismModalityRepository.create();
-  //       adventureTourism.processId = payload.processId;
-  //       adventureTourism.typeId = modality.id
-
-  //       await adventureTourismModalityRepository.save(adventureTourism);
-  //     } catch (error: unknown) {
-  //       let errorMessage = 'Error desconocido';
-
-  //       if (error instanceof Error) {
-  //         errorMessage = error.message;
-  //       } else if (typeof error === 'string') {
-  //         errorMessage = error;
-  //       }
-
-  //       throw new BadRequestException({
-  //         error: errorMessage,
-  //         message: `Error guardando modalidades`,
-  //       });
-  //     }
-  //   }
-
-  //   return true;
-  // }
-
-  private async saveTransport(
-    payload: CreateRegistrationProcessCtcDto,
-    manager: EntityManager,
-  ): Promise<boolean> {
-    const touristTransportCompanyRepository = manager.getRepository(TouristTransportCompanyEntity);
-    const catalogueRepository = manager.getRepository(CatalogueEntity);
-
-    const catalogues = await catalogueRepository.find(); //todo: Una sola consulta a la base de datos y luego usamos ese array
-
-    // Eliminar transportes existentes
-    /* await transportRepository.delete({ processId: payload.processId }); */ //todo: Posible reutilizacion en otros tramites
-
-    // Si no hay datos de transporte, retornar
-    //if (!payload.transport.hasTransports || payload.transport.touristTransportCompanies.length === 0 ) {
-    //return true;
-    //}
-    if (payload.touristTransport.hasTransports) {
-      for (const item of payload.touristTransport.touristTransportCompanies) {
-        try {
-          const transport = touristTransportCompanyRepository.create();
-          const rucType = catalogues.find((x) => (x.code = item.rucType.code));
-          // Asignar directamente los campos que vienen del DTO/Entidad
-          transport.processId = payload.processId;
-          transport.ruc = item.ruc;
-          transport.legalName = item.legalName;
-          transport.authorizationNumber = item.authorizationNumber;
-
-          // Si vienen los IDs de las relaciones, asignarlas directamente
-
-          transport.typeId = item.type.id;
-
-          if (rucType) {
-            transport.rucTypeId = rucType.id;
-          }
-
-          await touristTransportCompanyRepository.save(transport);
-        } catch (error: unknown) {
-          let errorMessage = 'Error desconocido';
-
-          if (error instanceof Error) {
-            errorMessage = error.message;
-          } else if (typeof error === 'string') {
-            errorMessage = error;
-          }
-
-          throw new BadRequestException({
-            error: errorMessage,
-            message: `Error guardando Compañía de Transporte: ${item.legalName || item.ruc}`,
-          });
-        }
-      }
-    }
-
-    return true;
-  }
-
-  private async saveTouristGuides(
-    payload: CreateRegistrationProcessCtcDto,
-    manager: EntityManager,
-  ): Promise<boolean> {
-    const touristGuideRepository = manager.getRepository(TouristGuideEntity);
-
-    for (const item of payload.communityOperation.touristGuides) {
-      try {
-        const touristGuide = touristGuideRepository.create();
-        touristGuide.processId = payload.processId;
-        touristGuide.isGuide = item.isGuide;
-        touristGuide.identification = item.identification;
-        touristGuide.name = item.name;
-
-        await touristGuideRepository.save(touristGuide);
-      } catch (error: unknown) {
-        let errorMessage = 'Error desconocido';
-
-        if (error instanceof Error) {
-          errorMessage = error.message;
-        } else if (typeof error === 'string') {
-          errorMessage = error;
-        }
-
-        throw new BadRequestException({
-          error: errorMessage,
-          message: `Error guardando Guía de Turismo: ${item.name || item.identification}`,
-        });
-      }
-    }
-
-    return true;
   }
 
   private async saveCadastre(processId: string, manager: EntityManager): Promise<CadastreEntity> {

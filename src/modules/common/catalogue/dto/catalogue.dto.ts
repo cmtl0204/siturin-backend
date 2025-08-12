@@ -1,4 +1,4 @@
-import { IsString, IsUUID } from 'class-validator';
+import { IsOptional, IsString, IsUUID } from 'class-validator';
 import { isStringValidationOptions } from '@utils/dto-validation';
 
 export class CatalogueDto {
@@ -7,4 +7,8 @@ export class CatalogueDto {
 
   @IsString(isStringValidationOptions())
   readonly code: string;
+
+  @IsOptional()
+  @IsString(isStringValidationOptions())
+  readonly name: string;
 }

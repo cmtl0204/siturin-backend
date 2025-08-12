@@ -1,15 +1,32 @@
-import { IsArray, IsBoolean, IsOptional, ValidateNested } from 'class-validator';
-import { isBooleanValidationOptions } from '@utils/dto-validation';
-import { TouristTransportCompanyEntity } from '@modules/core/entities/tourist-transport-company.entity';
+import { IsOptional, IsString, ValidateNested } from 'class-validator';
+import { isStringValidationOptions } from '@utils/dto-validation';
 import { Type } from 'class-transformer';
+import { CatalogueDto } from '@modules/common/catalogue/dto';
 
 export class TransportDto {
   @IsOptional()
-  @IsArray()
-  @ValidateNested()
-  @Type(() => TouristTransportCompanyEntity)
-  readonly touristTransportCompanies: TouristTransportCompanyEntity[];
+  @IsString(isStringValidationOptions())
+  readonly id: string;
 
-  @IsBoolean(isBooleanValidationOptions())
-  readonly hasTransports: boolean;
+  @IsOptional()
+  @IsString(isStringValidationOptions())
+  readonly ruc: string;
+
+  @IsOptional()
+  @IsString(isStringValidationOptions())
+  readonly legalName: string;
+
+  @IsOptional()
+  @IsString(isStringValidationOptions())
+  readonly authorizationNumber: string;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => CatalogueDto)
+  readonly rucType: CatalogueDto;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => CatalogueDto)
+  readonly type: CatalogueDto;
 }

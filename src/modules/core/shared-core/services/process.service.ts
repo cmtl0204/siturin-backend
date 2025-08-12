@@ -10,6 +10,7 @@ import {
   CoreRepositoryEnum,
 } from '@utils/enums';
 import {
+  AdventureTourismModalityEntity,
   AssignmentEntity,
   BreachCauseEntity,
   EstablishmentAddressEntity,
@@ -21,6 +22,8 @@ import {
   InternalUserEntity,
   ProcessEntity,
   RegulationResponseEntity,
+  TouristGuideEntity,
+  TouristTransportCompanyEntity,
 } from '@modules/core/entities';
 import {
   BreachCauseDto,
@@ -28,11 +31,15 @@ import {
   CreateStep1Dto,
   CreateStep2Dto,
   InactivationCauseDto,
+  TouristGuideDto,
 } from '@modules/core/shared-core/dto/process';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
 import { UserEntity } from '@auth/entities';
 import { FileService } from '@modules/common/file/file.service';
 import { CreateRegulationResponseDto } from '@modules/core/shared-core/dto/process/create-regulation-response.dto';
+import { CreateAdventureTourismModalityDto } from '@modules/core/shared-core/dto/adventure-tourism-modality';
+import { TransportDto } from '@modules/core/roles/external/dto/process-ctc/transport';
+import { CatalogueDto } from '@modules/common/catalogue/dto';
 
 @Injectable()
 export class ProcessService {
@@ -285,7 +292,7 @@ export class ProcessService {
   async saveAutoInspection(
     manager: EntityManager,
     processId: string,
-    type: CatalogueEntity,
+    type: CatalogueDto,
     user: UserEntity,
   ) {
     const inspectionRepository = manager.getRepository(InspectionEntity);
@@ -614,5 +621,111 @@ export class ProcessService {
     }
 
     return internalUser;
+  }
+
+  async saveAdventureTourismModalities(
+    processId: string,
+    modalities: CreateAdventureTourismModalityDto[],
+    manager: EntityManager,
+  ): Promise<boolean> {
+    const modalityRepository = manager.getRepository(AdventureTourismModalityEntity);
+
+    for (const item of modalities) {
+      try {
+        const modality = modalityRepository.create();
+        modality.processId = processId;
+        modality.className = item.className;
+
+        modality.typeId = item.type.id;
+
+        await modalityRepository.save(modality);
+        console.log('Guardado modalidad:', modality);
+      } catch (error: unknown) {
+        console.error('Error guardando modalidad:', error, item);
+        let errorMessage = 'Error desconocido';
+        if (error instanceof Error) {
+          errorMessage = error.message;
+        } else if (typeof error === 'string') {
+          errorMessage = error;
+        }
+
+        throw new BadRequestException({
+          error: errorMessage,
+          message: `Error guardando Modalidad de Turismo Aventura: ${item.className || item.type?.id}`,
+        });
+      }
+    }
+
+    return true;
+  }
+
+  async saveTouristGuides(
+    processId: string,
+    touristGuides: TouristGuideDto[],
+    manager: EntityManager,
+  ): Promise<boolean> {
+    const touristGuideRepository = manager.getRepository(TouristGuideEntity);
+
+    for (const item of touristGuides) {
+      try {
+        const touristGuide = touristGuideRepository.create();
+        touristGuide.processId = processId;
+        touristGuide.identification = item.identification;
+        touristGuide.name = item.name;
+        touristGuide.isGuide = item.isGuide;
+
+        await touristGuideRepository.save(touristGuide);
+      } catch (error: unknown) {
+        let errorMessage = 'Error desconocido';
+        if (error instanceof Error) {
+          errorMessage = error.message;
+        } else if (typeof error === 'string') {
+          errorMessage = error;
+        }
+
+        throw new BadRequestException({
+          error: errorMessage,
+          message: `Error guardando Guía de Turismo: ${item.name || item.identification}`,
+        });
+      }
+    }
+
+    return true;
+  }
+
+  async saveTouristTransports(
+    processId: string,
+    transports: TransportDto[],
+    manager: EntityManager,
+  ): Promise<boolean> {
+    const transportRepository = manager.getRepository(TouristTransportCompanyEntity);
+
+    for (const item of transports) {
+      try {
+        const transport = transportRepository.create();
+        transport.processId = processId;
+        transport.legalName = item.legalName;
+        transport.ruc = item.ruc;
+        transport.authorizationNumber = item.authorizationNumber;
+        transport.rucTypeId = item.rucType.id;
+        transport.typeId = item.type.id; //todo: en vez de authorization debe ser typeId y type.id
+
+        await transportRepository.save(transport);
+      } catch (error: unknown) {
+        let errorMessage = 'Error desconocido';
+        if (error instanceof Error) {
+          errorMessage = error.message;
+        } else if (typeof error === 'string') {
+          errorMessage = error;
+        }
+
+        throw new BadRequestException({
+          error: errorMessage,
+          message: `Error guardando Transporte Turístico: ${item.legalName || item.ruc || item.type.id || item.authorizationNumber || item.rucType.id}`,
+        });
+      }
+    }
+
+    return true;
   }
 }

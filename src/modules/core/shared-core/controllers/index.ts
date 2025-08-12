@@ -3,6 +3,7 @@ import { ProcessesController } from './process.controller';
 import { CadastreController } from '@modules/core/shared-core/controllers/cadastre.controller';
 import { ActivityController } from '@modules/core/shared-core/controllers/activity.controller';
 import { RegulationSectionController } from '@modules/core/shared-core/controllers/regulation-section.controller';
+import { RoomTypeController } from '@modules/core/shared-core/controllers/room-type.controller';
 
 export const controllers = [
   ActivityController,
@@ -10,4 +11,5 @@ export const controllers = [
   ProcessesController,
   CadastreController,
   RegulationSectionController,
+  RoomTypeController,
 ];

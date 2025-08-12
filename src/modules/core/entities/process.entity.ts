@@ -5,6 +5,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -18,6 +19,8 @@ import { EstablishmentAddressEntity } from '@modules/core/entities/establishment
 import { EstablishmentContactPersonEntity } from '@modules/core/entities/establishment-contact-person.entity';
 import { CadastreEntity } from '@modules/core/entities/cadastre.entity';
 import { InspectionEntity } from '@modules/core/entities/inspection.entity';
+import { InactivationCauseEntity } from '@modules/core/entities/inactivation-cause.entity';
+import { AssignmentEntity } from '@modules/core/entities/assignment.entity';
 
 @Entity('processes', { schema: 'core' })
 export class ProcessEntity {
@@ -68,6 +71,12 @@ export class ProcessEntity {
 
   @OneToOne(() => InspectionEntity, (entity) => entity.process)
   actualInspection: InspectionEntity;
+
+  @OneToMany(() => InactivationCauseEntity, (entity) => entity.process)
+  inactivationCauses: InactivationCauseEntity[];
+
+  @OneToOne(() => AssignmentEntity, (entity) => entity.process)
+  assignment: AssignmentEntity;
 
   /** Foreign Keys **/
   @ManyToOne(() => ActivityEntity, { nullable: true })

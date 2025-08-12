@@ -12,7 +12,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { CadastreStateEntity, ProcessEntity } from '@modules/core/entities';
-import { UserEntity } from '@auth/entities';
 
 @Entity('cadastres', { schema: 'core' })
 export class CadastreEntity {

@@ -9,6 +9,7 @@ import { ActivityService } from '@modules/core/shared-core/services/activity.ser
 import { CacheModule } from '@nestjs/cache-manager';
 import { RegulationSectionService } from '@modules/core/shared-core/services/regulation-section.service';
 import { RegulationResponsesService } from '@modules/core/shared-core/services/regulation-responses.service';
+import { RoomTypeService } from '@modules/core/shared-core/services/room-type.service';
 
 @Global()
 @Module({
@@ -23,6 +24,7 @@ import { RegulationResponsesService } from '@modules/core/shared-core/services/r
     CadastreService,
     RegulationSectionService,
     RegulationResponsesService,
+    RoomTypeService,
   ],
   exports: [ProcessService, EmailService],
 })

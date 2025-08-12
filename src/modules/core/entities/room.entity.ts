@@ -9,6 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { ProcessEntity } from '@modules/core/entities/process.entity';
+import { RoomTypeEntity } from '@modules/core/entities/room-type.entity';
 
 @Entity('rooms', { schema: 'core' })
 export class RoomEntity {
@@ -60,6 +61,17 @@ export class RoomEntity {
     comment: 'Actividad',
   })
   processId: string;
+
+  @ManyToOne(() => RoomTypeEntity, { nullable: true })
+  @JoinColumn({ name: 'room_type_id' })
+  roomType: RoomTypeEntity;
+  @Column({
+    type: 'uuid',
+    name: 'room_type_id',
+    nullable: true,
+    comment: 'Tipo de habitacion',
+  })
+  roomTypeId: string;
 
   /** Columns **/
   @Column({

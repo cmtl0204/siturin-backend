@@ -14,15 +14,15 @@ import {
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Auth } from '@auth/decorators';
 import { ResponseHttpInterface } from '@utils/interfaces';
-import { CadastreService } from '@modules/core/dac/services/cadastre.service';
+import { CreateCadastreDto } from '@modules/core/roles/dac/dto/cadastre';
 import { PaginationDto } from '@utils/dto';
-import { CreateCadastreDto } from '@modules/core/shared-core/dto/cadastre';
+import { CadastreDacService } from '@modules/core/roles/dac/services/cadastre-dac.service';
 
-@ApiTags('DAC Cadastre')
+@ApiTags('Cadastre DAC ')
 @Auth()
 @Controller('core/dac/cadastres')
-export class CadastreController {
-  constructor(private service: CadastreService) {}
+export class CadastreDacController {
+  constructor(private service: CadastreDacService) {}
 
   @ApiOperation({ summary: 'List all Cadastres' })
   @Get()

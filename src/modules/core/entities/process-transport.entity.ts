@@ -76,11 +76,11 @@ export class ProcessTransportEntity {
   /** Columns **/
   @Column({
     name: 'certified',
-    type: 'varchar',
+    type: 'boolean',
     nullable: true,
     comment: '',
   })
-  certified: string;
+  certified: boolean;
 
   @Column({
     name: 'certified_code',

@@ -4,7 +4,7 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ResponseHttpInterface } from '@utils/interfaces';
 import { ProcessFoodDrinkService } from '../services/process-food-drink.service';
-import { CreateRegistrationProcessFoodDrinkDto } from '../dto/process-food-drink/create-registration-process-food-drink.dto';
+import { CreateRegistrationProcessFoodDrinkDto } from '@modules/core/roles/external/dto/process-food-drink';
 
 @ApiTags('Process Food Drink')
 @Auth()

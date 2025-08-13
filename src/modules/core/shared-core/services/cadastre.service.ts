@@ -150,7 +150,7 @@ export class CadastreService {
         throw new NotFoundException('Catastro no encontrado');
       }
 
-      await this.validateInspectionAt(manager, cadastre);
+      // await this.validateInspectionAt(manager, cadastre);
 
       await this.saveDefinitiveSuspensionInspectionStatus(
         manager,

@@ -1,9 +1,15 @@
 import { TDocumentDefinitions } from 'pdfmake/interfaces';
 import { defaultFooter, defaultHeader, defaultDate, customLayout } from '../layouts/layout_5';
+import { format } from 'date-fns/format';
+import { es } from 'date-fns/locale';
 
-export const suspension = (data: any): TDocumentDefinitions => {
+export const registerSuspension = (data: any): TDocumentDefinitions => {
 
   const qrData = `http://localhost:3000/api/v1/enrollment-reports/certificate`;
+
+  const legalName = data.ruc.type?.code === 'natural'
+    ? data.ruc.legalName
+    : data.ruc.legalRepresentativeName;
 
   return {
     pageSize: 'A4',
@@ -20,7 +26,7 @@ export const suspension = (data: any): TDocumentDefinitions => {
         style: 'subtitle'
       },
       {
-        text: 'ESMERALDAS - ATACAMES,' + defaultDate(),
+        text: `${data.province.name} - ${data.canton.name}, ${format(data.registeredAt, 'yyyy-MM-dd')}`,
         style: 'date'
       },
       {
@@ -29,7 +35,7 @@ export const suspension = (data: any): TDocumentDefinitions => {
         margin: [0, 0, 0, 10]
       },
       {
-        text: 'GUARDERAS RIOFRIO ESTEBAN',
+        text: legalName,
         bold: true,
         style: 'small',
         margin: [0, 0, 0, 10]
@@ -37,17 +43,17 @@ export const suspension = (data: any): TDocumentDefinitions => {
       {
         text: [
           'En la ciudad de ',
-          { text: 'ATACAMES', bold: true },
+          { text: data.canton.name, bold: true },
           ', a los ',
-          { text: '20 días del mes octubre del año 2024,', bold: true },
+          { text: `${format(data.registeredAt, 'd')} días del mes ${format(data.registeredAt, 'MMMM', { locale: es })} del año ${format(data.registeredAt, 'yyyy')}`, bold: true },
           ', la ',
-          { text: 'DIRECCION ZONAL 1 - DZ1', bold: true },
+          { text: `DIRECCION ZONAL  - ${data.zone.acronym}`, bold: true },
           ', representado por el funcionario ',
-          { text: 'CASANOVA ROJAS MARLY YIMABEL', bold: true },
+          { text: data.internalUser?.name, bold: true },
           ', en su calidad de Técnico Zonal; y, el señor(a) ',
-          { text: 'ANALUISA FAJARDO MARCIA YOLANDA', bold: true },
+          { text: data.ruc.legalName, bold: true },
           ' en su calidad de propietario o representante legal del establecimiento ',
-          { text: 'DWJ', bold: true },
+          { text: data.establishment.tradeName, bold: true },
           ', de manera libre y voluntaria suscriben la presente ',
           { text: 'Acta de Suspensión Temporal', bold: true },
           ' del establecimiento con la siguiente información:'
@@ -65,42 +71,42 @@ export const suspension = (data: any): TDocumentDefinitions => {
           body: [
             [
               { text: 'Número de Establecimiento:', style: 'tableSubtitle' },
-              { text: '1', style: 'defaultText' }
+              { text: data.establishment.number, style: 'defaultText' }
             ],
             [
               { text: 'R.U.C.:', style: 'tableSubtitle' },
-              { text: '1706577796001', style: 'defaultText' }
+              { text: data.ruc.number, style: 'defaultText' }
             ],
             [
               { text: 'Razón Social:', style: 'tableSubtitle' },
-              { text: 'ANALUISA FAJARDO MARCIA YOLANDA', style: 'defaultText' }
+              { text: data.ruc.legalName, style: 'defaultText' }
             ],
             [
               { text: 'Nombre Comercial:', style: 'tableSubtitle' },
-              { text: 'DWJ', style: 'defaultText' }
+              { text: data.establishment.tradeName, style: 'defaultText' }
             ],
             [
               { text: 'Actividad:', style: 'tableSubtitle' },
-              { text: 'AMERICAN DELI', style: 'defaultText' }
+              { text: data.activity?.name, style: 'defaultText' }
             ], [
               { text: 'Clasificaión:', style: 'tableSubtitle' },
-              { text: 'AMERICAN DELI', style: 'defaultText' }
+              { text: data.classification?.name, style: 'defaultText' }
             ],
             [
               { text: 'Representante Legal/Propietario:', style: 'tableSubtitle' },
-              { text: 'ANALUISA FAJARDO MARCIA YOLANDA', style: 'defaultText' }
+              { text: data.ruc.legalName, style: 'defaultText' }
             ],
             [
               { text: 'Número de Registro:', style: 'tableSubtitle' },
-              { text: '1706577796001.001.2014173', style: 'defaultText' }
+              { text: data.cadastre.registerNumber, style: 'defaultText' }
             ],
             [
               { text: 'Dirección:', style: 'tableSubtitle' },
-              { text: 'ESMERALDAS, ATACAMES, ATACAMES, CALLE 23 SL32 CALLE C6', style: 'defaultText' }
+              { text: `${data.province.name}, ${data.canton.name}, ${data.parish.name}, ${data.establishmentAddress.mainStreet}, ${data.establishmentAddress.numberStreet}, ${data.establishmentAddress.secondaryStreet}, ${data.establishmentAddress.referenceStreet}`, style: 'defaultText' }//
             ],
             [
               { text: 'Correo Electrónico:', style: 'tableSubtitle' },
-              { text: 'marcia_974@hotmail.com', style: 'defaultText' }
+              { text: data.cadastre.process.establishmentContactPerson.email, style: 'defaultText' }
             ]
           ]
         },
@@ -113,9 +119,9 @@ export const suspension = (data: any): TDocumentDefinitions => {
           'Mediante Check list de control de fecha ',
           { text: '2024-10-20', bold: true },
           ', suscritos por el funcionario ',
-          { text: 'CASANOVA ROJAS MARLY YIMABEL', bold: true },
+          { text: data.internalUser?.name, bold: true },
           ' y el señor/a: ',
-          { text: 'ANALUISA FAJARDO MARCIA YOLANDA', bold: true },
+          { text: data.cadastre.process.establishment.ruc.legalName, bold: true },
           ' propietario / Representante legal del establecimiento inspeccionado, se determinan el ',
           { text: 'incumplimiento de la normativa legal', bold: true },
           ', por lo que de conformidad a lo establecido en el Acuerdo Ministerial No. 2022-0010, se procede con la ',
@@ -161,15 +167,15 @@ export const suspension = (data: any): TDocumentDefinitions => {
               { text: 'Firma:', style: 'defaultText', margin: [0, 15, 0, 15] }
             ],
             [
-              { text: 'CASANOVA ROJAS MARLY YIMABEL', style: 'defaultText', },
+              { text: data.internalUser?.name, style: 'defaultText', },
               { text: 'Nombre:', style: 'defaultText', }
             ],
             [
-              { text: 'C.I. 1308972627', style: 'defaultText', },
+              { text: `C.I. ${data.internalUser?.identification}`, style: 'defaultText', },
               { text: 'Documento de Identidad:', style: 'defaultText', }
             ],
             [
-              { text: 'Dirección Zonal: DZ1', style: 'defaultText', },
+              { text: `DIRECCION ZONAL: ${data.zone.acronym}`, style: 'defaultText', },
               { text: 'Fecha y Hora:', style: 'defaultText', }
             ],
           ]
@@ -183,76 +189,6 @@ export const suspension = (data: any): TDocumentDefinitions => {
         margin: [0, 10, 0, 10]
       },
 
-      {
-        canvas: [
-          { type: 'line', x1: 0, y1: 0, x2: 520, y2: 0, lineWidth: 1, lineColor: '#D1D1D1' }
-        ]
-      },
-      {
-        text: 'Observaciones:',
-        style: 'subtitle',
-        margin: [0, 5, 0, 5]
-      },
-      {
-        canvas: [
-          { type: 'line', x1: 0, y1: 0, x2: 520, y2: 0, lineWidth: 1, lineColor: '#D1D1D1' }
-        ],
-        margin: [0, 0, 0, 20]
-      },
-      {
-        canvas: [
-          { type: 'line', x1: 0, y1: 0, x2: 520, y2: 0, lineWidth: 1, lineColor: '#D1D1D1' }
-        ],
-        margin: [0, 20, 0, 5]
-      },
-      {
-        columns: [
-          {
-            width: '50%',
-            stack: [
-              { text: 'Técnico Zonal', style: 'subtitle' },
-              {
-                canvas: [{ type: 'line', x1: 0, y1: 0, x2: 260, y2: 0, lineWidth: 1, lineColor: '#D1D1D1' }], margin: [0, 5, 0, 5]
-              },
-              { text: 'Firma:', style: 'defaultText' },
-              {
-                canvas: [{ type: 'line', x1: 0, y1: 0, x2: 260, y2: 0, lineWidth: 1, lineColor: '#D1D1D1' }], margin: [0, 5, 0, 5]
-              },
-              { text: 'CARCELÉN CÓRDOVA RICARDO ESTEBAN', style: 'defaultText' },
-              {
-                canvas: [{ type: 'line', x1: 0, y1: 0, x2: 260, y2: 0, lineWidth: 1, lineColor: '#D1D1D1' }], margin: [0, 5, 0, 5]
-              },
-              { text: 'C.I. 1716437718', style: 'defaultText' },
-              {
-                canvas: [{ type: 'line', x1: 0, y1: 0, x2: 260, y2: 0, lineWidth: 1, lineColor: '#D1D1D1' }], margin: [0, 5, 0, 5]
-              },
-              { text: 'Dirección Zonal: DZ1', style: 'defaultText' },
-            ]
-          },
-          {
-            width: '50%',
-            stack: [
-              { text: 'Propietario/Gerente/Administrador', style: 'subtitle' },
-              {
-                canvas: [{ type: 'line', x1: 0, y1: 0, x2: 260, y2: 0, lineWidth: 1, lineColor: '#D1D1D1' }], margin: [0, 5, 0, 5]
-              },
-              { text: 'Firma:', style: 'defaultText' },
-              {
-                canvas: [{ type: 'line', x1: 0, y1: 0, x2: 260, y2: 0, lineWidth: 1, lineColor: '#D1D1D1' }], margin: [0, 5, 0, 5]
-              },
-              { text: 'Nombre:', style: 'defaultText' },
-              {
-                canvas: [{ type: 'line', x1: 0, y1: 0, x2: 260, y2: 0, lineWidth: 1, lineColor: '#D1D1D1' }], margin: [0, 5, 0, 5]
-              },
-              { text: 'Documento de Identidad:', style: 'defaultText' },
-              {
-                canvas: [{ type: 'line', x1: 0, y1: 0, x2: 260, y2: 0, lineWidth: 1, lineColor: '#D1D1D1' }], margin: [0, 5, 0, 5]
-              },
-              { text: 'Fecha y Hora:', style: 'defaultText' },
-            ]
-          }
-        ]
-      },
     ],
 
     styles: {

@@ -24,7 +24,7 @@ export const registerCertificateReport = (data: any): TDocumentDefinitions => {
             width: 160, // Ancho para el logo
             stack: [
               {
-                image: `./storage/resources/reports/images/${data.cadastre.process.classification.code}.png`,
+                image: `./storage/resources/reports/images/${data.classification.code}.png`,
                 alignment: 'center',
               },
             ],
@@ -37,11 +37,11 @@ export const registerCertificateReport = (data: any): TDocumentDefinitions => {
             width: 180, // Ancho para el QR y textos
             stack: [
               {
-                text: data.cadastre.process.classification.name,
+                text: data.classification.name,
                 style: 'title',
               },
               {
-                text: data.cadastre.process.category.name,
+                text: data.category.name,
                 style: 'title', // Reducido a 16 para mejor jerarquía
                 bold: false, // Sin negrita para diferenciarlo
                 margin: [0, 5, 0, 10], // Más espacio superior e inferior
@@ -64,7 +64,7 @@ export const registerCertificateReport = (data: any): TDocumentDefinitions => {
 
       // Nombre del establecimiento centrado y destacado
       {
-        text: data.cadastre.process.establishment.tradeName,
+        text: data.establishment.tradeName,
         style: 'title',
         margin: [0, 0, 0, 30], // Más espacio inferior
       },
@@ -99,7 +99,7 @@ export const registerCertificateReport = (data: any): TDocumentDefinitions => {
           },
           {
             width: '33%',
-            text: data.cadastre.process.establishment.ruc.number,
+            text: data.ruc.number,
             style: 'label',
           },
           {
@@ -138,34 +138,34 @@ export const registerCertificateReport = (data: any): TDocumentDefinitions => {
         columns: [
           {
             width: '33%',
-            text: data.cadastre.process.establishmentAddress.province.name,
+            text: data.province.name,
             style: 'label',
           },
           {
             width: '33%',
-            text: data.cadastre.process.establishmentAddress.canton.name,
+            text: data.canton.name,
             style: 'label',
           },
           {
             width: '34%',
-            text: data.cadastre.process.establishmentAddress.parish.name,
+            text: data.parish.name,
             style: 'label',
           },
         ],
       },
       {
-        image: `./storage/resources/reports/signatures/${data.cadastre.process.establishmentAddress.province.zone.code}.png`,
+        image: `./storage/resources/reports/signatures/${data.zone.code}.png`,
         alignment: 'center',
         marginTop: 10,
       },
       {
         stack: [
           {
-            text: `DIRECTORA ZONAL - ${data.cadastre.process.establishmentAddress.province.zone.acronym}`,
+            text: `DIRECTORA ZONAL - ${data.zone.acronym}`,
             style: 'firm',
           },
           {
-            text: data.cadastre.process.establishmentAddress.province.zone.director,
+            text: data.zone.director,
             style: 'firm',
           },
         ],
@@ -176,7 +176,7 @@ export const registerCertificateReport = (data: any): TDocumentDefinitions => {
         stack: [
           // Ubicación con código abreviado
           {
-            text: `Fecha de emisión del certificaod de registro ${format(data.cadastre.registeredAt, 'yyyy-MM-dd')}`,
+            text: `Fecha de emisión del certificaod de registro ${format(data.registeredAt, 'yyyy-MM-dd')}`,
             style: 'firm',
             bold: false,
             alignment: 'left',
@@ -363,7 +363,7 @@ export const registerCertificateReport = (data: any): TDocumentDefinitions => {
             width: '100%',
             stack: [
               {
-                text: `${data.cadastre.process.classification.name}`,
+                text: `${data.classification.name}`,
                 style: 'imageTitle',
                 margin: [0, 0, 0, 5],
               },
@@ -382,7 +382,7 @@ export const registerCertificateReport = (data: any): TDocumentDefinitions => {
                 margin: [0, 0, 0, 10],
               },
               {
-                text: data.cadastre.process.establishment.tradeName,
+                text: data.establishment.tradeName,
                 style: 'imageSubtitle',
               },
               {
@@ -391,7 +391,7 @@ export const registerCertificateReport = (data: any): TDocumentDefinitions => {
                     width: '100%',
                     columns: [
                       {
-                        image: `./storage/resources/reports/images/${data.cadastre.process.classification.code}.png`,
+                        image: `./storage/resources/reports/images/${data.classification.code}.png`,
                         width: 150,
                         height: 150,
                       },
@@ -423,7 +423,7 @@ export const registerCertificateReport = (data: any): TDocumentDefinitions => {
                             margin: [0, 0, 0, 10],
                           },
                           {
-                            text: data.cadastre.process.category.name,
+                            text: data.category.name,
                             style: 'imageTitle',
                             marginBottom: 10,
                           },

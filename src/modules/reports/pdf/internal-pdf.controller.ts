@@ -32,4 +32,55 @@ export class InternalPdfController {
     pdfDoc.pipe(response);
     pdfDoc.end();
   }
+
+   @PublicRoute()
+  @Header('Content-Type', 'application/pdf')
+  @Get('inactivation/:cadastreId')
+  async generateInactivation(
+    @Res() response: Response,
+    @Param('cadastreId', ParseUUIDPipe) cadastreId: string,
+  ) {
+    const pdfDoc: PDFKit.PDFDocument = (await this.internalPdfService.generateInactivation({
+      type:'pdf',
+      cadastreId: cadastreId,
+    })) as PDFKit.PDFDocument;
+
+    pdfDoc.info.Title = 'Users Report';
+    pdfDoc.pipe(response);
+    pdfDoc.end();
+  }
+
+   @PublicRoute()
+  @Header('Content-Type', 'application/pdf')
+  @Get('update/:cadastreId')
+  async generateUpdate(
+    @Res() response: Response,
+    @Param('cadastreId', ParseUUIDPipe) cadastreId: string,
+  ) {
+    const pdfDoc: PDFKit.PDFDocument = (await this.internalPdfService.generateUpdate({
+      type:'pdf',
+      cadastreId: cadastreId,
+    })) as PDFKit.PDFDocument;
+
+    pdfDoc.info.Title = 'Users Report';
+    pdfDoc.pipe(response);
+    pdfDoc.end();
+  }
+
+   @PublicRoute()
+  @Header('Content-Type', 'application/pdf')
+  @Get('suspension/:cadastreId')
+  async generateSuspension(
+    @Res() response: Response,
+    @Param('cadastreId', ParseUUIDPipe) cadastreId: string,
+  ) {
+    const pdfDoc: PDFKit.PDFDocument = (await this.internalPdfService.generateSuspension({
+      type:'pdf',
+      cadastreId: cadastreId,
+    })) as PDFKit.PDFDocument;
+
+    pdfDoc.info.Title = 'Users Report';
+    pdfDoc.pipe(response);
+    pdfDoc.end();
+  }
 }

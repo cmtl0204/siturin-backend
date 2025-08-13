@@ -1,88 +1,49 @@
 import { TDocumentDefinitions } from 'pdfmake/interfaces';
 import { customLayout, defaultDate, defaultFooter, defaultHeader } from '../layouts/layout_4';
+import { format } from 'date-fns/format';
 
-export const inactivation = (data: any): TDocumentDefinitions => {
+export const registerInactivation = (data: any): TDocumentDefinitions => {
 
     const qrData = `http://localhost:3000/api/v1/enrollment-reports/certificate`;
-    /* let message = [
-        'En la ciudad de ',
-        { text: 'CHILLANES', bold: true },
-        ', el Ministerio de Turismo certifica que, el señor(a) ',
-        { text: 'GUARDERAS RIOFRIO ESTEBAN', bold: true },
-        ' en su calidad de propietario o representante legal del establecimiento ',
-        { text: 'AMERICAN DELI', bold: true },
-        ', de manera libre y voluntaria realiza el trámite de Inactivación del establecimiento con la siguiente información:'
-    ];
-    message = [
-        'En la ciudad de ',
-        { text: 'ATACAMES', bold: true },
-        ', el ssMinisterio de Turismo certifica que, el señor(a) ',
-        { text: 'GUARDERAS RIOFRIO ESTEBAN', bold: true },
-        ' en su calidad de propietario o representante legal del establecimiento ',
-        { text: 'AMERICAN DELI', bold: true },
-        ', de manera libre y voluntaria realiza el trámite de Inactivación del establecimiento con la siguiente información:'
-    ]; */
 
-    const origin: string  = 'CHILLANES'; // o 'ATACAMES', o lo que necesites
+    const legalName = data.ruc.type?.code === 'natural'
+        ? data.ruc.legalName
+        : data.ruc.legalRepresentativeName;
 
     let message;
 
-    if (origin === 'CHILLANES') {
+    if (data.inactivationCauseType?.code === 'a_peticion') {
         message = [
-            '11En la ciudad de ',
-            { text: 'CHILLANES', bold: true },
-            ', el AAMinisterio de Turismo certifica que, el señor(a) ',
-            { text: 'GUARDERAS RIOFRIO ESTEBAN', bold: true },
+            'En la ciudad de ',
+            { text: data.canton.name, bold: true },
+            ', el Ministerio de Turismo certifica que, el señor(a) ',
+            { text: legalName, bold: true },
             ' en su calidad de propietario o representante legal del establecimiento ',
-            { text: 'AMERICAN DELI', bold: true },
-            ', de manera libre y voluntaria realiza el trámite de Inactivación del establecimiento con la siguiente información:'
+            { text: data.establishment.tradeName, bold: true },
+            ', de manera libre y voluntaria realiza el trámite de ',
+            { text: 'Inactivacion', bold: true },
+            ' del establecimiento con la siguiente información:'
         ];
-    } else if (origin === 'ATACAMES') {
+        
+    } else if (data.inactivationCauseType?.code === 'de_oficio') {
         message = [
-            '22En la ciudad de ',
-            { text: 'ATACAMES', bold: true },
-            ', el BBMinisterio de Turismo certifica que, el señor(a) ',
-            { text: 'GUARDERAS RIOFRIO ESTEBAN', bold: true },
-            ' en su calidad de propietario o representante legal del establecimiento ',
-            { text: 'AMERICAN DELI', bold: true },
-            ', de manera libre y voluntaria realiza el trámite de Inactivación del establecimiento con la siguiente información:'
+            'En la ciudad de ',
+            { text: data.canton.name, bold: true },
+            ', el Ministerio de Turismo certifica que, de conformidad al cumplimiento del ',
+            { text: 'Acuerdo Ministerial No. 2017-042', bold: true },
+            ' se procedió a realizar las acciones de control (inspección) correspondientes al establecimiento ',
+            { text: data.establishment.tradeName, bold: true },
         ];
     }
 
-    const message1 = [
-        '11En la ciudad de ',
-        { text: 'CHILLANES', bold: true },
-        ', el Ministerio de Turismo certifica que, el señor(a) ',
-        { text: 'GUARDERAS RIOFRIO ESTEBAN', bold: true },
-        ' en su calidad de propietario o representante legal del establecimiento ',
-        { text: 'AMERICAN DELI', bold: true },
-        ', de manera libre y voluntaria realiza el trámite de Inactivación del establecimiento con la siguiente información:'
-    ];
-
-    const message2 = [
-        '22En la ciudad de ',
-        { text: 'ATACAMES', bold: true },
-        ', el ssMinisterio de Turismo certifica que, el señor(a) ',
-        { text: 'GUARDERAS RIOFRIO ESTEBAN', bold: true },
-        ' en su calidad de propietario o representante legal del establecimiento ',
-        { text: 'AMERICAN DELI', bold: true },
-        ', de manera libre y voluntaria realiza el trámite de Inactivación del establecimiento con la siguiente información:'
-    ];
-
-
-    const city = (data.city || 'ATACAMES').trim().toUpperCase();
-
-    //const message = city === 'ATACAMES' ? message1 : message2;
-
     const list = {
-        ul: [
-            {
-                text: 'El establecimiento turístico ha cambiado de actividad a no turístico.',
+        ul: data.inactivationCauses && data.inactivationCauses.length > 0
+            ? data.inactivationCauses.map(cause => ({
+                text: cause.name,
                 bold: true,
-            }
-        ]
+            }))
+            : [{ text: 'Sin causas', bold: true }]
     };
-
 
 
     return {
@@ -102,7 +63,7 @@ export const inactivation = (data: any): TDocumentDefinitions => {
                 marginBottom: 10,
             },
             {
-                text: 'BOLÍVAR - CHILLANES,' + defaultDate(),
+                text: `${data.province.name} - ${data.canton.name}, ${format(data.registeredAt, 'yyyy-MM-dd')}`,
                 style: 'date'
             },
             {
@@ -111,7 +72,7 @@ export const inactivation = (data: any): TDocumentDefinitions => {
                 marginBottom: 10,
             },
             {
-                text: 'GUARDERAS RIOFRIO ESTEBAN',
+                text: legalName,
                 bold: true,
                 style: 'small',
                 marginBottom: 10,
@@ -132,38 +93,38 @@ export const inactivation = (data: any): TDocumentDefinitions => {
                     body: [
                         [
                             { text: 'Número de Establecimiento:', style: 'tableTitle' },
-                            { text: '3', style: 'defaultText' }
+                            { text: data.establishment.number, style: 'defaultText' }
                         ],
                         [
                             { text: 'R.U.C.:', style: 'tableTitle' },
-                            { text: '1792072018001', style: 'defaultText' }
+                            { text: data.ruc.number, style: 'defaultText' }
                         ],
                         [
                             { text: 'Razón Social:', style: 'tableTitle' },
-                            { text: 'DELI INTERNACIONAL S.A.', style: 'defaultText' }
+                            { text: data.ruc.legalName, style: 'defaultText' }
                         ],
                         [
                             { text: 'Nombre Comercial:', style: 'tableTitle' },
-                            { text: 'AMERICAN DELI', style: 'defaultText' }
+                            { text: data.establishment.tradeName, style: 'defaultText' }
                         ],
                         [
                             { text: 'Actividad:', style: 'tableTitle' },
-                            { text: 'AMERICAN DELI', style: 'defaultText' }
+                            { text: data.activity?.name, style: 'defaultText' }
                         ], [
                             { text: 'Clasificaión:', style: 'tableTitle' },
-                            { text: 'AMERICAN DELI', style: 'defaultText' }
+                            { text: data.classification?.name, style: 'defaultText' }
                         ],
                         [
                             { text: 'Representante Legal/Propietario:', style: 'tableTitle' },
-                            { text: 'GUARDERAS RIOFRIO ESTEBAN', style: 'defaultText' }
+                            { text: data.ruc.legalName, style: 'defaultText' }
                         ],
                         [
                             { text: 'Número de Registro:', style: 'tableTitle' },
-                            { text: '1792072018001.003.1013851', style: 'defaultText' }
+                            { text: data.cadastre.registerNumber, style: 'defaultText' }
                         ],
                         [
                             { text: 'Dirección:', style: 'tableTitle' },
-                            { text: 'BOLÍVAR, CHILLANES, CHILLANES, nose, nose, nose', style: 'defaultText' }
+                            { text: `${data.province.name}, ${data.canton.name}, ${data.parish.name}, ${data.establishmentAddress.mainStreet}, ${data.establishmentAddress.numberStreet}, ${data.establishmentAddress.secondaryStreet}, ${data.establishmentAddress.referenceStreet}`, style: 'defaultText' }
                         ]
                     ]
                 },
@@ -187,14 +148,22 @@ export const inactivation = (data: any): TDocumentDefinitions => {
                 marginBottom: 10,
             },
             {
-                image: './storage/resources/reports/layouts/firma.png',
+                image: `./storage/resources/reports/signatures/${data.zone.code}.png`,
                 alignment: 'center',
                 marginBottom: 10,
             },
             {
-                text: 'DIRECTOR/A ZONAL 8 - DZ8 FANNY LORENA CONDO TAMAYO',
-                style: 'firm',
-                margin: [140, 0, 140, 0]
+                stack: [
+                    {
+                        text: `DIRECTORA ZONAL - ${data.zone.acronym}`,
+                        style: 'firm',
+                    },
+                    {
+                        text: data.zone.director,
+                        style: 'firm',
+                    },
+                ],
+                margin: [140, 0, 140, 0],
             }
         ],
 
@@ -216,8 +185,6 @@ export const inactivation = (data: any): TDocumentDefinitions => {
             },
             small: {
                 fontSize: 8,
-                //characterSpacing: 0.1 as any,
-                //lineHeight: 1.2,
                 alignment: 'justify',
             },
             label: {
@@ -232,7 +199,6 @@ export const inactivation = (data: any): TDocumentDefinitions => {
             tableTitle: {
                 fontSize: 8,
                 bold: true,
-                //color: '#000000',      // texto negro
                 alignment: 'left',
             },
             defaultText: {

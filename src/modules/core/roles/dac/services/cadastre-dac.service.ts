@@ -69,6 +69,7 @@ export class CadastreDacService {
         .take(params.limit)
         .getQuery();
 
+      console.log(idsQuery);
       queryBuilder.where(`cadastre.id IN (${idsQuery})`);
     }
 

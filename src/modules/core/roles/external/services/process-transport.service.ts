@@ -13,6 +13,7 @@ import {
   CadastreStateEntity,
   ProcessAgencyEntity,
   ProcessEntity,
+  ProcessTransportEntity,
   SalesRepresentativeEntity,
   TouristGuideEntity,
 } from '@modules/core/entities';
@@ -125,7 +126,7 @@ export class ProcessTransportService {
     payload: CreateRegistrationProcessAgencyDto,
     manager: EntityManager,
   ): Promise<ProcessAgencyEntity> {
-    const processAgencyRepository = manager.getRepository(ProcessAgencyEntity);
+    const processAgencyRepository = manager.getRepository(ProcessTransportEntity);
     let processAgency = await processAgencyRepository.findOneBy({ processId: payload.processId });
 
     if (!processAgency) {
@@ -133,9 +134,11 @@ export class ProcessTransportService {
     }
 
     processAgency.processId = payload.processId;
-    processAgency.permanentPhysicalSpaceId = payload.permanentPhysicalSpace.id;
-    processAgency.totalAccreditedStaffLanguage = payload.totalAccreditedStaffLanguage;
-    processAgency.percentageAccreditedStaffLanguage = payload.percentageAccreditedStaffLanguage;
+    processAgency.airlineTypeId = payload.permanentPhysicalSpace.id;
+    processAgency.certified = payload.cer;
+    processAgency.certifiedCode = payload.totalAccreditedStaffLanguage;
+    processAgency.certifiedIssueAt = payload.percentageAccreditedStaffLanguage;
+    processAgency.certifiedExpirationAt = payload.percentageAccreditedStaffLanguage;
 
     return await processAgencyRepository.save(processAgency);
   }

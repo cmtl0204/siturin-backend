@@ -43,10 +43,16 @@ export class CreateRegistrationProcessFoodDrinkDto {
   @Type(() => CatalogueDto)
   readonly localType: CatalogueDto;
 
+  @IsOptional()
+  @IsObject()
+  @Type(() => CatalogueDto)
+  readonly geographicArea: CatalogueDto;
+
   @IsObject()
   @Type(() => CatalogueDto)
   readonly establishmentType: CatalogueDto;
 
+  @IsOptional()
   @IsString()
   readonly establishmentName: string;
 

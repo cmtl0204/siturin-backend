@@ -13,6 +13,7 @@ import { ProcessParkService } from '@modules/core/roles/external/services/proces
 import { ProcessCtcService } from '@modules/core/roles/external/services/process-ctc.service';
 import { ProcessEventService } from '@modules/core/roles/external/services/process-event.service';
 import { ProcessFoodDrinkService } from '@modules/core/roles/external/services/process-food-drink.service';
+import { ProcessTransportService } from '@modules/core/roles/external/services/process-transport.service';
 
 @Global()
 @Module({
@@ -27,6 +28,7 @@ import { ProcessFoodDrinkService } from '@modules/core/roles/external/services/p
     ProcessCtcService,
     ProcessEventService,
     ProcessFoodDrinkService,
+    ProcessTransportService,
   ],
   exports: [],
 })

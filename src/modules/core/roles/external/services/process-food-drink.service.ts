@@ -131,7 +131,7 @@ export class ProcessFoodDrinkService {
     processFoodDrink.processId = payload.processId;
     processFoodDrink.totalCapacities = payload.totalCapacities;
     processFoodDrink.totalTables = payload.totalTables;
-    processFoodDrink.establishmentName = payload.establishmentName;
+    processFoodDrink.establishmentName = payload.establishmentName || '';
     processFoodDrink.establishmentTypeId = payload.establishmentType.id;
     processFoodDrink.hasFranchiseGrantCertificate = payload.hasFranchiseGrantCertificate;
 

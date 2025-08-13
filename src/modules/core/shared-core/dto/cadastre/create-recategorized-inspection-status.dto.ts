@@ -9,11 +9,6 @@ export class CreateRecategorizedInspectionStatusDto {
   readonly cadastreId: string;
 
   @IsNotEmpty()
-  @IsUUID()
-  readonly processId: string;
-
-  @IsNotEmpty()
-  @ValidateNested()
   @Type(() => CatalogueDto)
   readonly state: CatalogueDto;
 

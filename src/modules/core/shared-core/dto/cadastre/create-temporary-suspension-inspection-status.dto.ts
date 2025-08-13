@@ -9,16 +9,10 @@ export class CreateTemporarySuspensionInspectionStatusDto {
   readonly cadastreId: string;
 
   @IsNotEmpty()
-  @IsUUID()
-  readonly processId: string;
-
-  @IsNotEmpty()
-  @ValidateNested()
   @Type(() => CatalogueDto)
   readonly state: CatalogueDto;
 
   @IsArray()
-  @ValidateNested()
   @Type(() => BreachCauseDto)
   readonly breachCauses: BreachCauseDto[];
 }

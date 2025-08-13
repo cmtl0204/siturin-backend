@@ -12,7 +12,7 @@ import { CatalogueDto } from '@modules/common/catalogue/dto';
 import { ActivityEntity, CategoryEntity, ClassificationEntity } from '@modules/core/entities';
 import { AccommodationDto } from '@modules/core/roles/external/dto/process-ctc/accommodation.dto';
 import { FoodDrinkDto } from './food-drink.dto';
-import { TouristTransportDto } from './tourist-transport.dto';
+import { TransportDto } from './transport.dto';
 import { CommunityOperationDto } from '@modules/core/roles/external/dto/process-ctc/community-operation.dto';
 import { CreateRegulationDto } from '@modules/core/shared-core/dto/process/create-regulation.dto';
 
@@ -69,8 +69,8 @@ export class CreateRegistrationProcessCtcDto {
 
   @IsOptional()
   // @ValidateNested()
-  @Type(() => TouristTransportDto)
-  readonly transport: TouristTransportDto;
+  @Type(() => TransportDto)
+  readonly transport: TransportDto;
 
   @IsOptional()
   @ValidateNested()

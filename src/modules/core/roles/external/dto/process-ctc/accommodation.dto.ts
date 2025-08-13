@@ -16,8 +16,8 @@ export class AccommodationDto {
   @IsPositive(isPositiveValidationOptions())
   readonly totalRooms: number;
 
-    @IsNotEmpty()
-    @ValidateNested()
-    @Type(() => CreateRegulationDto)
-    readonly regulation: CreateRegulationDto;
+  @IsNotEmpty()
+  @ValidateNested()
+  @Type(() => CreateRegulationDto)
+  readonly regulation: CreateRegulationDto;
 }

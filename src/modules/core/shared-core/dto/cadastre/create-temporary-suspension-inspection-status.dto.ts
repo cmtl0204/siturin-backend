@@ -1,7 +1,7 @@
 import { IsArray, IsNotEmpty, IsOptional, IsUUID, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { CatalogueDto } from '@modules/common/catalogue/dto';
-import { BreachCauseDto, TouristGuideDto } from '@modules/core/shared-core/dto/process';
+import { BreachCauseDto, CreateTouristGuideDto } from '@modules/core/shared-core/dto/process';
 
 export class CreateTemporarySuspensionInspectionStatusDto {
   @IsNotEmpty()

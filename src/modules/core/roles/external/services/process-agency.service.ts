@@ -8,10 +8,12 @@ import {
 } from '@utils/enums';
 import { ResponseHttpInterface } from '@utils/interfaces';
 import {
+  AdventureTourismModalityEntity,
   CadastreEntity,
   CadastreStateEntity,
   ProcessAgencyEntity,
   ProcessEntity,
+  SalesRepresentativeEntity,
   TouristGuideEntity,
 } from '@modules/core/entities';
 import { CreateRegistrationProcessAgencyDto } from '@modules/core/roles/external/dto/process-agency';
@@ -165,6 +167,77 @@ export class ProcessAgencyService {
         throw new BadRequestException({
           error: errorMessage,
           message: `Error guardando Guía de Turismo: ${item.name || item.identification}`,
+        });
+      }
+    }
+
+    return true;
+  }
+
+  private async saveAdventureTourismModalities(
+    payload: CreateRegistrationProcessAgencyDto,
+    manager: EntityManager,
+  ): Promise<boolean> {
+    const adventureTourismModalityRepository = manager.getRepository(
+      AdventureTourismModalityEntity,
+    );
+
+    for (const item of payload.adventureTourismModalities) {
+      try {
+        const adventureTourismModality = adventureTourismModalityRepository.create();
+        adventureTourismModality.processId = payload.processId;
+        adventureTourismModality.className = item.className;
+        adventureTourismModality.typeId = item.type.id;
+
+        await adventureTourismModalityRepository.save(adventureTourismModality);
+      } catch (error: unknown) {
+        let errorMessage = 'Error desconocido';
+
+        if (error instanceof Error) {
+          errorMessage = error.message;
+        } else if (typeof error === 'string') {
+          errorMessage = error;
+        }
+
+        throw new BadRequestException({
+          error: errorMessage,
+          message: `Error guardando Modalidades de Turismo: ${item.type || item.className}`,
+        });
+      }
+    }
+
+    return true;
+  }
+
+  private async saveSalesRepresentatives(
+    payload: CreateRegistrationProcessAgencyDto,
+    manager: EntityManager,
+  ): Promise<boolean> {
+    const salesRepresentativeRepository = manager.getRepository(SalesRepresentativeEntity);
+
+    for (const item of payload.salesRepresentatives) {
+      try {
+        const salesRepresentative = salesRepresentativeRepository.create();
+        salesRepresentative.processId = payload.processId;
+        salesRepresentative.ruc = item.ruc;
+        salesRepresentative.legalName = item.legalName;
+        salesRepresentative.hasProfessionalDegree = item.hasProfessionalDegree;
+        salesRepresentative.hasContract = item.hasContract;
+        salesRepresentative.hasWorkExperience = item.hasWorkExperience;
+
+        await salesRepresentativeRepository.save(salesRepresentative);
+      } catch (error: unknown) {
+        let errorMessage = 'Error desconocido';
+
+        if (error instanceof Error) {
+          errorMessage = error.message;
+        } else if (typeof error === 'string') {
+          errorMessage = error;
+        }
+
+        throw new BadRequestException({
+          error: errorMessage,
+          message: `Error guardando Representante de Ventas: ${item.legalName || item.ruc}`,
         });
       }
     }

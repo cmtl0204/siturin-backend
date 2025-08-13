@@ -2,7 +2,7 @@ import { IsBoolean, IsOptional, IsString } from 'class-validator';
 import { isBooleanValidationOptions, isStringValidationOptions } from '@utils/dto-validation';
 import { TouristLicenseEntity } from '@modules/core/entities';
 
-export class TouristGuideDto {
+export class CreateTouristGuideDto {
   @IsString(isStringValidationOptions())
   readonly identification: string;
 

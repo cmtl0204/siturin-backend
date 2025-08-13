@@ -66,7 +66,7 @@ export class ProcessCtcService {
       }
 
       if (payload.transport) {
-        const touristTransport = await this.processService.saveTouristTransports(
+        const touristTransport = await this.processService.saveTouristTransportCompanies(
           payload.processId,
           payload.transport.touristTransportCompanies,
           manager,

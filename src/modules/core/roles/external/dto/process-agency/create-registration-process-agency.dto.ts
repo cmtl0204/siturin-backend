@@ -12,7 +12,11 @@ import { isBooleanValidationOptions, isPositiveValidationOptions } from '@utils/
 import { Type } from 'class-transformer';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
 import { ActivityEntity, CategoryEntity, ClassificationEntity } from '@modules/core/entities';
-import { TouristGuideDto } from '@modules/core/shared-core/dto/process';
+import {
+  CreateSalesRepresentativeDto,
+  CreateTouristGuideDto,
+  CreateTouristTransportCompanyDto,
+} from '@modules/core/shared-core/dto/process';
 import { CatalogueDto } from '@modules/common/catalogue/dto';
 import { CreateRegulationDto } from '@modules/core/shared-core/dto/process/create-regulation.dto';
 import { CreateAdventureTourismModalityDto } from '@modules/core/shared-core/dto/adventure-tourism-modality';
@@ -64,14 +68,26 @@ export class CreateRegistrationProcessAgencyDto {
   @IsOptional()
   @IsArray()
   @ValidateNested()
-  @Type(() => TouristGuideDto)
-  readonly touristGuides: TouristGuideDto[];
+  @Type(() => CreateTouristGuideDto)
+  readonly touristGuides: CreateTouristGuideDto[];
 
   @IsOptional()
   @IsArray()
   @ValidateNested()
   @Type(() => CreateAdventureTourismModalityDto)
   readonly adventureTourismModalities: CreateAdventureTourismModalityDto[];
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested()
+  @Type(() => CreateSalesRepresentativeDto)
+  readonly salesRepresentatives: CreateSalesRepresentativeDto[];
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested()
+  @Type(() => CreateTouristTransportCompanyDto)
+  readonly touristTransportCompanies: CreateTouristTransportCompanyDto[];
 
   @IsNotEmpty()
   @ValidateNested()

@@ -12,8 +12,8 @@ export class FoodDrinkDto {
   @IsPositive(isPositiveValidationOptions())
   readonly totalTables: number;
 
-    @IsNotEmpty()
-    @ValidateNested()
-    @Type(() => CreateRegulationDto)
-    readonly regulation: CreateRegulationDto;
+  @IsNotEmpty()
+  @ValidateNested()
+  @Type(() => CreateRegulationDto)
+  readonly regulation: CreateRegulationDto;
 }

@@ -3,7 +3,7 @@ import { isStringValidationOptions } from '@utils/dto-validation';
 import { Type } from 'class-transformer';
 import { CatalogueDto } from '@modules/common/catalogue/dto';
 
-export class TransportDto {
+export class CreateTouristTransportCompanyDto {
   @IsOptional()
   @IsString(isStringValidationOptions())
   readonly id: string;

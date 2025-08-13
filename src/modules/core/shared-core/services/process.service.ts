@@ -31,14 +31,15 @@ import {
   CreateStep1Dto,
   CreateStep2Dto,
   InactivationCauseDto,
-  TouristGuideDto,
+  CreateTouristGuideDto,
+  CreateTouristTransportCompanyDto,
 } from '@modules/core/shared-core/dto/process';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
 import { UserEntity } from '@auth/entities';
 import { FileService } from '@modules/common/file/file.service';
 import { CreateRegulationResponseDto } from '@modules/core/shared-core/dto/process/create-regulation-response.dto';
 import { CreateAdventureTourismModalityDto } from '@modules/core/shared-core/dto/adventure-tourism-modality';
-import { TransportDto } from '@modules/core/roles/external/dto/process-ctc/transport';
+import { TransportDto } from '@modules/core/roles/external/dto/process-ctc/transport.dto';
 import { CatalogueDto } from '@modules/common/catalogue/dto';
 
 @Injectable()
@@ -661,7 +662,7 @@ export class ProcessService {
 
   async saveTouristGuides(
     processId: string,
-    touristGuides: TouristGuideDto[],
+    touristGuides: CreateTouristGuideDto[],
     manager: EntityManager,
   ): Promise<boolean> {
     const touristGuideRepository = manager.getRepository(TouristGuideEntity);
@@ -693,9 +694,9 @@ export class ProcessService {
     return true;
   }
 
-  async saveTouristTransports(
+  async saveTouristTransportCompanies(
     processId: string,
-    transports: TransportDto[],
+    transports: CreateTouristTransportCompanyDto[],
     manager: EntityManager,
   ): Promise<boolean> {
     const transportRepository = manager.getRepository(TouristTransportCompanyEntity);

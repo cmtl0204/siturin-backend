@@ -9,7 +9,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { ProcessEntity } from '@modules/core/entities/process.entity';
-import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
 
 @Entity('process_ctc', { schema: 'core' })
 export class ProcessCtcEntity {
@@ -130,6 +129,7 @@ export class ProcessCtcEntity {
   @Column({
     name: 'id_temp',
     type: 'bigint',
+    nullable: true,
     comment: 'Codigo de la tabla migrada',
   })
   idTemp: number;

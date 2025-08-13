@@ -125,7 +125,7 @@ export class ProcessTransportService {
   private async saveProcessTransport(
     payload: CreateRegistrationProcessAgencyDto,
     manager: EntityManager,
-  ): Promise<ProcessAgencyEntity> {
+  ): Promise<ProcessTransportEntity> {
     const processAgencyRepository = manager.getRepository(ProcessTransportEntity);
     let processAgency = await processAgencyRepository.findOneBy({ processId: payload.processId });
 
@@ -135,10 +135,10 @@ export class ProcessTransportService {
 
     processAgency.processId = payload.processId;
     processAgency.airlineTypeId = payload.permanentPhysicalSpace.id;
-    processAgency.certified = payload.cer;
-    processAgency.certifiedCode = payload.totalAccreditedStaffLanguage;
-    processAgency.certifiedIssueAt = payload.percentageAccreditedStaffLanguage;
-    processAgency.certifiedExpirationAt = payload.percentageAccreditedStaffLanguage;
+    processAgency.certified = true;
+    processAgency.certifiedCode = '';
+    processAgency.certifiedIssueAt = new Date();
+    processAgency.certifiedExpirationAt = new Date();
 
     return await processAgencyRepository.save(processAgency);
   }
@@ -170,41 +170,6 @@ export class ProcessTransportService {
         throw new BadRequestException({
           error: errorMessage,
           message: `Error guardando Guía de Turismo: ${item.name || item.identification}`,
-        });
-      }
-    }
-
-    return true;
-  }
-
-  private async saveAdventureTourismModalities(
-    payload: CreateRegistrationProcessAgencyDto,
-    manager: EntityManager,
-  ): Promise<boolean> {
-    const adventureTourismModalityRepository = manager.getRepository(
-      AdventureTourismModalityEntity,
-    );
-
-    for (const item of payload.adventureTourismModalities) {
-      try {
-        const adventureTourismModality = adventureTourismModalityRepository.create();
-        adventureTourismModality.processId = payload.processId;
-        adventureTourismModality.className = item.className;
-        adventureTourismModality.typeId = item.type.id;
-
-        await adventureTourismModalityRepository.save(adventureTourismModality);
-      } catch (error: unknown) {
-        let errorMessage = 'Error desconocido';
-
-        if (error instanceof Error) {
-          errorMessage = error.message;
-        } else if (typeof error === 'string') {
-          errorMessage = error;
-        }
-
-        throw new BadRequestException({
-          error: errorMessage,
-          message: `Error guardando Modalidades de Turismo: ${item.type || item.className}`,
         });
       }
     }

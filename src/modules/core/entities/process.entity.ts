@@ -72,12 +72,17 @@ export class ProcessEntity {
   @OneToOne(() => InspectionEntity, (entity) => entity.process)
   actualInspection: InspectionEntity;
 
+  @OneToMany(() => InspectionEntity, (entity) => entity.process)
+  inspections: InspectionEntity[];
+
   @OneToMany(() => InactivationCauseEntity, (entity) => entity.process)
   inactivationCauses: InactivationCauseEntity[];
 
   @OneToOne(() => AssignmentEntity, (entity) => entity.process)
   assignment: AssignmentEntity;
 
+  @OneToMany(() => AssignmentEntity, (entity) => entity.process)
+  assignments: AssignmentEntity[];
   /** Foreign Keys **/
   @ManyToOne(() => ActivityEntity, { nullable: true })
   @JoinColumn({ name: 'activity_id' })

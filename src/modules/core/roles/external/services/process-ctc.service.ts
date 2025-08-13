@@ -65,10 +65,10 @@ export class ProcessCtcService {
         );
       }
 
-      if (payload.touristTransportCompany) {
+      if (payload.transport) {
         const touristTransport = await this.processService.saveTouristTransports(
           payload.processId,
-          payload.touristTransportCompany.touristTransportCompanies,
+          payload.transport.touristTransportCompanies,
           manager,
         );
       }

@@ -700,29 +700,31 @@ export class ProcessService {
   ): Promise<boolean> {
     const transportRepository = manager.getRepository(TouristTransportCompanyEntity);
 
-    for (const item of transports) {
-      try {
-        const transport = transportRepository.create();
-        transport.processId = processId;
-        transport.legalName = item.legalName;
-        transport.ruc = item.ruc;
-        transport.authorizationNumber = item.authorizationNumber;
-        transport.rucTypeId = item.rucType.id;
-        transport.typeId = item.type.id; //todo: en vez de authorization debe ser typeId y type.id
+    if (transports != null && transports.length > 0) {
+      for (const item of transports) {
+        try {
+          const transport = transportRepository.create();
+          transport.processId = processId;
+          transport.legalName = item.legalName;
+          transport.ruc = item.ruc;
+          transport.authorizationNumber = item.authorizationNumber;
+          transport.rucTypeId = item.rucType.id;
+          transport.typeId = item.type.id;
 
-        await transportRepository.save(transport);
-      } catch (error: unknown) {
-        let errorMessage = 'Error desconocido';
-        if (error instanceof Error) {
-          errorMessage = error.message;
-        } else if (typeof error === 'string') {
-          errorMessage = error;
+          await transportRepository.save(transport);
+        } catch (error: unknown) {
+          let errorMessage = 'Error desconocido';
+          if (error instanceof Error) {
+            errorMessage = error.message;
+          } else if (typeof error === 'string') {
+            errorMessage = error;
+          }
+
+          throw new BadRequestException({
+            error: errorMessage,
+            message: `Error guardando Transporte Turístico: ${item.legalName || item.ruc || item.type.id || item.authorizationNumber || item.rucType.id}`,
+          });
         }
-
-        throw new BadRequestException({
-          error: errorMessage,
-          message: `Error guardando Transporte Turístico: ${item.legalName || item.ruc || item.type.id || item.authorizationNumber || item.rucType.id}`,
-        });
       }
     }
 

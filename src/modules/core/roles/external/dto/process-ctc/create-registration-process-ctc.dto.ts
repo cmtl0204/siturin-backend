@@ -68,9 +68,9 @@ export class CreateRegistrationProcessCtcDto {
   readonly foodDrink: FoodDrinkDto;
 
   @IsOptional()
-  @ValidateNested()
+  // @ValidateNested()
   @Type(() => TouristTransportDto)
-  readonly touristTransportCompany: TouristTransportDto;
+  readonly transport: TouristTransportDto;
 
   @IsOptional()
   @ValidateNested()

@@ -6,7 +6,7 @@ import { Type } from 'class-transformer';
 export class TouristTransportDto {
   @IsOptional()
   @IsArray()
-  @ValidateNested()
+  // @ValidateNested()
   @Type(() => TouristTransportCompanyEntity)
   readonly touristTransportCompanies: TouristTransportCompanyEntity[];
 

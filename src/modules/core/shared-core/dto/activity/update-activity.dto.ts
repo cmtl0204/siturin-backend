@@ -1,4 +1,4 @@
 import { PartialType } from '@nestjs/swagger';
-import { BaseTouristGuideDto } from '@modules/core/shared-core/dto/tourist-guide/base-tourist-guide.dto';
+import { BaseActivityDto } from '@modules/core/shared-core/dto/activity/base-activity.dto';
 
-export class UpdateActivityDto extends PartialType(BaseTouristGuideDto) {}
+export class UpdateActivityDto extends PartialType(BaseActivityDto) {}

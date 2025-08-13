@@ -1,4 +1,3 @@
-import { TouristGuideController } from './tourist-guide.controller';
 import { ProcessesController } from './process.controller';
 import { CadastreController } from '@modules/core/shared-core/controllers/cadastre.controller';
 import { ActivityController } from '@modules/core/shared-core/controllers/activity.controller';
@@ -8,7 +7,6 @@ import { CategoryConfigurationsController } from '@modules/core/shared-core/cont
 
 export const controllers = [
   ActivityController,
-  TouristGuideController,
   ProcessesController,
   CadastreController,
   RegulationSectionController,

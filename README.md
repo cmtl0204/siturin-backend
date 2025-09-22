@@ -100,39 +100,39 @@ Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
 
 ## Libraries
 ```bash
-$ npm i --save @faker-js/faker
-$ npm i --save @nestjs/axios
-$ npm i --save @nestjs/cache-manager
-$ npm i --save @nestjs/config
-$ npm i --save @nestjs/jwt
-$ npm i --save @nestjs/passport
-$ npm i --save @nestjs/swagger
-$ npm i --save axios
-$ npm i --save bcrypt
-$ npm i --save cache-manager
-$ npm i --save class-transformer
-$ npm i --save class-validator
-$ npm i --save cls-hooked
-$ npm i --save date-fns
-$ npm i --save exceljs
-$ npm i --save joi
-$ npm i --save nodemailer
-$ npm i --save nodemailer-express-handlebars
-$ npm i --save passport
-$ npm i --save passport-jwt
-$ npm i --save passport-local
-$ npm i --save pdfmake
-$ npm i --save pg
-$ npm i --save qrcode
-$ npm i --save typeorm
+npm i --save @faker-js/faker
+npm i --save @nestjs/axios
+npm i --save @nestjs/cache-manager
+npm i --save @nestjs/config
+npm i --save @nestjs/jwt
+npm i --save @nestjs/passport
+npm i --save @nestjs/swagger
+npm i --save axios
+npm i --save bcrypt
+npm i --save cache-manager
+npm i --save class-transformer
+npm i --save class-validator
+npm i --save cls-hooked
+npm i --save date-fns
+npm i --save exceljs
+npm i --save joi
+npm i --save nodemailer
+npm i --save nodemailer-express-handlebars
+npm i --save passport
+npm i --save passport-jwt
+npm i --save passport-local
+npm i --save pdfmake
+npm i --save pg
+npm i --save qrcode
+npm i --save typeorm
 
-$ npm i -D @types/bcrypt
-$ npm i -D @types/cls-hooked
-$ npm i -D @types/exceljs
-$ npm i -D @types/multer
-$ npm i -D @types/nodemailer-express-handlebars
-$ npm i -D @types/passport-local
-$ npm i -D @types/passport-jwt
-$ npm i -D @types/pdfmake
+npm i -D @types/bcrypt
+npm i -D @types/cls-hooked
+npm i -D @types/exceljs
+npm i -D @types/multer
+npm i -D @types/nodemailer-express-handlebars
+npm i -D @types/passport-local
+npm i -D @types/passport-jwt
+npm i -D @types/pdfmake
 ```
 

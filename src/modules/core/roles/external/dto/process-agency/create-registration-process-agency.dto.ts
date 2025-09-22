@@ -12,14 +12,12 @@ import { isBooleanValidationOptions, isPositiveValidationOptions } from '@utils/
 import { Type } from 'class-transformer';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
 import { ActivityEntity, CategoryEntity, ClassificationEntity } from '@modules/core/entities';
-import {
-  CreateSalesRepresentativeDto,
-  CreateTouristGuideDto,
-  CreateTouristTransportCompanyDto,
-} from '@modules/core/shared-core/dto/process';
+import { TouristGuideDto } from '@modules/core/shared-core/dto/process';
 import { CatalogueDto } from '@modules/common/catalogue/dto';
-import { CreateRegulationDto } from '@modules/core/shared-core/dto/process/create-regulation.dto';
-import { CreateAdventureTourismModalityDto } from '@modules/core/shared-core/dto/adventure-tourism-modality';
+import { RegulationDto } from '@modules/core/shared-core/dto/process/regulation.dto';
+import { AdventureTourismModalityDto } from '@modules/core/shared-core/dto/process/adventure-tourism-modality.dto';
+import { SalesRepresentativeDto } from '@modules/core/shared-core/dto/process/sales-representative.dto';
+import { TouristTransportCompanyDto } from '@modules/core/shared-core/dto/process/tourist-transport-company.dto';
 
 export class CreateRegistrationProcessAgencyDto {
   @IsUUID()
@@ -42,6 +40,10 @@ export class CreateRegistrationProcessAgencyDto {
   readonly category: CategoryEntity;
 
   @IsOptional()
+  @IsBoolean(isBooleanValidationOptions())
+  readonly hasLandUse: boolean;
+
+  @IsOptional()
   @IsObject()
   @Type(() => CatalogueDto)
   readonly localType: CatalogueDto;
@@ -57,40 +59,54 @@ export class CreateRegistrationProcessAgencyDto {
   readonly percentageAccreditedStaffLanguage: number;
 
   @IsBoolean(isBooleanValidationOptions())
-  readonly hasLandUse: boolean;
-
-  @IsBoolean(isBooleanValidationOptions())
   readonly isProtectedArea: boolean;
 
   @IsBoolean(isBooleanValidationOptions())
   readonly hasProtectedAreaContract: boolean;
 
+  @IsBoolean(isBooleanValidationOptions())
+  readonly hasTouristGuide: boolean;
+
+  @IsBoolean(isBooleanValidationOptions())
+  readonly hasAdventureTourismModality: boolean;
+
+  @IsBoolean(isBooleanValidationOptions())
+  readonly hasSalesRepresentative: boolean;
+
+  @IsBoolean(isBooleanValidationOptions())
+  readonly hasTouristTransportCompany: boolean;
+
   @IsOptional()
-  @IsArray()
-  @ValidateNested()
-  @Type(() => CreateTouristGuideDto)
-  readonly touristGuides: CreateTouristGuideDto[];
+  @IsObject()
+  @Type(() => CatalogueDto)
+  readonly geographicArea: CatalogueDto;
 
   @IsOptional()
   @IsArray()
   @ValidateNested()
-  @Type(() => CreateAdventureTourismModalityDto)
-  readonly adventureTourismModalities: CreateAdventureTourismModalityDto[];
+  @Type(() => TouristGuideDto)
+  readonly touristGuides: TouristGuideDto[];
 
   @IsOptional()
   @IsArray()
   @ValidateNested()
-  @Type(() => CreateSalesRepresentativeDto)
-  readonly salesRepresentatives: CreateSalesRepresentativeDto[];
+  @Type(() => SalesRepresentativeDto)
+  readonly salesRepresentatives: SalesRepresentativeDto[];
 
   @IsOptional()
   @IsArray()
   @ValidateNested()
-  @Type(() => CreateTouristTransportCompanyDto)
-  readonly touristTransportCompanies: CreateTouristTransportCompanyDto[];
+  @Type(() => TouristTransportCompanyDto)
+  readonly touristTransportCompanies: TouristTransportCompanyDto[];
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested()
+  @Type(() => AdventureTourismModalityDto)
+  readonly adventureTourismModalities: AdventureTourismModalityDto[];
 
   @IsNotEmpty()
   @ValidateNested()
-  @Type(() => CreateRegulationDto)
-  readonly regulation: CreateRegulationDto;
+  @Type(() => RegulationDto)
+  readonly regulation: RegulationDto;
 }

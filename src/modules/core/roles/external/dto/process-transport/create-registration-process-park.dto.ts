@@ -12,7 +12,7 @@ import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
 import { ActivityEntity, CategoryEntity, ClassificationEntity } from '@modules/core/entities';
 import { isBooleanValidationOptions } from '@utils/dto-validation';
 import { CatalogueDto } from '@modules/common/catalogue/dto';
-import { CreateRegulationDto } from '@modules/core/shared-core/dto/process/create-regulation.dto';
+import { RegulationDto } from '@modules/core/shared-core/dto/process/regulation.dto';
 
 export class CreateRegistrationProcessParkDto {
   @IsUUID()
@@ -55,6 +55,6 @@ export class CreateRegistrationProcessParkDto {
 
   @IsNotEmpty()
   @ValidateNested()
-  @Type(() => CreateRegulationDto)
-  readonly regulation: CreateRegulationDto;
+  @Type(() => RegulationDto)
+  readonly regulation: RegulationDto;
 }

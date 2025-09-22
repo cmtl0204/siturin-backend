@@ -1,6 +1,6 @@
 import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsUUID } from 'class-validator';
 
-export class CreateRegulationResponseDto {
+export class RegulationResponseDto {
   @IsNotEmpty()
   @IsUUID()
   id: string;

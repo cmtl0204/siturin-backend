@@ -12,9 +12,9 @@ import { CatalogueDto } from '@modules/common/catalogue/dto';
 import { ActivityEntity, CategoryEntity, ClassificationEntity } from '@modules/core/entities';
 import { AccommodationDto } from '@modules/core/roles/external/dto/process-ctc/accommodation.dto';
 import { FoodDrinkDto } from './food-drink.dto';
-import { TransportDto } from './transport.dto';
+import { TouristTransportDto } from './tourist-transport.dto';
 import { CommunityOperationDto } from '@modules/core/roles/external/dto/process-ctc/community-operation.dto';
-import { CreateRegulationDto } from '@modules/core/shared-core/dto/process/create-regulation.dto';
+import { RegulationDto } from '@modules/core/shared-core/dto/process/regulation.dto';
 
 export class CreateRegistrationProcessCtcDto {
   @IsUUID()
@@ -24,7 +24,7 @@ export class CreateRegistrationProcessCtcDto {
   @Type(() => CatalogueDto)
   readonly type: CatalogueDto;
 
-  @IsOptional()
+  @IsObject()
   @Type(() => CatalogueDto)
   readonly activities: CatalogueDto[];
 
@@ -68,9 +68,9 @@ export class CreateRegistrationProcessCtcDto {
   readonly foodDrink: FoodDrinkDto;
 
   @IsOptional()
-  // @ValidateNested()
-  @Type(() => TransportDto)
-  readonly transport: TransportDto;
+  @ValidateNested()
+  @Type(() => TouristTransportDto)
+  readonly touristTransport: TouristTransportDto;
 
   @IsOptional()
   @ValidateNested()
@@ -79,6 +79,6 @@ export class CreateRegistrationProcessCtcDto {
 
   @IsNotEmpty()
   @ValidateNested()
-  @Type(() => CreateRegulationDto)
-  readonly regulation: CreateRegulationDto;
+  @Type(() => RegulationDto)
+  readonly regulation: RegulationDto;
 }

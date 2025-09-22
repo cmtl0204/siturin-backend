@@ -19,7 +19,7 @@ import {
   ProcessEntity,
 } from '@modules/core/entities';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
-import { addDays, set } from 'date-fns';
+import { addDays, endOfDay, set } from 'date-fns';
 
 @Injectable()
 export class ProcessCtcService {
@@ -65,10 +65,10 @@ export class ProcessCtcService {
         );
       }
 
-      if (payload.transport) {
+      if (payload.touristTransport.hasTransports) {
         const touristTransport = await this.processService.saveTouristTransportCompanies(
           payload.processId,
-          payload.transport.touristTransportCompanies,
+          payload.touristTransport.touristTransportCompanies,
           manager,
         );
       }
@@ -81,12 +81,12 @@ export class ProcessCtcService {
         const food = await this.saveFood(payload, manager);
       }
 
-      await this.processService.saveAutoInspection(manager, payload.processId, payload.type, user);
+      await this.processService.saveAutoInspection(manager, user, payload.processId, payload.type);
 
       const autoAssignment = await this.processService.saveAutoAssignment(
+        manager,
         payload.processId,
         process.establishmentAddress.provinceId,
-        manager,
       );
 
       await this.processService.saveRegulation(
@@ -146,12 +146,7 @@ export class ProcessCtcService {
     process.categoryId = payload.category.id;
     process.registeredAt = new Date();
     process.endedAt = new Date();
-    process.inspectionExpirationAt = set(addDays(new Date(), 114), {
-      hours: 23,
-      minutes: 23,
-      seconds: 59,
-      milliseconds: 0,
-    });
+    process.inspectionExpirationAt = addDays(endOfDay(new Date()), 114);
 
     return await processRepository.save(process);
   }

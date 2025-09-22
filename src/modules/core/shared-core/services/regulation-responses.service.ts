@@ -2,7 +2,7 @@ import { RegulationResponseEntity, RegulationSectionEntity } from '@modules/core
 import { Inject, Injectable } from '@nestjs/common';
 import { CoreRepositoryEnum } from '@utils/enums';
 import { Repository } from 'typeorm';
-import { CreateRegulationResponseDto } from '@modules/core/shared-core/dto/process/create-regulation-response.dto';
+import { RegulationResponseDto } from '@modules/core/shared-core/dto/process/regulation-response.dto';
 
 @Injectable()
 export class RegulationResponsesService {
@@ -13,14 +13,14 @@ export class RegulationResponsesService {
     private readonly regulationSectionRepository: Repository<RegulationSectionEntity>,
   ) {}
 
-  async create(payload: CreateRegulationResponseDto) {
+  async create(payload: RegulationResponseDto) {
     const regulationResponse = this.complianceResponseRepository.create(payload);
     return await this.complianceResponseRepository.save(regulationResponse);
   }
 
   async createMany(
     processId: string,
-    payload: CreateRegulationResponseDto[],
+    payload: RegulationResponseDto[],
   ): Promise<RegulationResponseEntity[]> {
     const regulationResponses = this.complianceResponseRepository.create(payload);
     return await this.complianceResponseRepository.save(regulationResponses);

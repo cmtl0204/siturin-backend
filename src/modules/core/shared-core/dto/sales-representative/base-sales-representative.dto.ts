@@ -1,7 +1,7 @@
 import { IsBoolean, IsUUID, IsString } from 'class-validator';
 import { isBooleanValidationOptions, isStringValidationOptions } from '@utils/dto-validation';
 
-export class CreateSalesRepresentativeDto {
+export class BaseSalesRepresentativeDto {
   @IsUUID()
   readonly processId: string;
 

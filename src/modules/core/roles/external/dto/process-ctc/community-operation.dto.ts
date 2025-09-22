@@ -1,31 +1,28 @@
-import { IsArray, IsBoolean, IsNotEmpty, IsOptional, ValidateNested } from 'class-validator';
+import { IsArray, IsBoolean, IsOptional, ValidateNested } from 'class-validator';
 import { isBooleanValidationOptions } from '@utils/dto-validation';
 import { Type } from 'class-transformer';
-import { CreateTouristGuideDto } from '@modules/core/shared-core/dto/process';
-import { CreateAdventureTourismModalityDto } from '@modules/core/shared-core/dto/adventure-tourism-modality';
-import { CreateRegulationDto } from '@modules/core/shared-core/dto/process/create-regulation.dto';
+import { CatalogueDto } from '@modules/common/catalogue/dto';
+import {
+  AdventureTourismModalityDto,
+  TouristGuideDto,
+} from '@modules/core/shared-core/dto/process';
 
 export class CommunityOperationDto {
   @IsOptional()
   @IsArray()
   @ValidateNested()
-  @Type(() => CreateAdventureTourismModalityDto)
-  readonly adventureTourismModalities: CreateAdventureTourismModalityDto[];
+  @Type(() => AdventureTourismModalityDto)
+  readonly adventureTourismModalities: AdventureTourismModalityDto[];
 
   @IsOptional()
   @IsArray()
   @ValidateNested()
-  @Type(() => CreateTouristGuideDto)
-  readonly touristGuides: CreateTouristGuideDto[];
+  @Type(() => TouristGuideDto)
+  readonly touristGuides: TouristGuideDto[];
 
   @IsBoolean(isBooleanValidationOptions())
   readonly hasAdventureTourismModality: boolean;
 
   @IsBoolean(isBooleanValidationOptions())
   readonly hasTouristGuide: boolean;
-
-  @IsNotEmpty()
-  @ValidateNested()
-  @Type(() => CreateRegulationDto)
-  readonly regulation: CreateRegulationDto;
 }

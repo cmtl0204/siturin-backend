@@ -1,6 +1,6 @@
 import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { DataSource, EntityManager, Repository } from 'typeorm';
-import { addDays, differenceInDays, format, set, startOfDay } from 'date-fns';
+import { addDays, differenceInDays, endOfDay, format, startOfDay } from 'date-fns';
 import {
   CatalogueInspectionsStateEnum,
   CatalogueProcessesTypeEnum,
@@ -26,20 +26,19 @@ import {
   TouristTransportCompanyEntity,
 } from '@modules/core/entities';
 import {
+  AdventureTourismModalityDto,
   BreachCauseDto,
-  CreateInspectionDto,
   CreateStep1Dto,
   CreateStep2Dto,
   InactivationCauseDto,
-  CreateTouristGuideDto,
-  CreateTouristTransportCompanyDto,
+  InspectionDto,
+  TouristGuideDto,
+  TouristTransportCompanyDto,
 } from '@modules/core/shared-core/dto/process';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
 import { UserEntity } from '@auth/entities';
 import { FileService } from '@modules/common/file/file.service';
-import { CreateRegulationResponseDto } from '@modules/core/shared-core/dto/process/create-regulation-response.dto';
-import { CreateAdventureTourismModalityDto } from '@modules/core/shared-core/dto/adventure-tourism-modality';
-import { TransportDto } from '@modules/core/roles/external/dto/process-ctc/transport.dto';
+import { RegulationResponseDto } from '@modules/core/shared-core/dto/process/regulation-response.dto';
 import { CatalogueDto } from '@modules/common/catalogue/dto';
 
 @Injectable()
@@ -107,7 +106,7 @@ export class ProcessService {
     });
   }
 
-  async createExternalInspection(payload: CreateInspectionDto, user: UserEntity) {
+  async createExternalInspection(payload: InspectionDto, user: UserEntity) {
     const actualInspection = await this.inspectionRepository.findOne({
       where: { processId: payload.processId, isCurrent: true },
       relations: { state: true },
@@ -121,11 +120,7 @@ export class ProcessService {
       throw new NotFoundException('Estado inspección no encontrado');
     }
 
-    const inspectionAt = set(payload.inspectionAt, {
-      hours: 23,
-      minutes: 59,
-      seconds: 59,
-    });
+    const inspectionAt = endOfDay((payload.inspectionAt));
 
     // review aumentar el igual porque no debe dejar agenar el mismo dia
     if (differenceInDays(startOfDay(inspectionAt), startOfDay(new Date())) < 0) {
@@ -176,7 +171,7 @@ export class ProcessService {
     return this.inspectionRepository.save(inspection);
   }
 
-  async createInternalInspection(payload: CreateInspectionDto, user: UserEntity) {
+  async createInternalInspection(payload: InspectionDto, user: UserEntity) {
     const actualInspection = await this.inspectionRepository.findOne({
       where: { processId: payload.processId, isCurrent: true },
       relations: { state: true },
@@ -292,9 +287,9 @@ export class ProcessService {
 
   async saveAutoInspection(
     manager: EntityManager,
+    user: UserEntity,
     processId: string,
     type: CatalogueDto,
-    user: UserEntity,
   ) {
     const inspectionRepository = manager.getRepository(InspectionEntity);
     const catalogueRepository = manager.getRepository(CatalogueEntity);
@@ -356,12 +351,7 @@ export class ProcessService {
     if (state) inspection.stateId = state.id;
     if (user) inspection.userId = user.id;
 
-    inspection.inspectionAt = set(inspectionAt, {
-      hours: 23,
-      minutes: 23,
-      seconds: 59,
-      milliseconds: 0,
-    });
+    inspection.inspectionAt = endOfDay(inspectionAt);
 
     return inspectionRepository.save(inspection);
   }
@@ -369,7 +359,7 @@ export class ProcessService {
   async saveRegulation(
     manager: EntityManager,
     processId: string,
-    regulationResponses: CreateRegulationResponseDto[],
+    regulationResponses: RegulationResponseDto[],
   ) {
     const regulationResponseRepository = manager.getRepository(RegulationResponseEntity);
 
@@ -420,17 +410,12 @@ export class ProcessService {
 
     if (state) inspection.stateId = state.id;
 
-    inspection.inspectionAt = set(addDays(new Date(), 42), {
-      hours: 23,
-      minutes: 23,
-      seconds: 59,
-      milliseconds: 0,
-    });
+    inspection.inspectionAt = addDays(endOfDay(new Date()), 42);
 
     return inspectionRepository.save(inspection);
   }
 
-  async saveAutoAssignment(processId: string, dpaId: string, manager: EntityManager) {
+  async saveAutoAssignment(manager: EntityManager, processId: string, dpaId: string) {
     const assignmentRepository = manager.getRepository(AssignmentEntity);
 
     let assignment = await assignmentRepository.findOne({
@@ -626,7 +611,7 @@ export class ProcessService {
 
   async saveAdventureTourismModalities(
     processId: string,
-    modalities: CreateAdventureTourismModalityDto[],
+    modalities: AdventureTourismModalityDto[],
     manager: EntityManager,
   ): Promise<boolean> {
     const modalityRepository = manager.getRepository(AdventureTourismModalityEntity);
@@ -662,7 +647,7 @@ export class ProcessService {
 
   async saveTouristGuides(
     processId: string,
-    touristGuides: CreateTouristGuideDto[],
+    touristGuides: TouristGuideDto[],
     manager: EntityManager,
   ): Promise<boolean> {
     const touristGuideRepository = manager.getRepository(TouristGuideEntity);
@@ -696,7 +681,7 @@ export class ProcessService {
 
   async saveTouristTransportCompanies(
     processId: string,
-    transports: CreateTouristTransportCompanyDto[],
+    transports: TouristTransportCompanyDto[],
     manager: EntityManager,
   ): Promise<boolean> {
     const transportRepository = manager.getRepository(TouristTransportCompanyEntity);

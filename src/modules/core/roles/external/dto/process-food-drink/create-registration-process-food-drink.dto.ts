@@ -12,7 +12,7 @@ import {
 import { Type } from 'class-transformer';
 import { isBooleanValidationOptions } from '@utils/dto-validation';
 import { CatalogueDto } from '@modules/common/catalogue/dto';
-import { CreateRegulationDto } from '@modules/core/shared-core/dto/process/create-regulation.dto';
+import { RegulationDto } from '@modules/core/shared-core/dto/process/regulation.dto';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
 import { ActivityEntity, CategoryEntity, ClassificationEntity } from '@modules/core/entities';
 import { KitchenTypeDto } from './kitchen-type-process--food-drink.dto';
@@ -80,6 +80,6 @@ export class CreateRegistrationProcessFoodDrinkDto {
 
   @IsNotEmpty()
   @ValidateNested()
-  @Type(() => CreateRegulationDto)
-  readonly regulation: CreateRegulationDto;
+  @Type(() => RegulationDto)
+  readonly regulation: RegulationDto;
 }

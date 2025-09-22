@@ -3,6 +3,7 @@ import { DataSource, EntityManager } from 'typeorm';
 import {
   CatalogueActivitiesCodeEnum,
   CatalogueCadastresStateEnum,
+  CatalogueProcessesStateEnum,
   CatalogueTypeEnum,
   ConfigEnum,
 } from '@utils/enums';
@@ -15,12 +16,13 @@ import {
   ProcessEntity,
   SalesRepresentativeEntity,
   TouristGuideEntity,
+  TouristTransportCompanyEntity,
 } from '@modules/core/entities';
 import { CreateRegistrationProcessAgencyDto } from '@modules/core/roles/external/dto/process-agency';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
 import { ProcessService } from '@modules/core/shared-core/services/process.service';
 import { UserEntity } from '@auth/entities';
-import { addDays, set } from 'date-fns';
+import { addDays, endOfDay } from 'date-fns';
 import { EmailService } from '@modules/core/shared-core/services/email.service';
 
 @Injectable()
@@ -37,14 +39,14 @@ export class ProcessAgencyService {
     user: UserEntity,
   ): Promise<ResponseHttpInterface> {
     return await this.dataSource.transaction(async (manager) => {
-      const process = await this.saveProcess(payload, manager);
+      const process = await this.saveProcess(manager, payload);
 
-      await this.processService.saveAutoInspection(manager, payload.processId, payload.type, user);
+      await this.processService.saveAutoInspection(manager, user, payload.processId, payload.type);
 
       await this.processService.saveAutoAssignment(
+        manager,
         payload.processId,
         process.establishmentAddress.provinceId,
-        manager,
       );
 
       await this.processService.saveRegulation(
@@ -53,11 +55,25 @@ export class ProcessAgencyService {
         payload.regulation.regulationResponses,
       );
 
-      await this.saveProcessAgency(payload, manager);
+      if (payload.hasTouristGuide) {
+        await this.saveTouristGuides(manager, payload);
+      }
 
-      await this.saveTouristGuides(payload, manager);
+      if (payload.hasSalesRepresentative) {
+        await this.saveSalesRepresentatives(manager, payload);
+      }
 
-      const cadastre = await this.saveCadastre(payload.processId, manager);
+      if (payload.hasAdventureTourismModality) {
+        await this.saveAdventureTourismModalities(manager, payload);
+      }
+
+      if (payload.hasTouristTransportCompany) {
+        await this.saveTouristTransportCompanies(manager, payload);
+      }
+
+      await this.saveProcessAgency(manager, payload);
+
+      const cadastre = await this.saveCadastre(manager, payload.processId);
 
       const responseSendEmail = await this.emailService.sendRegistrationCertificateEmail(cadastre);
 
@@ -80,8 +96,8 @@ export class ProcessAgencyService {
   }
 
   private async saveProcess(
-    payload: CreateRegistrationProcessAgencyDto,
     manager: EntityManager,
+    payload: CreateRegistrationProcessAgencyDto,
   ): Promise<ProcessEntity> {
     const processRepository = manager.getRepository(ProcessEntity);
     const catalogueRepository = manager.getRepository(CatalogueEntity);
@@ -97,8 +113,8 @@ export class ProcessAgencyService {
 
     // review agregar enum para code y type
     const state = await catalogueRepository.findOneBy({
-      code: 'pendiente_inspeccion_1',
-      type: 'tramite_estados',
+      code: CatalogueProcessesStateEnum.pending_1,
+      type: CatalogueTypeEnum.processes_state,
     });
 
     if (state) process.stateId = state.id;
@@ -106,24 +122,19 @@ export class ProcessAgencyService {
     process.activityId = payload.activity.id;
     process.classificationId = payload.classification.id;
     process.categoryId = payload.category.id;
-    process.hasLandUse = payload.hasLandUse;
     process.registeredAt = new Date();
     process.endedAt = new Date();
+    process.hasLandUse = payload.hasLandUse;
     process.isProtectedArea = payload.isProtectedArea;
     process.hasProtectedAreaContract = payload.hasProtectedAreaContract;
-    process.inspectionExpirationAt = set(addDays(new Date(), 114), {
-      hours: 23,
-      minutes: 23,
-      seconds: 59,
-      milliseconds: 0,
-    });
+    process.inspectionExpirationAt = addDays(endOfDay(new Date()), 114);
 
     return await processRepository.save(process);
   }
 
   private async saveProcessAgency(
-    payload: CreateRegistrationProcessAgencyDto,
     manager: EntityManager,
+    payload: CreateRegistrationProcessAgencyDto,
   ): Promise<ProcessAgencyEntity> {
     const processAgencyRepository = manager.getRepository(ProcessAgencyEntity);
     let processAgency = await processAgencyRepository.findOneBy({ processId: payload.processId });
@@ -141,8 +152,8 @@ export class ProcessAgencyService {
   }
 
   private async saveTouristGuides(
-    payload: CreateRegistrationProcessAgencyDto,
     manager: EntityManager,
+    payload: CreateRegistrationProcessAgencyDto,
   ): Promise<boolean> {
     const touristGuideRepository = manager.getRepository(TouristGuideEntity);
 
@@ -175,8 +186,8 @@ export class ProcessAgencyService {
   }
 
   private async saveAdventureTourismModalities(
-    payload: CreateRegistrationProcessAgencyDto,
     manager: EntityManager,
+    payload: CreateRegistrationProcessAgencyDto,
   ): Promise<boolean> {
     const adventureTourismModalityRepository = manager.getRepository(
       AdventureTourismModalityEntity,
@@ -201,7 +212,7 @@ export class ProcessAgencyService {
 
         throw new BadRequestException({
           error: errorMessage,
-          message: `Error guardando Modalidades de Turismo: ${item.type || item.className}`,
+          message: `Error guardando Modalidades de Turismo: ${item.type.name || item.className}`,
         });
       }
     }
@@ -210,8 +221,8 @@ export class ProcessAgencyService {
   }
 
   private async saveSalesRepresentatives(
-    payload: CreateRegistrationProcessAgencyDto,
     manager: EntityManager,
+    payload: CreateRegistrationProcessAgencyDto,
   ): Promise<boolean> {
     const salesRepresentativeRepository = manager.getRepository(SalesRepresentativeEntity);
 
@@ -245,7 +256,43 @@ export class ProcessAgencyService {
     return true;
   }
 
-  private async saveCadastre(processId: string, manager: EntityManager): Promise<CadastreEntity> {
+  private async saveTouristTransportCompanies(
+    manager: EntityManager,
+    payload: CreateRegistrationProcessAgencyDto,
+  ): Promise<boolean> {
+    const touristTransportCompanyRepository = manager.getRepository(TouristTransportCompanyEntity);
+
+    for (const item of payload.touristTransportCompanies) {
+      try {
+        const touristTransportCompany = touristTransportCompanyRepository.create();
+        touristTransportCompany.processId = payload.processId;
+        touristTransportCompany.ruc = item.ruc;
+        touristTransportCompany.legalName = item.legalName;
+        touristTransportCompany.rucTypeId = item.rucType.id;
+        touristTransportCompany.authorizationNumber = item.authorizationNumber;
+        touristTransportCompany.typeId = item.type.id;
+
+        await touristTransportCompanyRepository.save(touristTransportCompany);
+      } catch (error: unknown) {
+        let errorMessage = 'Error desconocido';
+
+        if (error instanceof Error) {
+          errorMessage = error.message;
+        } else if (typeof error === 'string') {
+          errorMessage = error;
+        }
+
+        throw new BadRequestException({
+          error: errorMessage,
+          message: `Error guardando Compañia Transporte de Turismo: ${item.legalName || item.ruc}`,
+        });
+      }
+    }
+
+    return true;
+  }
+
+  private async saveCadastre(manager: EntityManager, processId: string): Promise<CadastreEntity> {
     const cadastreRepository = manager.getRepository(CadastreEntity);
     const cadastreStateRepository = manager.getRepository(CadastreStateEntity);
     const processRepository = manager.getRepository(ProcessEntity);

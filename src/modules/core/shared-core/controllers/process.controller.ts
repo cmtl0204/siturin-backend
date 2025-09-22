@@ -12,7 +12,7 @@ import { Auth, User } from '@auth/decorators';
 import { ResponseHttpInterface } from '@utils/interfaces';
 import { ProcessService } from '@modules/core/shared-core/services/process.service';
 import { CreateStep1Dto, CreateStep2Dto } from '@modules/core/shared-core/dto/process';
-import { CreateInspectionDto } from '@modules/core/shared-core/dto/process/create-inspection.dto';
+import { InspectionDto } from '@modules/core/shared-core/dto/process/inspection.dto';
 import { UserEntity } from '@auth/entities';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -54,7 +54,7 @@ export class ProcessesController {
   @ApiOperation({ summary: 'Create External Inspection' })
   @Post('external-inspections')
   async createExternalInspection(
-    @Body() payload: CreateInspectionDto,
+    @Body() payload: InspectionDto,
     @User() user: UserEntity,
   ): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.service.createExternalInspection(payload, user);
@@ -69,7 +69,7 @@ export class ProcessesController {
   @ApiOperation({ summary: 'Create Internal Inspection' })
   @Post('internal-inspections')
   async createInternalInspection(
-    @Body() payload: CreateInspectionDto,
+    @Body() payload: InspectionDto,
     @User() user: UserEntity,
   ): Promise<ResponseHttpInterface> {
     const serviceResponse = await this.service.createInternalInspection(payload, user);

@@ -16,7 +16,7 @@ import {
 } from '@modules/core/entities';
 import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
 import { EmailService } from '@modules/core/shared-core/services/email.service';
-import { addDays, set } from 'date-fns';
+import { addDays, endOfDay, set } from 'date-fns';
 import { ProcessService } from '@modules/core/shared-core/services/process.service';
 import { CreateRegistrationProcessEventDto } from '../dto/process-event';
 
@@ -36,12 +36,12 @@ export class ProcessEventService {
     return await this.dataSource.transaction(async (manager) => {
       const process = await this.saveProcess(payload, manager);
 
-      await this.processService.saveAutoInspection(manager, payload.processId, payload.type, user);
+      await this.processService.saveAutoInspection(manager, user, payload.processId, payload.type);
 
       await this.processService.saveAutoAssignment(
+        manager,
         payload.processId,
         process.establishmentAddress.provinceId,
-        manager,
       );
 
       await this.saveProcessEvent(payload, manager);
@@ -98,12 +98,7 @@ export class ProcessEventService {
     process.endedAt = new Date();
     process.isProtectedArea = payload.isProtectedArea;
     process.hasProtectedAreaContract = payload.hasProtectedAreaContract;
-    process.inspectionExpirationAt = set(addDays(new Date(), 114), {
-      hours: 23,
-      minutes: 23,
-      seconds: 59,
-      milliseconds: 0,
-    });
+    process.inspectionExpirationAt = addDays(endOfDay(new Date()), 114);
 
     return await processRepository.save(process);
   }

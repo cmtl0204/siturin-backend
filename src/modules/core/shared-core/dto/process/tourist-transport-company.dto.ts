@@ -1,13 +1,9 @@
 import { IsOptional, IsString, ValidateNested } from 'class-validator';
 import { isStringValidationOptions } from '@utils/dto-validation';
-import { Type } from 'class-transformer';
 import { CatalogueDto } from '@modules/common/catalogue/dto';
+import { Type } from 'class-transformer';
 
-export class CreateTouristTransportCompanyDto {
-  @IsOptional()
-  @IsString(isStringValidationOptions())
-  readonly id: string;
-
+export class TouristTransportCompanyDto {
   @IsOptional()
   @IsString(isStringValidationOptions())
   readonly ruc: string;
@@ -21,12 +17,10 @@ export class CreateTouristTransportCompanyDto {
   readonly authorizationNumber: string;
 
   @IsOptional()
-  @ValidateNested()
   @Type(() => CatalogueDto)
   readonly rucType: CatalogueDto;
 
   @IsOptional()
-  @ValidateNested()
   @Type(() => CatalogueDto)
   readonly type: CatalogueDto;
 }

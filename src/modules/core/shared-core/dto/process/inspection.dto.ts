@@ -1,8 +1,7 @@
-import { IsDate, IsObject, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsDate, IsOptional, IsString, IsUUID } from 'class-validator';
 import { isDateValidationOptions, isStringValidationOptions } from '@utils/dto-validation';
-import { CatalogueEntity } from '@modules/common/catalogue/catalogue.entity';
 
-export class CreateInspectionDto {
+export class InspectionDto {
   @IsUUID()
   readonly processId: string;
 

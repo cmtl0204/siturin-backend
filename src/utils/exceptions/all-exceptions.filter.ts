@@ -5,6 +5,7 @@ import {
   ExceptionFilter,
   ForbiddenException,
   HttpException,
+  InternalServerErrorException,
   NotFoundException,
   ServiceUnavailableException,
   UnauthorizedException,
@@ -15,6 +16,7 @@ import { QueryFailedError } from 'typeorm';
 import { ErrorResponseHttpModel } from '../interfaces';
 import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
 import { ThrottlerException } from '@nestjs/throttler';
+import { MailSendException } from '@utils/exceptions/MailSendException';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -26,7 +28,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const errorResponseHttpModel: ErrorResponseHttpModel = {
       error: 'Server Error',
       message: 'Server Error',
-      statusCode: 500,
     };
 
     let status = 500;
@@ -78,13 +79,10 @@ export class AllExceptionsFilter implements ExceptionFilter {
         errorResponseHttpModel.error = 'El sistema se encuentra en mantenimiento';
         errorResponseHttpModel.message = 'Lamentamos las molestias causadas';
       }
-
-      errorResponseHttpModel.statusCode = exception.getStatus();
     }
 
     if (exception instanceof QueryFailedError) {
       status = 400;
-      errorResponseHttpModel.statusCode = exception.driverError.code || 400;
       errorResponseHttpModel.error = exception.name || 'QueryFailedError';
       errorResponseHttpModel.message = exception.driverError.detail || 'Query Error';
     }
@@ -97,9 +95,14 @@ export class AllExceptionsFilter implements ExceptionFilter {
       //   exception.driverError.detail || 'Query Error';
     }
 
+    if (exception instanceof MailSendException) {
+      status = exception.getStatus();
+      const response = exception.getResponse() as any;
+      errorResponseHttpModel.error = response.error || 'Error';
+      errorResponseHttpModel.message = response.message || exception.message || 'Error';
+    }
+
     if (exception instanceof Error && status === 500) {
-      status = 400;
-      errorResponseHttpModel.statusCode = 400;
       errorResponseHttpModel.error = exception.name || 'Error';
       errorResponseHttpModel.message = exception.message || 'Error';
     }

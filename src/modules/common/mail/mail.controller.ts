@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { ResponseHttpInterface } from '@utils/interfaces';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { MailService } from '@modules/common/mail/mail.service';
@@ -13,21 +13,21 @@ export class MailController {
 
   @ApiOperation({ summary: 'Send Test Email' })
   @PublicRoute()
-  @Get('test')
-  async test(): Promise<ResponseHttpInterface> {
+  @Post('test')
+  async test(@Body() payload: any): Promise<ResponseHttpInterface> {
     const mailData: MailDataInterface = {
-      to: 'test@test.com',
+      to: payload.to,
       subject: 'Testing Email Send',
       template: MailTemplateEnum.TESTING,
       data: {
-        test: 'Testing',
+        test: payload.message,
       },
     };
 
     await this.mailService.sendMail(mailData);
 
     return {
-      data: null,
+      data: payload.to,
       message: 'Correo enviado correctamente',
       title: 'Enviado',
     };

@@ -1,4 +1,4 @@
-import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
+import { Inject, Injectable, InternalServerErrorException, OnModuleInit } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 import { SentMessageInfo } from 'nodemailer';
 import { ConfigType } from '@nestjs/config';
@@ -7,6 +7,7 @@ import { MailDataInterface } from './interfaces/mail-data.interface';
 import { join } from 'path';
 import { FolderPathsService } from '../folder-paths.service';
 import { Attachment } from 'nodemailer/lib/mailer';
+import { MailSendException } from '@utils/exceptions/MailSendException';
 
 @Injectable()
 export class MailService implements OnModuleInit {
@@ -127,7 +128,7 @@ export class MailService implements OnModuleInit {
       from: `"${this.configService.mail.fromName}" <${this.configService.mail.from}>`,
       subject: mailData.subject,
       template: mailData.template,
-      context: { system: 'SITURIN', data: mailData.data },
+      context: { system: this.configService.mail.fromName, data: mailData.data },
       attachments: mailAttachments,
     };
 
@@ -139,11 +140,14 @@ export class MailService implements OnModuleInit {
         rejected: response.rejected,
       };
     } catch (error) {
-      console.error('Error al enviar el correo:', error);
-      return {
-        error: true,
-        message: error.message || 'No se pudo enviar el correo',
-      };
+      if (error.responseCode === 535) {
+        throw new MailSendException(
+          'No se pudo enviar el correo',
+          'Usuario y/o contraseña del servidor de correo no válidos',
+          535,
+        );
+      }
+      throw error;
     }
   }
 }

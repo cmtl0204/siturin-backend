@@ -9,5 +9,4 @@ export interface ErrorResponseHttpModel<T = any> {
   data?: T;
   error: string;
   message: string | string[];
-  statusCode: number;
 }
